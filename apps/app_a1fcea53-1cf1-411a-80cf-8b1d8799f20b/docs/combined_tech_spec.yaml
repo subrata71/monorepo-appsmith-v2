@@ -5,8 +5,9 @@ metadata:
   - tech_spec_0.yaml
   - tech_spec_1.yaml
   - tech_spec_2.yaml
+  - tech_spec_3.yaml
   title: Combined Technical Specification
-  total_modules: 3
+  total_modules: 4
 modules:
 - module_name: '0'
   source_file: tech_spec_0.yaml
@@ -1319,9 +1320,452 @@ modules:
       success_criteria: All operations provide clear, animated feedback and the BST
         visualizes correctly at each step.
       title: Basic BST Interaction Workflow
+- module_name: '3'
+  source_file: tech_spec_3.yaml
+  specification:
+    client:
+      components:
+        atoms:
+        - description: Flat, minimalist button for triggering actions.
+          name: Button
+          props:
+          - label
+          - onClick
+          - disabled
+        - description: Minimalist input field for numeric entry.
+          name: Input
+          props:
+          - value
+          - onChange
+          - placeholder
+          - type
+          - error
+        - description: Used for labels, feedback, and headings.
+          name: Text
+          props:
+          - children
+          - variant
+        molecules:
+        - atoms:
+          - Input
+          - Button
+          description: Horizontal grouping of an input field and its corresponding
+            button.
+          name: ControlGroup
+          props:
+          - label
+          - inputProps
+          - buttonProps
+        - atoms:
+          - Text
+          description: Formatted status or error message with color cues.
+          name: StatusMessage
+          props:
+          - message
+          - type
+        organisms:
+        - atoms:
+          - Text
+          description: Top bar with the app name in bold, centered text.
+          molecules:
+          - Text
+          name: Header
+          props: []
+        - atoms:
+          - Button
+          - Input
+          description: All operation controls (insert, delete, search, reset) grouped
+            in a responsive row.
+          molecules:
+          - ControlGroup
+          name: ControlPanel
+          props: []
+        - atoms: []
+          description: Full SVG rendering of the BST, managing layout and all visual
+            feedback/animations.
+          molecules: []
+          name: BSTSVGTree
+          props:
+          - bst
+          - searchPath
+          - selectedNodeId
+          - animationState
+        - atoms:
+          - Text
+          description: Aggregates feedback and operation messages, auto-hides after
+            delay.
+          molecules:
+          - StatusMessage
+          name: StatusBar
+          props:
+          - message
+          - type
+      pages:
+      - description: The main interface for interacting with and visualizing BST operations.
+        organisms:
+        - Header
+        - ControlPanel
+        - BSTSVGTree
+        - StatusBar
+        queries:
+        - getBST
+        - createBSTNode
+        - deleteBSTNode
+        - searchBSTNode
+        - resetBST
+        route: /
+        title: BST Visualizer
+      stores:
+      - actions:
+        - 'insertNode(value: integer)'
+        - 'deleteNode(value: integer)'
+        - 'searchNode(value: integer)'
+        - resetTree()
+        - 'setStatusMessage(message: string)'
+        - 'setErrorMessage(message: string)'
+        - 'setAnimationState(state: string)'
+        description: State management for the BST structure, nodes, and current animation
+          state.
+        name: bstStore
+        state_shape:
+        - name: bst
+          type: BST
+        - name: selectedNodeId
+          type: string | null
+        - name: searchPath
+          type: string[]
+        - name: statusMessage
+          type: string
+        - name: errorMessage
+          type: string
+        - name: lastOperation
+          type: string
+        - name: animationState
+          type: string
+    domains:
+    - apis:
+      - description: Retrieves the current BST structure and all nodes.
+        input: none
+        method: GET
+        name: getBST
+        output: BST
+        path: /api/getBST
+      - description: Retrieves a single BST node by its id.
+        input: '{ id: string }'
+        method: GET
+        name: getBSTNodeById
+        output: BSTNode
+        path: /api/getBSTNodeById
+      - description: Inserts a new node into the BST with the specified value.
+        input: '{ value: integer }'
+        method: POST
+        name: createBSTNode
+        output: BSTNode
+        path: /api/createBSTNode
+      - description: Updates a BST node's value (not typical in BSTs, but included
+          for completeness).
+        input: '{ id: string, value: integer }'
+        method: PUT
+        name: updateBSTNode
+        output: BSTNode
+        path: /api/updateBSTNode
+      - description: Deletes a node from the BST by value and restructures the tree.
+        input: '{ value: integer }'
+        method: POST
+        name: deleteBSTNode
+        output: BSTNode
+        path: /api/deleteBSTNode
+      - description: Searches for a node by value, returns the node if found and search
+          path.
+        input: '{ value: integer }'
+        method: POST
+        name: searchBSTNode
+        output: '{ node: BSTNode | null, path: string[] }'
+        path: /api/searchBSTNode
+      - description: Clears the entire BST and resets to empty state.
+        input: none
+        method: POST
+        name: resetBST
+        output: BST
+        path: /api/resetBST
+      description: Domain modeling the client-side Binary Search Tree structure, encapsulating
+        nodes and tree operations (insert, delete, search, reset) with full state
+        management.
+      models:
+      - description: Represents a node in the binary search tree.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: value
+          nullable: false
+          pk: false
+          type: integer
+        - name: left
+          nullable: true
+          pk: false
+          type: BSTNode | null
+        - name: right
+          nullable: true
+          pk: false
+          type: BSTNode | null
+        - name: createdAt
+          nullable: true
+          pk: false
+          type: Date | null
+        - name: updatedAt
+          nullable: true
+          pk: false
+          type: Date | null
+        name: BSTNode
+      - description: Represents the entire binary search tree, managing nodes and
+          operations.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: root
+          nullable: true
+          pk: false
+          type: BSTNode | null
+        - name: createdAt
+          nullable: true
+          pk: false
+          type: Date | null
+        - name: updatedAt
+          nullable: true
+          pk: false
+          type: Date | null
+        name: BST
+      name: bst
+      services:
+      - description: Handles all BST business logic for insert, delete, search, and
+          reset operations, manages animation state and provides status messages.
+        methods:
+        - 'insertNode(value: integer)'
+        - 'deleteNode(value: integer)'
+        - 'searchNode(value: integer)'
+        - resetTree()
+        - 'getTree(): BST'
+        name: BSTService
+    metadata:
+      description: A static, client-side web application for visually demonstrating
+        Binary Search Tree (BST) operations—insert, delete, and search—emphasizing
+        simplicity, interactivity, and real-time SVG-based visualization.
+      generated_at: '2024-06-10T12:00:00Z'
+      name: Minimalist BST Visualizer
+      version: 1.0.0
+    product:
+      features:
+      - description: Allows users to input a number and insert it into the BST with
+          animated visualization.
+        domains:
+        - bst
+        id: bst_insert
+        priority: high
+        title: Insert Node
+      - description: Enables users to remove a specific node by value, animating its
+          removal and tree restructuring.
+        domains:
+        - bst
+        id: bst_delete
+        priority: high
+        title: Delete Node
+      - description: Lets users search for a value in the BST, visually highlighting
+          the search path and result.
+        domains:
+        - bst
+        id: bst_search
+        priority: high
+        title: Search Node
+      - description: Clears all nodes from the BST, resetting the visualization with
+          a smooth animation.
+        domains:
+        - bst
+        id: bst_reset
+        priority: medium
+        title: Reset Tree
+      - description: Ensures only valid integer values are accepted for all operations,
+          with subtle error feedback.
+        domains:
+        - bst
+        id: input_validation
+        priority: high
+        title: Input Validation
+      - description: The interface and SVG tree auto-scale and adjust to various screen
+          sizes and tree depths for optimal viewing.
+        domains:
+        - bst
+        id: responsive_ui
+        priority: medium
+        title: Responsive UI and Visualization
+      - description: Provides real-time feedback for all operations, errors, and instructions
+          in a status bar below the visualization.
+        domains:
+        - bst
+        id: status_feedback
+        priority: high
+        title: Status Feedback
+      goals:
+      - Provide an easy-to-understand visual demonstration of BST operations.
+      - Ensure all interactions are immediate, intuitive, and visually animated.
+      - Maintain a minimalist, distraction-free interface for learning and experimentation.
+      - Operate fully client-side with responsive, accessible UI.
+      personas:
+      - description: Learns data structures and algorithms; uses the app to visualize
+          BST operations for study and understanding.
+        goals:
+        - Understand how BSTs work visually.
+        - Experiment with BST insert, delete, and search operations.
+        name: Student
+      - description: Uses the app in teaching sessions or demonstrations to explain
+          BST concepts and operations interactively.
+        goals:
+        - Demonstrate BST operations live to students.
+        - Use the tool for classroom exercises or examples.
+        name: Educator
+      - description: References or experiments with BST logic and visualization for
+          technical understanding or UI inspiration.
+        goals:
+        - Experiment with BST logic for technical insight.
+        - Use the app as UI/UX reference for similar tools.
+        name: Developer
+      summary: Interactive, minimalist, client-side BST visualizer that enables users
+        to insert, delete, search, and reset nodes in a visually animated binary search
+        tree. The app is designed for clarity, simplicity, and intuitive user experience.
+    use_cases:
+    - actors:
+      - User
+      apis:
+      - createBSTNode
+      description: User enters a number and inserts it into the tree to see how the
+        BST structure changes.
+      domains:
+      - bst
+      happy_path:
+      - User enters a valid integer in the insert field.
+      - User clicks 'Insert'.
+      - Input is validated.
+      - Node is inserted and animated in the visualization.
+      - Status bar displays 'Inserted X'.
+      id: insert_node
+      pages:
+      - /
+      postconditions:
+      - The tree displays an additional node, inserted in the correct position.
+      preconditions:
+      - BST may be empty or already have nodes.
+      title: Insert a node into the BST
+    - actors:
+      - User
+      apis:
+      - deleteBSTNode
+      description: User deletes a node by value to observe how the BST structure updates.
+      domains:
+      - bst
+      happy_path:
+      - User enters a valid integer in the delete field.
+      - User clicks 'Delete'.
+      - Input is validated.
+      - Node is removed with animation.
+      - Status bar displays 'Deleted X' or error if value not found.
+      id: delete_node
+      pages:
+      - /
+      postconditions:
+      - The node is removed and the tree restructures as needed.
+      preconditions:
+      - BST contains at least one node.
+      title: Delete a node from the BST
+    - actors:
+      - User
+      apis:
+      - searchBSTNode
+      description: User searches for a value and sees the search path highlighted.
+      domains:
+      - bst
+      happy_path:
+      - User enters a valid integer in the search field.
+      - User clicks 'Search'.
+      - Input is validated.
+      - Search path is animated and result is shown.
+      - Status bar displays result (e.g., 'Found X' or 'X not found').
+      id: search_node
+      pages:
+      - /
+      postconditions:
+      - Search path is highlighted and the node (if found) is indicated.
+      preconditions:
+      - BST contains at least one node.
+      title: Search for a node in the BST
+    - actors:
+      - User
+      apis:
+      - resetBST
+      description: User clears the tree and starts over to experiment with new node
+        sequences.
+      domains:
+      - bst
+      happy_path:
+      - User clicks the 'Reset' button.
+      - All nodes are removed with an animation.
+      - Status bar displays 'Tree cleared'.
+      id: reset_tree
+      pages:
+      - /
+      postconditions:
+      - BST is empty.
+      preconditions:
+      - BST contains zero or more nodes.
+      title: Reset the tree
+    - actors:
+      - User
+      apis: []
+      description: User receives immediate feedback when entering invalid data.
+      domains:
+      - bst
+      happy_path:
+      - User enters non-integer or invalid input.
+      - Input field displays subtle error indicator.
+      - Status bar shows an error message.
+      id: input_error_handling
+      pages:
+      - /
+      postconditions:
+      - User is informed of input errors; no changes occur to BST.
+      preconditions:
+      - User is on the main app page.
+      title: Handle invalid input
+    user_journeys:
+    - id: typical_bst_session
+      persona: Student
+      related_use_cases:
+      - insert_node
+      - delete_node
+      - search_node
+      - reset_tree
+      steps:
+      - action: Open the Minimalist BST Visualizer.
+        page: /
+      - action: Insert several numbers using the controls.
+        page: /
+      - action: Search for a value, watching the highlighted traversal.
+        page: /
+      - action: Delete a node, observing the animation and restructuring.
+        page: /
+      - action: Reset the tree, confirming the clear operation.
+        page: /
+      - action: Repeat with different sequences for experimentation.
+        page: /
+      success_criteria: User gains understanding of BST operations via immediate visual
+        feedback and intuitive controls.
+      title: Typical BST Learning Session
 summary:
   module_names:
   - '0'
   - '1'
   - '2'
-  total_modules: 3
+  - '3'
+  total_modules: 4
