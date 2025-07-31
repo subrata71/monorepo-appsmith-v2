@@ -1,0 +1,81 @@
+access: No authentication or access control. App is open to all users and runs entirely
+  in the browser.
+behaviour: Purely client-side; all state is managed in-browser. The UI is responsive
+  and interactive, providing immediate feedback for user actions. Operations are accompanied
+  by smooth visual transitions—nodes appear/disappear or are highlighted to reflect
+  insert, delete, and search. Input validation ensures only valid numbers are processed.
+name: Minimalist BST Visualizer
+pages:
+- behaviour: All operations are interactive and update the visualization in real time.
+    Animations for node insert, delete, and search highlighting are smooth and not
+    distracting. Tree layout auto-scales to fit the viewport. Responsive to window
+    resizing.
+  id: main
+  purpose: The single-page interface for visualizing and interacting with a binary
+    search tree. Users can insert, delete, search, or reset nodes, and see real-time,
+    animated updates.
+  queries:
+  - bstDelete
+  sections:
+  - behaviour: No actions; provides identity and context for the app.
+    blocks:
+    - behaviour: Displays 'Minimalist BST Visualizer' centered at the top of the app.
+      id: app_title
+    id: header
+    title: Header
+    visual: Simple top bar with the app name in bold, centered text.
+  - behaviour: Each control triggers the corresponding tree operation. Input fields
+      are validated for integer entry. Invalid input shows a subtle error indicator.
+    blocks:
+    - behaviour: Input field for entering a number to delete. Only numeric input allowed.
+      id: delete_input
+    - behaviour: Button labeled 'Delete' that triggers bstDelete with the entered
+        value; clears input after successful delete.
+      id: delete_button
+    id: controls
+    title: Controls
+    visual: Horizontal row of minimalist input fields and buttons, each with a subtle
+      border and rounded corners. Spacing between controls, with tooltips or placeholders
+      where necessary.
+  - behaviour: Deletion animates the node fading and remaining nodes adjusting positions.
+      Visualization adjusts to browser size and tree depth.
+    blocks:
+    - behaviour: Renders the BST as SVG elements; updates the structure and transitions
+        nodes in/out for deletion.
+      id: tree_svg
+    id: visualization
+    title: BST Visualization
+    visual: 'Large central SVG area with nodes as outlined circles containing values,
+      connected by straight lines for edges. Nodes are evenly spaced and auto-laid
+      out horizontally. Animations for adding, removing, and searching are smooth
+      and consistent. Colors: nodes (#007BFF border), highlight (#FFC107), found green
+      (#28A745), and delete fade (#DC3545).'
+  - behaviour: Displays operation feedback (e.g., 'Node deleted', 'Node not found
+      for deletion'), input errors, or next-step instructions. Fades out after a few
+      seconds.
+    blocks:
+    - behaviour: Shows the most recent operation feedback or input error. Clears automatically
+        after 3 seconds.
+      id: status_message
+    id: status
+    title: Status Bar
+    visual: Small area below the visualization, left-aligned text, using muted color
+      (#666) for normal info and accent color for errors/highlights.
+  title: BST Visualizer
+  visual: Centered layout with top header, control panel below, and main area dedicated
+    to tree visualization. Controls are horizontally aligned above the visualization.
+    The BST is drawn in the center using SVG, scaling responsively to screen size.
+    Minimal, consistent spacing and clear affordances.
+queries:
+- id: bstDelete
+  responsibility: Deletes a node with a specified value from the BST, updating the
+    visualization with an animated removal and rearrangement.
+summary: A static, client-side web application that visually demonstrates the operations
+  of a Binary Search Tree (BST) — insertion, deletion, and search. The application
+  emphasizes simplicity and interactivity, providing intuitive controls and real-time
+  visualization without requiring any backend or server-side logic.
+visual: 'Minimalist, clean interface with a white or light background and accent color
+  #007BFF. Uses a single sans-serif font (e.g., Inter or system font stack). The BST
+  is rendered using simple SVG lines and circles. Controls are presented with flat,
+  unobtrusive buttons and input fields. Transitions and animations are subtle to maintain
+  focus on the tree visualization.'

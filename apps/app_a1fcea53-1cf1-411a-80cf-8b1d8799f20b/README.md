@@ -1,145 +1,167 @@
 # Minimalist BST Visualizer
 
-A interactive web application for visualizing Binary Search Tree (BST) operations with real-time animations and a clean, minimalist interface.
+A complete full-stack application for visualizing Binary Search Tree operations with real-time animations.
 
 ## Features
 
-- **Interactive BST Operations**: Insert, delete, search, and reset nodes
-- **Real-time Animations**: Smooth SVG-based animations for all tree operations  
-- **Search Path Highlighting**: Visual path highlighting during search operations
-- **Input Validation**: Robust validation for numeric inputs (-999 to 999)
-- **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Client-side Logic**: All BST operations handled in the browser for instant feedback
+✅ **Complete BST Operations**
+- Insert nodes with automatic BST placement
+- Delete nodes with tree reorganization
+- Search nodes with path highlighting
+- Reset tree to start fresh
 
-## Tech Stack
+✅ **Real-time Visualization**
+- SVG-based tree rendering
+- Smooth animations for all operations
+- Visual feedback for search paths
+- Responsive design for all devices
 
-### Frontend
-- **React 18** with TypeScript
-- **Zustand** for state management
-- **TailwindCSS** for styling
-- **SVG** for tree visualization
-- **Vite** for build tooling
-- **Feature-Sliced Design (FSD)** architecture
+✅ **Full-Stack Architecture**
+- React + TypeScript frontend with modern tooling
+- Fastify + Node.js backend with PostgreSQL
+- Feature-Sliced Design (FSD) architecture
+- Database persistence of BST structures
 
-### Backend
-- **Node.js** with TypeScript
-- **Fastify** web framework
-- **Drizzle ORM** with PostgreSQL
-- **RESTful API** for BST persistence (optional)
+✅ **Production Ready**
+- Complete error handling
+- TypeScript throughout
+- Comprehensive linting and testing setup
+- Database migrations
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
-- pnpm (recommended) or npm
-- PostgreSQL (for backend API)
 
-### Frontend Setup
-```bash
-cd frontend
-pnpm install
-pnpm run dev
-```
+- Node.js 24.4+
+- PostgreSQL running on localhost:5433
+- pnpm 10.13+
 
-The frontend will be available at `http://localhost:5173`
+### Backend Setup
 
-### Backend Setup (Optional)
 ```bash
 cd backend
 pnpm install
 pnpm run dev
 ```
 
-The backend API will be available at `http://localhost:3001`
+The backend will:
+- Run migrations automatically on startup
+- Create BST tables in PostgreSQL
+- Start API server on the configured port
+- Provide endpoints at `/api/v1/bst/*`
 
-### Full Stack Development
-Run both frontend and backend simultaneously:
+### Frontend Setup
+
 ```bash
-# Terminal 1 - Backend
-cd backend && pnpm run dev
-
-# Terminal 2 - Frontend  
-cd frontend && pnpm run dev
+cd frontend
+pnpm install
+pnpm run dev
 ```
 
-## Usage
+The frontend will:
+- Start Vite dev server (typically http://localhost:5173)
+- Connect to backend API automatically
+- Fall back to client-side mode if backend unavailable
 
-1. **Insert Node**: Enter a number (-999 to 999) and click "Insert" to add it to the tree
-2. **Delete Node**: Enter an existing node value and click "Delete" to remove it
-3. **Search Node**: Enter a value and click "Search" to highlight the path to that node
-4. **Reset Tree**: Click "Clear All" to empty the entire tree
+## API Endpoints
 
-### Visual Feedback
-- **Blue nodes**: Regular tree nodes
-- **Green nodes**: Successfully found during search
-- **Orange path**: Search traversal path
-- **Bouncing animation**: Newly inserted nodes
-- **Pulsing effect**: Nodes being operated on
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/api/v1/bst` | Get all BST trees |
+| POST | `/api/v1/bst` | Create new BST tree |
+| GET | `/api/v1/bst/:id` | Get tree with nodes |
+| DELETE | `/api/v1/bst/:id` | Delete BST tree |
+| POST | `/api/v1/bst/:id/insert` | Insert node |
+| POST | `/api/v1/bst/:id/delete` | Delete node |
+| POST | `/api/v1/bst/:id/search` | Search for node |
+| POST | `/api/v1/bst/:id/reset` | Clear all nodes |
 
 ## Architecture
 
-The application follows **Feature-Sliced Design (FSD)** methodology:
-
+### Frontend (React + TypeScript)
 ```
 src/
-├── entities/bst/          # BST domain logic & algorithms
-├── features/bst-operations/  # User interaction features  
-├── widgets/bst-visualization/  # Complex UI components
-├── pages/bst-visualizer/     # Route-level components
-└── shared/                   # Reusable utilities & UI
+├── app/          # Application shell & routing
+├── pages/        # Route components
+├── widgets/      # Complex UI assemblies
+├── features/     # User interactions
+├── entities/     # Domain logic (BST algorithms)
+└── shared/       # Infrastructure & UI components
 ```
 
-### Key Components
-
-- **BSTAlgorithms**: Core BST data structure operations
-- **useBSTStore**: Zustand store for state management  
-- **BSTSVGTree**: SVG-based tree visualization component
-- **BSTControlsPanel**: Interactive control interface
-- **LayoutCalculator**: Tree positioning & layout logic
+### Backend (Fastify + TypeScript)
+```
+src/
+├── app.ts        # Application builder
+├── routes/       # API endpoints
+├── services/     # Business logic
+├── db/           # Database schema & migrations
+└── plugins/      # Fastify plugins
+```
 
 ## Development
 
-### Code Quality
-```bash
-# Frontend
-cd frontend
-pnpm run lint    # Check code style
-pnpm run build   # Production build
-pnpm run test    # Run tests
+### Commands
 
-# Backend  
-cd backend
-pnpm run typecheck  # TypeScript checking
-pnpm run build     # Production build
-pnpm run test      # Run tests
-```
+**Frontend:**
+- `pnpm dev` - Development server
+- `pnpm build` - Production build
+- `pnpm lint` - ESLint checks
 
-### Architecture Decisions
+**Backend:**
+- `pnpm dev` - Development server with hot reload
+- `pnpm build` - TypeScript compilation
+- `pnpm test` - Run tests
+- `pnpm typecheck` - TypeScript validation
 
-- **Client-side First**: All BST logic runs in the browser for instant feedback
-- **Immutable State**: Zustand manages tree state immutably
-- **Responsive SVG**: Tree visualization adapts to container size
-- **Animation System**: Coordinated animations with proper timing
-- **Input Validation**: Type-safe validation with helpful error messages
+### Database
 
-## API Endpoints (Backend)
+PostgreSQL tables are created automatically via migrations:
+- `bst_trees` - Tree metadata
+- `bst_nodes` - Individual nodes with relationships
 
-The backend provides optional BST persistence:
+## Technology Stack
 
-- `GET /api/v1/bst` - List all saved BST trees
-- `POST /api/v1/bst` - Create a new BST tree
-- `GET /api/v1/bst/:id` - Get a specific BST tree
-- `DELETE /api/v1/bst/:id` - Delete a BST tree
-- `POST /api/v1/bst/:id/nodes` - Insert node into a tree
+**Frontend:**
+- React 19.1 + TypeScript
+- Vite 7.0 for build tooling
+- Tailwind CSS + Shadcn/UI components
+- Zustand for state management
+- TanStack Query for server state
+- Lucide React icons
+
+**Backend:**
+- Fastify 5.4 web framework
+- Drizzle ORM + PostgreSQL
+- TypeScript strict mode
+- Vitest for testing
+- Pino logging
+
+**Development:**
+- ESLint + Prettier
+- Husky pre-commit hooks
+- Feature-Sliced Design architecture
+- pnpm workspaces
+
+## Usage
+
+1. **Start the application** - Run both frontend and backend
+2. **Insert nodes** - Enter numbers and click Insert
+3. **Visualize structure** - Watch the BST build automatically
+4. **Search nodes** - See the traversal path highlighted
+5. **Delete nodes** - Observe tree reorganization
+6. **Reset anytime** - Clear and start over
+
+The application works in two modes:
+- **Connected mode**: Full persistence with backend
+- **Offline mode**: Client-side only (fallback)
 
 ## Contributing
 
-1. Follow the established FSD architecture
-2. Use TypeScript for type safety
-3. Add tests for new features
-4. Ensure responsive design
-5. Maintain clean, readable code
+This application follows strict coding standards:
+- TypeScript strict mode
+- ESLint with custom rules
+- Feature-Sliced Design patterns
+- Comprehensive testing
 
-## License
-
-MIT License - feel free to use this project for learning and teaching!
+See `CLAUDE.md` files for detailed coding guidelines.

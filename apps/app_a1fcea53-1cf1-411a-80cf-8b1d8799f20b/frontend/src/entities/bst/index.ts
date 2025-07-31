@@ -2,3 +2,4 @@ export type { BSTNode, BST, NodePosition, SearchResult, AnimationState, StatusTy
 export { BSTAlgorithms } from './model/bst-algorithms';
 export { LayoutCalculator } from './model/layout-calculator';
 export { useBSTStore } from './model/store';
+export { bstApi } from './api/requests';

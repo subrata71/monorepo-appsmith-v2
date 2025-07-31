@@ -1,8 +1,11 @@
 import { Helmet } from 'react-helmet';
 import { BSTSVGTree } from '@/widgets/bst-visualization';
 import { BSTControlsPanel } from '@/features/bst-operations';
+import { useBSTInitialization } from '@/features/bst-operations/hooks/useBSTInitialization';
 
 export const BSTVisualizerPage = () => {
+  const { currentTreeId, isInitializing, error } = useBSTInitialization();
+
   return (
     <>
       <Helmet>
@@ -20,6 +23,21 @@ export const BSTVisualizerPage = () => {
               <p className="mt-2 text-lg text-gray-600">
                 Interactive visualization of BST operations with real-time animations
               </p>
+              {isInitializing && (
+                <div className="mt-3 text-sm text-blue-600">
+                  🔄 Connecting to server...
+                </div>
+              )}
+              {error && (
+                <div className="mt-3 text-sm text-amber-600">
+                  ⚠️ {error}
+                </div>
+              )}
+              {currentTreeId && !isInitializing && (
+                <div className="mt-3 text-sm text-green-600">
+                  ✅ Connected to server
+                </div>
+              )}
             </div>
           </div>
         </header>
