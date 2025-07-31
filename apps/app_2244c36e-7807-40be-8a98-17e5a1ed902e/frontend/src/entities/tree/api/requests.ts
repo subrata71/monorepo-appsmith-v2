@@ -17,13 +17,13 @@ export const treeApi = {
 
   // Add a node to the tree
   addNode: async (request: AddNodeRequest): Promise<TreeStructure> => {
-    const response = await api.post('/tree/add-node', request);
+    const response = await api.post('/tree/add/node', request);
     return response.data;
   },
 
   // Remove a node from the tree
   removeNode: async (request: RemoveNodeRequest): Promise<TreeStructure> => {
-    const response = await api.post('/tree/remove-node', request);
+    const response = await api.post('/tree/remove/node', request);
     return response.data;
   },
 
@@ -35,14 +35,14 @@ export const treeApi = {
 
   // Get traversal steps
   getTraversalSteps: async (query: TraversalQuery): Promise<TraversalResult> => {
-    const response = await api.get('/tree/traversal-steps', { 
+    const response = await api.get('/tree/traversal/steps', { 
       params: query 
     });
     return response.data;
   },
 
   // Validate node value
-  validateValue: async (value: any): Promise<ValidationResult> => {
+  validateValue: async (value: number): Promise<ValidationResult> => {
     const response = await api.post('/tree/validate', { value });
     return response.data;
   },

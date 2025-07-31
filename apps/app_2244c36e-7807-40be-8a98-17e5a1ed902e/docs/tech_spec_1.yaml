@@ -1,0 +1,510 @@
+client:
+  components:
+    atoms:
+    - description: Clickable button for actions (add, remove, undo, redo, etc.)
+      name: Button
+      props:
+      - label
+      - onClick
+      - disabled
+      - icon
+    - description: Input field for entering node values.
+      name: Input
+      props:
+      - value
+      - onChange
+      - type
+      - placeholder
+      - disabled
+    - description: SVG or font icon for visual cues.
+      name: Icon
+      props:
+      - name
+    - description: Displays node value on hover.
+      name: Tooltip
+      props:
+      - content
+      - children
+    - description: Dropdown for traversal type selection.
+      name: Select
+      props:
+      - options
+      - value
+      - onChange
+    - description: Text label for inputs or sections.
+      name: Label
+      props:
+      - text
+    - description: Visual separator between sections.
+      name: Divider
+      props:
+      - orientation
+    molecules:
+    - atoms:
+      - Input
+      - Button
+      - Label
+      description: Input with validation and add/remove buttons.
+      name: ValueInputGroup
+      props:
+      - value
+      - onAdd
+      - onRemove
+      - validationState
+    - atoms:
+      - Select
+      description: Dropdown for selecting traversal type.
+      name: TraversalTypeSelector
+      props:
+      - options
+      - value
+      - onChange
+    - atoms:
+      - Button
+      description: Buttons for undo and redo actions.
+      name: UndoRedoControls
+      props:
+      - canUndo
+      - canRedo
+      - onUndo
+      - onRedo
+    - atoms:
+      - Label
+      description: Shows current traversal sequence and highlights step.
+      name: TraversalStepIndicator
+      props:
+      - sequence
+      - currentStep
+    organisms:
+    - atoms:
+      - Divider
+      description: Panel containing all controls for manipulating the tree and traversals.
+      molecules:
+      - ValueInputGroup
+      - TraversalTypeSelector
+      - UndoRedoControls
+      name: ControlsPanel
+      props:
+      - inputValue
+      - onInputChange
+      - onAdd
+      - onRemove
+      - onTraversalTypeChange
+      - onStep
+      - onUndo
+      - onRedo
+      - canUndo
+      - canRedo
+      - validationState
+    - atoms:
+      - Tooltip
+      description: Canvas displaying the tree with animated transitions; tooltips
+        on hover.
+      molecules: []
+      name: TreeCanvas
+      props:
+      - tree
+      - hoveredNodeId
+      - traversalStep
+      - onNodeHover
+    - atoms: []
+      description: Shows the sequence of nodes in the current traversal and highlights
+        the current step.
+      molecules:
+      - TraversalStepIndicator
+      name: TraversalStepsDisplay
+      props:
+      - sequence
+      - currentStep
+  pages:
+  - description: Allows users to interactively build or modify a binary tree and visualize
+      structural and traversal changes.
+    organisms:
+    - ControlsPanel
+    - TreeCanvas
+    - TraversalStepsDisplay
+    queries:
+    - getTree
+    - createNode
+    - removeNode
+    - traverseTree
+    - undoTreeAction
+    - redoTreeAction
+    route: /
+    title: Binary Tree Visualizer
+  stores:
+  - actions:
+    - 'addNode(value: integer)'
+    - 'removeNode(value: integer)'
+    - 'setTraversalType(type: string)'
+    - stepTraversal()
+    - undo()
+    - redo()
+    - 'setInputValue(value: integer)'
+    description: Manages current binary tree data, nodes, and structure.
+    name: treeStore
+    state_shape:
+    - name: tree
+      type: BinaryTree
+    - name: selectedTraversal
+      type: string | null
+    - name: traversalSequence
+      type: integer[]
+    - name: traversalStep
+      type: integer
+    - name: undoStack
+      type: BinaryTree[]
+    - name: redoStack
+      type: BinaryTree[]
+    - name: inputValue
+      type: integer | ''
+    - name: validationState
+      type: string | null
+  - actions:
+    - 'setHoveredNode(id: string | null)'
+    - 'setTraversalActive(active: boolean)'
+    - 'setDisabledActions(actions: string[])'
+    description: Manages UI states such as which node is hovered, traversal in progress,
+      and button enabled/disabled states.
+    name: uiStore
+    state_shape:
+    - name: hoveredNodeId
+      type: string | null
+    - name: isTraversalActive
+      type: boolean
+    - name: isUndoAvailable
+      type: boolean
+    - name: isRedoAvailable
+      type: boolean
+    - name: disabledActions
+      type: string[]
+domains:
+- apis:
+  - description: Returns the current tree as a structured object for rendering.
+    input: none
+    method: GET
+    name: getTree
+    output: BinaryTree
+    path: /tree
+  - description: Add a new node with a given value to the binary tree.
+    input: '{ value: integer }'
+    method: POST
+    name: createNode
+    output: '{ node: TreeNode, tree: BinaryTree }'
+    path: /tree/node
+  - description: Remove a node from the binary tree by value and update the structure.
+    input: '{ value: integer }'
+    method: DELETE
+    name: removeNode
+    output: '{ tree: BinaryTree }'
+    path: /tree/node
+  - description: Update an existing node's value.
+    input: '{ id: string, value: integer }'
+    method: PATCH
+    name: updateNode
+    output: '{ node: TreeNode, tree: BinaryTree }'
+    path: /tree/node
+  - description: Delete a node from the tree by ID.
+    input: '{ id: string }'
+    method: DELETE
+    name: deleteNode
+    output: '{ tree: BinaryTree }'
+    path: /tree/node/by-id
+  - description: Perform a traversal (inorder, preorder, postorder) and return the
+      node sequence.
+    input: '{ type: string }'
+    method: POST
+    name: traverseTree
+    output: '{ sequence: integer[] }'
+    path: /tree/traverse
+  - description: Undo the last editing action.
+    input: none
+    method: POST
+    name: undoTreeAction
+    output: '{ tree: BinaryTree }'
+    path: /tree/undo
+  - description: Redo the last undone editing action.
+    input: none
+    method: POST
+    name: redoTreeAction
+    output: '{ tree: BinaryTree }'
+    path: /tree/redo
+  description: Domain for representing and manipulating the binary tree and its nodes.
+  models:
+  - description: Represents a node within the binary tree.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: value
+      nullable: false
+      pk: false
+      type: integer
+    - name: left
+      nullable: true
+      pk: false
+      type: string
+    - name: right
+      nullable: true
+      pk: false
+      type: string
+    - name: parent
+      nullable: true
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: Date
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: Date
+    name: TreeNode
+  - description: Represents the overall binary tree structure.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: root
+      nullable: true
+      pk: false
+      type: string
+    - name: nodes
+      nullable: false
+      pk: false
+      type: TreeNode[]
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: Date
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: Date
+    name: BinaryTree
+  name: tree
+  services:
+  - description: Handles insertion of nodes, structure validation, and animation triggers.
+    methods:
+    - 'insertNode(value: integer): { node: TreeNode, tree: BinaryTree }'
+    name: treeInsertService
+  - description: Handles deletion of nodes, rebalancing, and visual updates.
+    methods:
+    - 'removeNode(value: integer): BinaryTree'
+    name: treeRemoveService
+  - description: Executes inorder, preorder, and postorder traversals with stepwise
+      output.
+    methods:
+    - 'traverse(type: string): integer[]'
+    name: treeTraversalService
+  - description: Maintains undo/redo stack, restores previous tree states.
+    methods:
+    - 'undo(): BinaryTree'
+    - 'redo(): BinaryTree'
+    name: treeUndoRedoService
+  - description: Validates node values for uniqueness and integer type.
+    methods:
+    - 'validateNode(value: integer): boolean'
+    name: treeValidationService
+metadata:
+  description: Interactive tool for creating, editing, and visualizing binary trees
+    with animated transitions and step-by-step traversals.
+  generated_at: '2024-06-11T17:28:00Z'
+  name: Binary Tree Visualizer
+  version: 1.0.0
+product:
+  features:
+  - description: Real-time, animated rendering of the binary tree structure as users
+      add or remove nodes.
+    domains:
+    - tree
+    id: tree_visualization
+    priority: high
+    title: Animated Tree Visualization
+  - description: Add or remove nodes with instant validation and feedback.
+    domains:
+    - tree
+    id: node_management
+    priority: high
+    title: Node Management
+  - description: Step through inorder, preorder, or postorder traversals with highlighted
+      nodes.
+    domains:
+    - tree
+    id: tree_traversal
+    priority: high
+    title: Traversal Animation
+  - description: Revert or re-apply editing actions to the tree.
+    domains:
+    - tree
+    id: undo_redo
+    priority: medium
+    title: Undo/Redo
+  - description: Optimized for desktop and tablet, resizes controls and canvas accordingly.
+    domains:
+    - tree
+    id: responsive_ui
+    priority: medium
+    title: Responsive Layout
+  goals:
+  - Let users intuitively create, edit, and visualize binary trees
+  - Provide animated, responsive feedback for every operation
+  - Support step-through traversal visualizations (inorder, preorder, postorder)
+  - Enable undo/redo for editing actions
+  - Ensure a modern, readable, and responsive UI
+  personas:
+  - description: Learns data structures and algorithms, wants to visualize binary
+      trees for better understanding.
+    goals:
+    - Easy creation, editing, and visualization of binary trees
+    - Clear visual feedback and step-by-step traversals
+    name: Student
+  - description: Teaches computer science concepts, uses the tool for demonstrations
+      in class.
+    goals:
+    - Reliable, interactive canvas to show tree changes and traversals
+    - Undo/redo for demonstration and correction
+    name: Educator
+  - description: Reviews, debugs, or experiments with tree algorithms.
+    goals:
+    - Fast feedback for tree operations
+    - Ability to test various tree configurations
+    name: Developer
+  summary: Interactive tool enabling users to build, modify, and visualize binary
+    trees with animated rendering and traversal stepping.
+use_cases:
+- actors:
+  - Student
+  - Educator
+  - Developer
+  apis:
+  - createNode
+  - getTree
+  description: User enters an integer value and adds a new node to the binary tree
+    if the value is unique.
+  domains:
+  - tree
+  happy_path:
+  - User enters integer into input field.
+  - User clicks "Add" button.
+  - The node is inserted into the correct position in the binary tree.
+  - The tree canvas animates the insertion.
+  id: add_node
+  pages:
+  - /
+  postconditions:
+  - Binary tree updated and rendered with the new node.
+  preconditions:
+  - The value is a valid integer not already in the tree.
+  title: Add Node to Tree
+- actors:
+  - Student
+  - Educator
+  - Developer
+  apis:
+  - removeNode
+  - getTree
+  description: User removes a node by entering its value and clicking "Remove".
+  domains:
+  - tree
+  happy_path:
+  - User enters integer value in input field.
+  - User clicks "Remove" button.
+  - The node is removed, and the tree structure is updated.
+  - The canvas animates the removal and rearrangement.
+  id: remove_node
+  pages:
+  - /
+  postconditions:
+  - Binary tree updated without the node.
+  preconditions:
+  - The value exists in the tree.
+  title: Remove Node from Tree
+- actors:
+  - Student
+  - Educator
+  - Developer
+  apis:
+  - traverseTree
+  description: User selects a traversal type (inorder, preorder, postorder) and steps
+    through each node.
+  domains:
+  - tree
+  happy_path:
+  - User selects traversal type.
+  - User initiates traversal.
+  - Each step highlights the current node in the canvas and displays the sequence.
+  id: traverse_tree
+  pages:
+  - /
+  postconditions:
+  - User can step through the entire traversal with visual feedback.
+  preconditions:
+  - The tree contains at least one node.
+  title: Step Through Traversal
+- actors:
+  - Student
+  - Educator
+  - Developer
+  apis:
+  - undoTreeAction
+  - redoTreeAction
+  description: User undoes or redoes recent editing actions.
+  domains:
+  - tree
+  happy_path:
+  - User clicks "Undo" or "Redo" button.
+  - The tree reverts or reapplies the last change.
+  - The canvas animates the transition.
+  id: undo_redo_action
+  pages:
+  - /
+  postconditions:
+  - Tree restored to previous or updated state.
+  preconditions:
+  - There is at least one action to undo or redo.
+  title: Undo/Redo
+user_journeys:
+- id: build_and_visualize_tree
+  persona: Student
+  related_use_cases:
+  - add_node
+  - remove_node
+  - traverse_tree
+  - undo_redo_action
+  steps:
+  - action: User opens the visualizer page.
+    page: /
+  - action: User adds several nodes, visually confirming each insertion.
+    page: /
+  - action: User removes a node and watches the animated update.
+    page: /
+  - action: User selects inorder traversal and steps through nodes, observing highlights.
+    page: /
+  - action: User undoes and redoes the last operation to understand structural changes.
+    page: /
+  success_criteria: User can intuitively create, modify, and visualize a binary tree,
+    and step through traversals with clear animated feedback.
+  title: Build and Visualize a Binary Tree
+- id: demonstrate_traversal_in_class
+  persona: Educator
+  related_use_cases:
+  - add_node
+  - remove_node
+  - traverse_tree
+  - undo_redo_action
+  steps:
+  - action: Educator builds a sample tree using controls.
+    page: /
+  - action: Educator selects preorder traversal and steps through each node.
+    page: /
+  - action: Educator uses undo/redo to show different configurations and corrections.
+    page: /
+  - action: Students observe real-time updates and ask questions.
+    page: /
+  success_criteria: Class follows visual changes; traversal steps are easy to explain
+    and undo/redo aids demonstration.
+  title: Demonstrate Traversal in Class

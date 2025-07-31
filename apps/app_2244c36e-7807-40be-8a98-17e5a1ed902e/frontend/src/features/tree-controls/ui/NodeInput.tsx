@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
-import { Input } from '@/shared/ui';
-import { Label } from '@/shared/ui';
+import { Input, Label } from '@/shared/ui';
 import { useTreeVisualizerStore } from '@/shared/model/tree-visualizer-store';
 
 interface NodeInputProps {

@@ -71,6 +71,6 @@ export const useTraversalQuery = (query: TraversalQuery, enabled = false) => {
 // Validate value mutation
 export const useValidateValueMutation = () => {
   return useMutation({
-    mutationFn: (value: any) => treeApi.validateValue(value),
+    mutationFn: (value: number) => treeApi.validateValue(value),
   });
 };

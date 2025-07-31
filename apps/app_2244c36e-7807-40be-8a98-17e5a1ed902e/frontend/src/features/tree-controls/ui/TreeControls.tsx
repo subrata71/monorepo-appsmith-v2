@@ -1,7 +1,5 @@
 import { Plus, Minus, Trash2 } from 'lucide-react';
-import { Button } from '@/shared/ui';
-import { Card } from '@/shared/ui';
-import { Separator } from '@/shared/ui';
+import { Button, Card, Separator } from '@/shared/ui';
 import { useTreeVisualizerStore } from '@/shared/model/tree-visualizer-store';
 import { 
   useAddNodeMutation, 
@@ -23,7 +21,7 @@ export const TreeControls = () => {
   const removeNodeMutation = useRemoveNodeMutation();
   const clearTreeMutation = useClearTreeMutation();
 
-  const handleValueChange = (value: string) => {
+  const handleValueChange = () => {
     // Value changes are handled by the NodeInput component
   };
 
