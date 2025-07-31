@@ -46,4 +46,22 @@ export const treeApi = {
     const response = await api.post('/tree/validate', { value });
     return response.data;
   },
+
+  // Undo last operation
+  undo: async (): Promise<TreeStructure> => {
+    const response = await api.post('/tree/undo');
+    return response.data;
+  },
+
+  // Redo last undone operation
+  redo: async (): Promise<TreeStructure> => {
+    const response = await api.post('/tree/redo');
+    return response.data;
+  },
+
+  // Get undo/redo status
+  getUndoRedoStatus: async (): Promise<{ canUndo: boolean; canRedo: boolean }> => {
+    const response = await api.get('/tree/undo/redo/status');
+    return response.data;
+  },
 };

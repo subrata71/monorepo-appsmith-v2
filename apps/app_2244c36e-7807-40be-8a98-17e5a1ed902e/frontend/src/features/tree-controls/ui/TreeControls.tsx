@@ -1,11 +1,14 @@
-import { Plus, Minus, Trash2 } from 'lucide-react';
+import { Plus, Minus, Trash2, Undo, Redo } from 'lucide-react';
 import { Button, Card, Separator } from '@/shared/ui';
 import { useTreeVisualizerStore } from '@/shared/model/tree-visualizer-store';
 import { 
   useAddNodeMutation, 
   useRemoveNodeMutation, 
   useClearTreeMutation,
-  useTreeQuery 
+  useTreeQuery,
+  useUndoMutation,
+  useRedoMutation,
+  useUndoRedoStatusQuery
 } from '@/entities/tree';
 import { NodeInput } from './NodeInput';
 
@@ -17,9 +20,12 @@ export const TreeControls = () => {
   const setIsAnimating = useTreeVisualizerStore(state => state.setIsAnimating);
 
   const { data: treeData } = useTreeQuery();
+  const { data: undoRedoStatus } = useUndoRedoStatusQuery();
   const addNodeMutation = useAddNodeMutation();
   const removeNodeMutation = useRemoveNodeMutation();
   const clearTreeMutation = useClearTreeMutation();
+  const undoMutation = useUndoMutation();
+  const redoMutation = useRedoMutation();
 
   const handleValueChange = () => {
     // Value changes are handled by the NodeInput component
@@ -71,14 +77,40 @@ export const TreeControls = () => {
     }
   };
 
+  const handleUndo = async () => {
+    try {
+      setIsAnimating(true);
+      await undoMutation.mutateAsync();
+    } catch (error) {
+      console.error('Failed to undo:', error);
+    } finally {
+      setIsAnimating(false);
+    }
+  };
+
+  const handleRedo = async () => {
+    try {
+      setIsAnimating(true);
+      await redoMutation.mutateAsync();
+    } catch (error) {
+      console.error('Failed to redo:', error);
+    } finally {
+      setIsAnimating(false);
+    }
+  };
+
   const hasNodes = treeData?.nodes && treeData.nodes.length > 0;
   const canAddNode = isInputValid && inputValue.trim() !== '' && !isAnimating;
   const canRemoveNode = canAddNode && hasNodes;
   const canClearTree = hasNodes && !isAnimating;
+  const canUndo = undoRedoStatus?.canUndo && !isAnimating;
+  const canRedo = undoRedoStatus?.canRedo && !isAnimating;
 
   const isLoading = addNodeMutation.isPending || 
                    removeNodeMutation.isPending || 
-                   clearTreeMutation.isPending;
+                   clearTreeMutation.isPending ||
+                   undoMutation.isPending ||
+                   redoMutation.isPending;
 
   return (
     <Card className="p-6">
@@ -116,6 +148,30 @@ export const TreeControls = () => {
 
         <Separator />
 
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            onClick={handleUndo}
+            disabled={!canUndo || isLoading}
+            variant="outline"
+            size="sm"
+          >
+            <Undo className="w-4 h-4 mr-1" />
+            Undo
+          </Button>
+
+          <Button
+            onClick={handleRedo}
+            disabled={!canRedo || isLoading}
+            variant="outline"
+            size="sm"
+          >
+            <Redo className="w-4 h-4 mr-1" />
+            Redo
+          </Button>
+        </div>
+
+        <Separator />
+
         <Button
           onClick={handleClearTree}
           disabled={!canClearTree || isLoading}
@@ -127,11 +183,13 @@ export const TreeControls = () => {
           Clear Tree
         </Button>
 
-        {(addNodeMutation.error || removeNodeMutation.error || clearTreeMutation.error) && (
+        {(addNodeMutation.error || removeNodeMutation.error || clearTreeMutation.error || undoMutation.error || redoMutation.error) && (
           <div className="text-sm text-red-600 mt-2">
             {addNodeMutation.error?.message || 
              removeNodeMutation.error?.message || 
-             clearTreeMutation.error?.message}
+             clearTreeMutation.error?.message ||
+             undoMutation.error?.message ||
+             redoMutation.error?.message}
           </div>
         )}
 

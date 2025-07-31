@@ -24,5 +24,8 @@ export {
   useClearTreeMutation,
   useTraversalQuery,
   useValidateValueMutation,
+  useUndoRedoStatusQuery,
+  useUndoMutation,
+  useRedoMutation,
   treeKeys
 } from './api/queries';

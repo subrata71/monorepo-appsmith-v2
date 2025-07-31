@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { TreeNode, TraversalStep } from '../db/schema.js';
+import { TreeNode, TraversalStep, TreeSnapshot } from '../db/schema.js';
 import { log } from '../utils/index.js';
 
 export interface TreeWithNodes {
@@ -11,7 +11,14 @@ export interface TreeStructure {
   tree: { id: string; rootId: string | null } | null;
   nodes: TreeNode[];
   traversalSteps?: TraversalStep[];
+  snapshots?: TreeSnapshot[];
+  currentSnapshotIndex?: number;
 }
+
+// In-memory snapshot stack for undo/redo (simple implementation)
+let undoStack: TreeStructure[] = [];
+let redoStack: TreeStructure[] = [];
+const MAX_SNAPSHOTS = 20;
 
 export const treeService = (app: FastifyInstance) => ({
   // Get current tree structure with all nodes
@@ -24,6 +31,27 @@ export const treeService = (app: FastifyInstance) => ({
     };
   },
 
+  // Helper to create a snapshot before modification
+  createSnapshot: async (operation: string): Promise<void> => {
+    const currentState = await app.repositories.tree.getTreeWithNodes();
+    const snapshot: TreeStructure = {
+      tree: currentState.tree,
+      nodes: [...currentState.nodes], // Deep copy
+    };
+    
+    undoStack.push(snapshot);
+    
+    // Limit stack size
+    if (undoStack.length > MAX_SNAPSHOTS) {
+      undoStack.shift();
+    }
+    
+    // Clear redo stack when new operation is performed
+    redoStack = [];
+    
+    log.info(`Created snapshot for operation: ${operation}`);
+  },
+
   // Add a node to the binary tree
   addNode: async (value: number): Promise<TreeStructure> => {
     log.info(`Adding node with value: ${value}`);
@@ -33,6 +61,9 @@ export const treeService = (app: FastifyInstance) => ({
     if (exists) {
       throw new Error(`Node with value ${value} already exists`);
     }
+
+    // Create snapshot before modification
+    await app.services.tree.createSnapshot('add');
 
     // Get current tree structure
     const { tree, nodes } = await app.repositories.tree.getTreeWithNodes();
@@ -103,6 +134,9 @@ export const treeService = (app: FastifyInstance) => ({
   // Remove a node from the binary tree
   removeNode: async (value: number): Promise<TreeStructure> => {
     log.info(`Removing node with value: ${value}`);
+    
+    // Create snapshot before modification
+    await app.services.tree.createSnapshot('remove');
     
     const { tree, nodes } = await app.repositories.tree.getTreeWithNodes();
     
@@ -203,6 +237,9 @@ export const treeService = (app: FastifyInstance) => ({
   clearTree: async (): Promise<TreeStructure> => {
     log.info('Clearing entire tree');
     
+    // Create snapshot before modification
+    await app.services.tree.createSnapshot('clear');
+    
     const { tree } = await app.repositories.tree.getTreeWithNodes();
     
     // Delete all nodes
@@ -286,5 +323,130 @@ export const treeService = (app: FastifyInstance) => ({
     }
     
     return { isValid: true };
+  },
+
+  // Undo the last operation
+  undo: async (): Promise<TreeStructure> => {
+    log.info('Undoing last operation');
+    
+    if (undoStack.length === 0) {
+      throw new Error('Nothing to undo');
+    }
+
+    // Get current state and add to redo stack
+    const currentState = await app.repositories.tree.getTreeWithNodes();
+    const currentSnapshot: TreeStructure = {
+      tree: currentState.tree,
+      nodes: [...currentState.nodes],
+    };
+    redoStack.push(currentSnapshot);
+
+    // Get previous state from undo stack
+    const previousState = undoStack.pop()!;
+    
+    // Restore previous state
+    await app.services.tree.restoreTreeState(previousState);
+    
+    return await app.repositories.tree.getTreeWithNodes();
+  },
+
+  // Redo the last undone operation
+  redo: async (): Promise<TreeStructure> => {
+    log.info('Redoing last undone operation');
+    
+    if (redoStack.length === 0) {
+      throw new Error('Nothing to redo');
+    }
+
+    // Get current state and add back to undo stack
+    const currentState = await app.repositories.tree.getTreeWithNodes();
+    const currentSnapshot: TreeStructure = {
+      tree: currentState.tree,
+      nodes: [...currentState.nodes],
+    };
+    undoStack.push(currentSnapshot);
+
+    // Get next state from redo stack
+    const nextState = redoStack.pop()!;
+    
+    // Restore next state
+    await app.services.tree.restoreTreeState(nextState);
+    
+    return await app.repositories.tree.getTreeWithNodes();
+  },
+
+  // Helper to restore tree state from snapshot
+  restoreTreeState: async (snapshot: TreeStructure): Promise<void> => {
+    log.info('Restoring tree state from snapshot');
+    
+    // Clear all existing nodes
+    await app.repositories.tree.deleteAllNodes();
+    
+    // If snapshot has no tree or nodes, leave empty
+    if (!snapshot.tree || !snapshot.nodes || snapshot.nodes.length === 0) {
+      // Update tree to have no root if it exists
+      const existingTree = await app.repositories.tree.getTreeWithNodes();
+      if (existingTree.tree) {
+        await app.repositories.tree.updateTree(existingTree.tree.id, { rootId: null });
+      }
+      return;
+    }
+
+    // Get or create tree
+    let tree = snapshot.tree;
+    const existingTree = await app.repositories.tree.getTreeWithNodes();
+    if (!existingTree.tree) {
+      tree = await app.repositories.tree.createTree({ rootId: null });
+    } else {
+      tree = existingTree.tree;
+    }
+
+    // Recreate all nodes with their original IDs and relationships
+    const nodeMap = new Map<string, string>(); // old ID -> new ID
+    
+    // First pass: create all nodes without relationships
+    for (const node of snapshot.nodes) {
+      const newNode = await app.repositories.tree.createNode({
+        value: node.value,
+        leftId: null,
+        rightId: null,
+        parentId: null,
+      });
+      nodeMap.set(node.id, newNode.id);
+    }
+
+    // Second pass: establish relationships
+    for (const node of snapshot.nodes) {
+      const newNodeId = nodeMap.get(node.id)!;
+      const updateData: any = {};
+      
+      if (node.leftId && nodeMap.has(node.leftId)) {
+        updateData.leftId = nodeMap.get(node.leftId);
+      }
+      if (node.rightId && nodeMap.has(node.rightId)) {
+        updateData.rightId = nodeMap.get(node.rightId);
+      }
+      if (node.parentId && nodeMap.has(node.parentId)) {
+        updateData.parentId = nodeMap.get(node.parentId);
+      }
+      
+      if (Object.keys(updateData).length > 0) {
+        await app.repositories.tree.updateNode(newNodeId, updateData);
+      }
+    }
+
+    // Set root node
+    if (snapshot.tree.rootId && nodeMap.has(snapshot.tree.rootId)) {
+      const newRootId = nodeMap.get(snapshot.tree.rootId)!;
+      await app.repositories.tree.updateTree(tree.id, { rootId: newRootId });
+    }
+  },
+
+  // Get undo/redo status
+  getUndoRedoStatus: (): { canUndo: boolean; canRedo: boolean } => {
+    return {
+      canUndo: undoStack.length > 0,
+      canRedo: redoStack.length > 0,
+    };
   },
 });

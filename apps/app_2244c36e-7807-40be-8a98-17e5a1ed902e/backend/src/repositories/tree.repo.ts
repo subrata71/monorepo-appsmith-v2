@@ -1,7 +1,7 @@
 import * as schema from '../db/schema.js';
 import { eq, and } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { trees, treeNodes, traversalSteps, Tree, NewTree, TreeNode, NewTreeNode, TraversalStep, NewTraversalStep } from '../db/schema.js';
+import { trees, treeNodes, traversalSteps, treeSnapshots, Tree, NewTree, TreeNode, NewTreeNode, TraversalStep, NewTraversalStep, TreeSnapshot, NewTreeSnapshot } from '../db/schema.js';
 import { log } from '../utils/index.js';
 
 export const treeRepo = (db: NodePgDatabase<typeof schema>) => ({
@@ -99,5 +99,24 @@ export const treeRepo = (db: NodePgDatabase<typeof schema>) => ({
       where: eq(treeNodes.value, value) 
     });
     return !!existingNode;
-  }
+  },
+
+  // Tree Snapshot operations for undo/redo
+  createSnapshot: (snapshot: Omit<NewTreeSnapshot, 'id' | 'createdAt'>) =>
+    db
+      .insert(treeSnapshots)
+      .values(snapshot)
+      .returning()
+      .then(r => r[0]),
+
+  getSnapshots: (treeId: string) =>
+    db.select().from(treeSnapshots)
+      .where(eq(treeSnapshots.treeId, treeId))
+      .orderBy(treeSnapshots.order),
+
+  deleteSnapshot: (id: string) =>
+    db.delete(treeSnapshots).where(eq(treeSnapshots.id, id)),
+
+  clearSnapshots: (treeId: string) =>
+    db.delete(treeSnapshots).where(eq(treeSnapshots.treeId, treeId))
 });
