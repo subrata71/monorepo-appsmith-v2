@@ -4,9 +4,9 @@ import { pgTable, uuid, varchar, timestamp, integer, jsonb } from 'drizzle-orm/p
 export const treeNodes = pgTable('tree_nodes', {
   id: uuid('id').primaryKey().defaultRandom(),
   value: integer('value').notNull(),
-  leftId: uuid('left_id').references(() => treeNodes.id),
-  rightId: uuid('right_id').references(() => treeNodes.id),
-  parentId: uuid('parent_id').references(() => treeNodes.id),
+  leftId: uuid('left_id'),
+  rightId: uuid('right_id'),
+  parentId: uuid('parent_id'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -14,7 +14,7 @@ export const treeNodes = pgTable('tree_nodes', {
 // Trees table - container for the binary tree structure
 export const trees = pgTable('trees', {
   id: uuid('id').primaryKey().defaultRandom(),
-  rootId: uuid('root_id').references(() => treeNodes.id),
+  rootId: uuid('root_id'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -22,7 +22,7 @@ export const trees = pgTable('trees', {
 // Traversal Steps table - for storing traversal sequences
 export const traversalSteps = pgTable('traversal_steps', {
   id: uuid('id').primaryKey().defaultRandom(),
-  nodeId: uuid('node_id').references(() => treeNodes.id).notNull(),
+  nodeId: uuid('node_id').notNull(),
   order: integer('order').notNull(),
   traversalType: varchar('traversal_type', { length: 50 }).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -32,7 +32,7 @@ export const traversalSteps = pgTable('traversal_steps', {
 // Tree Snapshots table - for storing tree states for undo/redo functionality
 export const treeSnapshots = pgTable('tree_snapshots', {
   id: uuid('id').primaryKey().defaultRandom(),
-  treeId: uuid('tree_id').references(() => trees.id).notNull(),
+  treeId: uuid('tree_id').notNull(),
   snapshot: jsonb('snapshot').notNull(), // JSON representation of tree structure
   operation: varchar('operation', { length: 50 }).notNull(), // 'add', 'remove', 'clear'
   order: integer('order').notNull(), // Order in the undo/redo stack

@@ -89,7 +89,7 @@ export const treeService = (app: FastifyInstance) => ({
     }
 
     // Find position to insert new node using BST logic
-    const rootNode = nodes.find(n => n.id === currentTree.rootId);
+    const rootNode = nodes.find((n: TreeNode) => n.id === currentTree.rootId);
     if (!rootNode) {
       throw new Error('Tree structure is corrupted - root node not found');
     }
@@ -100,7 +100,7 @@ export const treeService = (app: FastifyInstance) => ({
 
     // Traverse tree to find insertion point
     while (currentNodeId) {
-      const currentNode = nodes.find(n => n.id === currentNodeId);
+      const currentNode = nodes.find((n: TreeNode) => n.id === currentNodeId);
       if (!currentNode) break;
 
       parentId = currentNode.id;
@@ -144,15 +144,15 @@ export const treeService = (app: FastifyInstance) => ({
       throw new Error('Tree is empty');
     }
 
-    const nodeToRemove = nodes.find(n => n.value === value);
+    const nodeToRemove = nodes.find((n: TreeNode) => n.value === value);
     if (!nodeToRemove) {
       throw new Error(`Node with value ${value} not found`);
     }
 
     // Handle different cases for node removal
-    const leftChild = nodes.find(n => n.id === nodeToRemove.leftId);
-    const rightChild = nodes.find(n => n.id === nodeToRemove.rightId);
-    const parent = nodeToRemove.parentId ? nodes.find(n => n.id === nodeToRemove.parentId) : null;
+    const leftChild = nodes.find((n: TreeNode) => n.id === nodeToRemove.leftId);
+    const rightChild = nodes.find((n: TreeNode) => n.id === nodeToRemove.rightId);
+    const parent = nodeToRemove.parentId ? nodes.find((n: TreeNode) => n.id === nodeToRemove.parentId) : null;
 
     // Case 1: Node is a leaf (no children)
     if (!leftChild && !rightChild) {
@@ -199,7 +199,7 @@ export const treeService = (app: FastifyInstance) => ({
       // Go to leftmost node in right subtree
       while (successor.leftId) {
         successorParent = successor;
-        successor = nodes.find(n => n.id === successor.leftId)!;
+        successor = nodes.find((n: TreeNode) => n.id === successor.leftId)!;
       }
       
       // Replace node's value with successor's value
@@ -207,7 +207,7 @@ export const treeService = (app: FastifyInstance) => ({
       
       // Remove successor (which has at most one right child)
       if (successor.rightId) {
-        const successorRight = nodes.find(n => n.id === successor.rightId)!;
+        const successorRight = nodes.find((n: TreeNode) => n.id === successor.rightId)!;
         
         if (successorParent.id === nodeToRemove.id) {
           // Successor is direct right child
@@ -254,7 +254,7 @@ export const treeService = (app: FastifyInstance) => ({
   },
 
   // Generate traversal steps for a given traversal type
-  getTraversalSteps: async (traversalType: 'inorder' | 'preorder' | 'postorder'): Promise<TraversalStep[]> => {
+  getTraversalSteps: async (traversalType: 'inorder' | 'preorder' | 'postorder'): Promise<Array<{ nodeId: string; order: number; traversalType: string }>> => {
     log.info(`Generating ${traversalType} traversal steps`);
     
     const { tree, nodes } = await app.repositories.tree.getTreeWithNodes();
@@ -266,13 +266,13 @@ export const treeService = (app: FastifyInstance) => ({
     // Clear existing traversal steps for this type
     await app.repositories.tree.deleteTraversalSteps(traversalType);
     
-    const steps: TraversalStep[] = [];
+    const steps: Array<{ nodeId: string; order: number; traversalType: string }> = [];
     let order = 0;
 
     const traverse = (nodeId: string | null) => {
       if (!nodeId) return;
       
-      const node = nodes.find(n => n.id === nodeId);
+      const node = nodes.find((n: TreeNode) => n.id === nodeId);
       if (!node) return;
 
       if (traversalType === 'preorder') {
