@@ -1,0 +1,95 @@
+app:
+  access: Public; no authentication required; no user-specific state retained.
+  behaviour: Immediate feedback for all actions, step-by-step animation for traversals,
+    undo/redo for editing actions, responsive layout for desktop/tablet.
+  name: Binary Tree Visualizer
+  pages:
+  - behaviour: All controls update the canvas. Traversal actions animate node highlights.
+      Undo/redo stack maintained. Validation prevents duplicate/non-integer entries.
+    id: main_visualizer
+    purpose: Allows users to interactively build or modify a binary tree and visualize
+      structural and traversal changes.
+    queries:
+    - addNode
+    - removeNode
+    - getTree
+    - traverse
+    - clearTree
+    - undo
+    - redo
+    sections:
+    - behaviour: Button triggers action. Values validated. Disabled buttons for unavailable
+        actions.
+      blocks:
+      - behaviour: Allows only valid integer input for node value.
+        id: value_input
+      - behaviour: Adds node to tree; disables if input invalid or duplicate.
+        id: add_button
+      - behaviour: Removes node from tree; disables if value not in tree.
+        id: remove_button
+      - behaviour: Resets tree to empty; disables if already empty.
+        id: clear_button
+      - behaviour: Reverts last action; disables if no history.
+        id: undo_button
+      - behaviour: Reapplies last undone action; disables if no undone steps.
+        id: redo_button
+      id: controls_section
+      title: Controls
+      visual: Vertical stack of input and buttons. Clear spacing, visible grouping.
+    - behaviour: Button starts animated traversal, highlighting nodes step-by-step
+        and showing result below.
+      blocks:
+      - behaviour: Animates inorder traversal on canvas.
+        id: inorder_button
+      - behaviour: Animates preorder traversal on canvas.
+        id: preorder_button
+      - behaviour: Animates postorder traversal on canvas.
+        id: postorder_button
+      id: traversal_section
+      title: Traversal
+      visual: Group of three buttons below controls, each with unique color/icon.
+    - behaviour: Updates with each tree change. Traversal highlights current node.
+        Node tooltips on hover display value.
+      blocks:
+      - behaviour: Renders current tree structure with animation. Responds to hover
+          (show value) and traversal (highlight).
+        id: tree_canvas
+      id: canvas_section
+      title: Tree Canvas
+      visual: White canvas with node circles and connecting edges. Nodes spaced for
+        readability. Animated transitions for changes.
+    - behaviour: Updates live during traversal animation.
+      blocks:
+      - behaviour: Displays traversal sequence, highlights active node.
+        id: traversal_output
+      id: traversal_result_section
+      title: Traversal Output
+      visual: Horizontal row of result chips/boxes below canvas, highlighting active
+        traversal step.
+    title: Binary Tree Visualizer
+    visual: 'Two-column layout: left controls (inputs, buttons), right main canvas
+      (tree). Traversal steps appear below the canvas. Clear, readable labels and
+      buttons.'
+  queries:
+  - id: addNode
+    responsibility: Insert a new value into the binary tree and update the graphical
+      representation.
+  - id: removeNode
+    responsibility: Remove a value from the binary tree and update the graphical representation.
+  - id: getTree
+    responsibility: Returns the current tree as a structured object for rendering.
+  - id: traverse
+    responsibility: Given a traversal type, returns the sequence of node values for
+      animation.
+  - id: clearTree
+    responsibility: Empties the tree, resetting to initial state.
+  - id: undo
+    responsibility: Revert the most recent tree operation.
+  - id: redo
+    responsibility: Reapply the most recently undone operation.
+  summary: Interactive tool for creating, editing, and visualizing binary trees. Users
+    can add or remove nodes, see animated tree rendering, and perform and step through
+    traversals (inorder, preorder, postorder).
+  visual: Modern UI with light backgrounds, accent colors for actions, and a central
+    canvas for tree visualization. Nodes and edges are clearly visible, with smooth
+    animation for changes.
