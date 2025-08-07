@@ -1,6 +1,6 @@
 {
-  "name": "{{APP_TITLE}}",
-  "short_name": "{{APP_TITLE}}",
+  "name": "Simple Calculator",
+  "short_name": "Calculator",
   "icons": [
     {
       "src": "/assets/icons/web-app-manifest-192x192.png",

@@ -1,0 +1,41 @@
+id: operation-buttons
+name: Operation selection buttons
+page_id: main_page
+sub_items:
+- effort: 1
+  id: operation-buttons-ui
+  name: Operation buttons UI and interaction
+  page:
+    behaviour: Inputs are validated in real-time. Clicking an operation button calculates
+      and displays the result. Keyboard input and tab navigation are supported. Error
+      messages show unobtrusively when needed.
+    id: main_page
+    purpose: Enables users to input two numbers, select an arithmetic operation, and
+      immediately see the result. Designed for speed and simplicity.
+    queries:
+    - calculate
+    sections:
+    - behaviour: Clicking a button triggers calculation using both input values and
+        the selected operation. If division is selected and the second number is zero,
+        an error is shown instead of a result.
+      blocks:
+      - behaviour: Performs addition of the two numbers.
+        id: add_button
+      - behaviour: Performs subtraction (first minus second).
+        id: subtract_button
+      - behaviour: Performs multiplication of the two numbers.
+        id: multiply_button
+      - behaviour: Performs division (first divided by second), unless second number
+          is zero.
+        id: divide_button
+      id: operation_section
+      title: Operation Selection
+      visual: Four large operation buttons (+, -, ×, ÷) arranged in a row below the
+        number inputs. Selected operation is visually highlighted.
+    title: Simple Calculator
+    visual: Single card layout, centered on the screen, containing input fields, operation
+      buttons, and result area. All elements are vertically stacked with ample spacing.
+  summary: Create four large, horizontally arranged operation buttons. Ensure they
+    are accessible, highlight the selected operation, and trigger calculation on click.
+summary: Implement four large, accessible operation buttons (+, -, ×, ÷) that trigger
+  calculation when clicked. Visually highlight the selected operation.

@@ -6,6 +6,7 @@
 // UI Components
 export { NumberInputField } from './ui/NumberInputField';
 export { CalculatorDemo } from './ui/CalculatorDemo';
+export { CalculationResultDisplay } from './ui/CalculationResultDisplay';
 
 // Types and Models
 export type {

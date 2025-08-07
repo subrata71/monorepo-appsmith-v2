@@ -1,0 +1,204 @@
+client:
+  components:
+    entities:
+    - description: Business entity component for a validated number input field.
+      entity: calculation
+      name: NumberInputField
+      props:
+      - value
+      - onChange
+      - label
+      - error
+    - description: Displays calculation results and error messages.
+      entity: calculation
+      name: CalculationResultDisplay
+      props:
+      - result
+      - error
+    features:
+    - description: Renders four large, horizontally arranged operation buttons (+,
+        -, ×, ÷) with accessible selection and highlighting. Triggers calculation
+        when clicked.
+      entities: []
+      feature: operation-selection
+      name: OperationButtons
+      props:
+      - selectedOperation
+      - onSelect(operation)
+      - disabled
+      shared: []
+    - description: Handles coordinated input, validation, and operation trigger logic.
+      entities:
+      - NumberInputField
+      - CalculationResultDisplay
+      feature: arithmetic-calculation
+      name: CalculationForm
+      props:
+      - onCalculate
+      shared:
+      - Button
+      - Input
+    shared:
+    - category: ui
+      description: Generic button component for operation selection.
+      name: Button
+      props:
+      - label
+      - onClick
+      - disabled
+      - variant
+      - selected
+    - category: ui
+      description: Large, labeled numeric input with validation.
+      name: Input
+      props:
+      - value
+      - onChange
+      - label
+      - type
+      - error
+    - category: ui
+      description: Displays labels, warnings, and result messages.
+      name: Text
+      props:
+      - children
+      - variant
+    - category: ui
+      description: Centered container for calculator UI.
+      name: Card
+      props:
+      - children
+    widgets:
+    - description: Complete calculator UI section with inputs, operation buttons,
+        and result.
+      entities:
+      - NumberInputField
+      - CalculationResultDisplay
+      features:
+      - CalculationForm
+      name: CalculatorCard
+      props: []
+      shared:
+      - Card
+      - Text
+  pages:
+  - description: Calculator UI with two numeric input fields, four large operation
+      buttons, and result/error display.
+    queries:
+    - calculate
+    route: /
+    title: Simple Calculator
+    widgets:
+    - CalculatorCard
+  stores:
+  - actions:
+    - 'setFirstNumber(value: number | null)'
+    - 'setSecondNumber(value: number | null)'
+    - 'setOperation(operation: string | null)'
+    - validateInputs()
+    - calculate()
+    - 'setResult(result: number | null)'
+    - 'setErrorMessage(message: string | null)'
+    description: Manages state for input values, validation errors, selected operation,
+      and current result.
+    layer: features
+    name: calculationStore
+    state_shape:
+    - name: firstNumber
+      type: number | null
+    - name: secondNumber
+      type: number | null
+    - name: operation
+      type: '''add'' | ''subtract'' | ''multiply'' | ''divide'' | null'
+    - name: inputErrors
+      type: '{ firstNumber?: string, secondNumber?: string }'
+    - name: result
+      type: number | null
+    - name: errorMessage
+      type: string | null
+domains:
+- apis: []
+  description: Handles all arithmetic calculation logic, including operation selection
+    and calculation triggering.
+  models: []
+  name: calculation
+  services: []
+metadata:
+  description: Implements four large, accessible operation buttons (+, -, ×, ÷) with
+    visual selection and calculation trigger functionality for the calculator.
+  generated_at: '2024-06-11T16:00:00Z'
+  name: calculator-operation-buttons
+  version: 1.1.0
+product:
+  features:
+  - description: Four large, horizontally arranged operation buttons (+, -, ×, ÷)
+      visually highlight the selected operation and trigger calculation.
+    domains:
+    - calculation
+    id: operation-selection-buttons
+    priority: high
+    title: Operation Selection Buttons
+  goals:
+  - Enable users to perform arithmetic operations quickly with large, accessible operation
+    buttons.
+  - Visually indicate which operation is selected.
+  - Ensure operation buttons are keyboard-accessible and provide immediate feedback.
+  personas:
+  - description: A non-technical individual who needs to perform quick arithmetic
+      operations.
+    goals:
+    - Perform basic calculations without hassle.
+    - Instantly see results and error messages if something is wrong.
+    name: Casual User
+  - description: A user who relies on keyboard navigation and clear UI cues for accessibility.
+    goals:
+    - Navigate calculator easily using keyboard.
+    - Receive unobtrusive but clear validation feedback.
+    name: Accessibility-Focused User
+  summary: Basic calculator allowing users to input two numbers, select an operation
+    using prominent operation buttons, and view results or errors instantly.
+use_cases:
+- actors:
+  - Casual User
+  - Accessibility-Focused User
+  apis:
+  - calculate
+  description: User selects an arithmetic operation via large buttons; the system
+    immediately performs the calculation and displays the result or error.
+  domains:
+  - calculation
+  happy_path:
+  - User clicks or navigates to an operation button (+, -, ×, ÷).
+  - The selected button is visually highlighted.
+  - System performs the calculation and displays the result instantly.
+  id: select-operation-and-calculate
+  pages:
+  - main_page
+  postconditions:
+  - Result or error is displayed.
+  - Selected operation remains highlighted until changed.
+  preconditions:
+  - User is on the calculator main page.
+  - Both number inputs are valid.
+  title: Select Operation and Calculate
+user_journeys:
+- id: operation-button-journey
+  persona: Accessibility-Focused User
+  related_use_cases:
+  - select-operation-and-calculate
+  steps:
+  - action: User enters valid numbers in both fields.
+    page: /
+  - action: User tabs to the row of operation buttons.
+    page: /
+  - action: User selects an operation using keyboard or mouse.
+    page: /
+  - action: Selected operation button is visually highlighted.
+    page: /
+  - action: Result or error is displayed below.
+    page: /
+  - action: User changes operation; highlight updates and new result is shown.
+    page: /
+  success_criteria: User can easily select any operation, see which is selected, and
+    instantly view the result, all with full keyboard and screen reader support.
+  title: Operation Button Selection Journey

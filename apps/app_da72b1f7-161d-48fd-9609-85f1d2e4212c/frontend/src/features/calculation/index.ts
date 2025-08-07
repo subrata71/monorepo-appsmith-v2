@@ -5,3 +5,6 @@
 
 // Store
 export { useCalculationStore } from './model/calculationStore';
+
+// UI Components
+export { OperationButtons } from './ui/OperationButtons';
