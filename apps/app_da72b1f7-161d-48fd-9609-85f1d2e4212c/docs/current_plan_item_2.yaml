@@ -1,0 +1,24 @@
+id: calculation-logic
+name: Client-side calculation and error handling
+page_id: main_page
+sub_items:
+- effort: 1
+  id: calculation-logic-impl
+  name: Implement calculation logic and error handling
+  page:
+    behaviour: Inputs are validated in real-time. Clicking an operation button calculates
+      and displays the result. Keyboard input and tab navigation are supported. Error
+      messages show unobtrusively when needed.
+    id: main_page
+    purpose: Enables users to input two numbers, select an arithmetic operation, and
+      immediately see the result. Designed for speed and simplicity.
+    queries:
+    - calculate
+    sections: []
+    title: Simple Calculator
+    visual: Single card layout, centered on the screen, containing input fields, operation
+      buttons, and result area. All elements are vertically stacked with ample spacing.
+  summary: Write client-side logic to perform the selected arithmetic operation, validate
+    inputs, handle division by zero, and return result or error message.
+summary: Process the selected operation on the two input numbers, handle division
+  by zero and invalid input cases, and return the result or an error message.

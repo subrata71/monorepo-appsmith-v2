@@ -1,0 +1,255 @@
+client:
+  components:
+    entities:
+    - description: Business entity component for a validated number input field.
+      entity: calculation
+      name: NumberInputField
+      props:
+      - value
+      - onChange
+      - label
+      - error
+    - description: Displays calculation results and error messages.
+      entity: calculation
+      name: CalculationResultDisplay
+      props:
+      - result
+      - error
+    features:
+    - description: Handles coordinated input, validation, and operation trigger logic,
+        including error handling for invalid input and division by zero.
+      entities:
+      - NumberInputField
+      - CalculationResultDisplay
+      feature: arithmetic-calculation
+      name: CalculationForm
+      props:
+      - onCalculate
+      shared:
+      - Button
+      - Input
+    - description: Renders four large, horizontally arranged operation buttons (+,
+        -, ×, ÷) with accessible selection and highlighting. Triggers calculation
+        when clicked.
+      entities: []
+      feature: operation-selection
+      name: OperationButtons
+      props:
+      - selectedOperation
+      - onSelect(operation)
+      - disabled
+      shared: []
+    shared:
+    - category: ui
+      description: Generic button component for operation selection.
+      name: Button
+      props:
+      - label
+      - onClick
+      - disabled
+      - variant
+      - selected
+    - category: ui
+      description: Large, labeled numeric input with validation.
+      name: Input
+      props:
+      - value
+      - onChange
+      - label
+      - type
+      - error
+    - category: ui
+      description: Displays labels, warnings, and result messages.
+      name: Text
+      props:
+      - children
+      - variant
+    - category: ui
+      description: Centered container for calculator UI.
+      name: Card
+      props:
+      - children
+    widgets:
+    - description: Complete calculator UI section with inputs, operation buttons,
+        and result.
+      entities:
+      - NumberInputField
+      - CalculationResultDisplay
+      features:
+      - CalculationForm
+      name: CalculatorCard
+      props: []
+      shared:
+      - Card
+      - Text
+  pages:
+  - description: Calculator UI with two numeric input fields, four large operation
+      buttons, and result/error display.
+    queries:
+    - calculate
+    route: /
+    title: Simple Calculator
+    widgets:
+    - CalculatorCard
+  stores:
+  - actions:
+    - 'setFirstNumber(value: number | null)'
+    - 'setSecondNumber(value: number | null)'
+    - 'setOperation(operation: string | null)'
+    - validateInputs()
+    - calculate()
+    - 'setResult(result: number | null)'
+    - 'setErrorMessage(message: string | null)'
+    description: Manages state for input values, validation errors, selected operation,
+      and current result. Now implements client-side calculation logic and error handling.
+    layer: features
+    name: calculationStore
+    state_shape:
+    - name: firstNumber
+      type: number | null
+    - name: secondNumber
+      type: number | null
+    - name: operation
+      type: '''add'' | ''subtract'' | ''multiply'' | ''divide'' | null'
+    - name: inputErrors
+      type: '{ firstNumber?: string, secondNumber?: string }'
+    - name: result
+      type: number | null
+    - name: errorMessage
+      type: string | null
+domains:
+- apis:
+  - description: Perform calculation using provided input, returning result or error.
+      (Logic now fully supported client-side.)
+    input: CalculationInput
+    method: POST
+    name: calculate
+    output: CalculationResult
+    path: /calculate
+  description: Handles arithmetic calculation logic, input validation, and error handling,
+    now implemented on the client side for immediate feedback.
+  models:
+  - description: Data structure for calculation input and validation.
+    fields:
+    - name: firstNumber
+      nullable: false
+      pk: false
+      type: number
+    - name: secondNumber
+      nullable: false
+      pk: false
+      type: number
+    - name: operation
+      nullable: false
+      pk: false
+      type: '''add'' | ''subtract'' | ''multiply'' | ''divide'''
+    name: CalculationInput
+  - description: Represents result or error from a calculation.
+    fields:
+    - name: result
+      nullable: true
+      pk: false
+      type: number
+    - name: error
+      nullable: true
+      pk: false
+      type: string
+    name: CalculationResult
+  name: calculation
+  services:
+  - description: Handles arithmetic operations, input validation, and error handling.
+    methods:
+    - 'validateInput(firstNumber: number, secondNumber: number): { valid: boolean,
+      error?: string }'
+    - 'performCalculation(firstNumber: number, secondNumber: number, operation: string):
+      { result?: number, error?: string }'
+    name: CalculationService
+metadata:
+  description: Implements client-side calculation logic, input validation, and error
+    handling for the Simple Calculator. Handles division by zero and invalid input,
+    returning results or error messages to the user.
+  generated_at: '2024-06-11T18:00:00Z'
+  name: calculator-client-calculation-logic
+  version: 1.2.0
+product:
+  features:
+  - description: Client-side logic to validate inputs, perform arithmetic operations,
+      and handle error display for invalid inputs or edge cases (e.g., division by
+      zero).
+    domains:
+    - calculation
+    id: client-calculation-logic
+    priority: high
+    title: Client-side Calculation Logic and Error Handling
+  goals:
+  - Perform arithmetic operations on two numbers instantly client-side.
+  - Validate user input in real time to prevent invalid calculations.
+  - Clearly inform users of errors such as division by zero or non-numeric input.
+  - Maintain a responsive, accessible, and intuitive user experience.
+  personas:
+  - description: A non-technical individual who needs to perform quick arithmetic
+      operations.
+    goals:
+    - Perform basic calculations without hassle.
+    - Instantly see results and error messages if something is wrong.
+    name: Casual User
+  - description: A user who relies on keyboard navigation and clear UI cues for accessibility.
+    goals:
+    - Navigate calculator easily using keyboard.
+    - Receive unobtrusive but clear validation feedback.
+    name: Accessibility-Focused User
+  summary: Enables users to input two numbers, select an operation, and view the calculation
+    result or a relevant error instantly in a simple, accessible UI.
+use_cases:
+- actors:
+  - Casual User
+  - Accessibility-Focused User
+  apis:
+  - calculate (client-side/store action)
+  description: User enters two numbers and selects an operation; the client validates
+    input and performs the calculation, displaying the result or an error message
+    instantly.
+  domains:
+  - calculation
+  happy_path:
+  - User enters first number.
+  - User enters second number.
+  - Inputs are validated in real time.
+  - User selects an operation (+, -, ×, ÷).
+  - Calculation runs immediately on the client side.
+  - Result is displayed below.
+  id: client-perform-calculation
+  pages:
+  - main_page
+  postconditions:
+  - Result or error is visible to the user.
+  preconditions:
+  - User is on the Simple Calculator main page.
+  title: Perform Calculation with Client-side Logic
+user_journeys:
+- id: client-calculation-error-journey
+  persona: Casual User
+  related_use_cases:
+  - client-perform-calculation
+  steps:
+  - action: User navigates to the Simple Calculator page.
+    page: /
+  - action: User enters a non-numeric value in one input.
+    page: /
+  - action: Inline error appears and operation buttons are disabled.
+    page: /
+  - action: User corrects the input to a valid number.
+    page: /
+  - action: User enters valid number in the second input.
+    page: /
+  - action: User selects division operation and sets second number to zero.
+    page: /
+  - action: Error message "Cannot divide by zero" is displayed below.
+    page: /
+  - action: User changes second number to a valid non-zero value.
+    page: /
+  - action: Result is displayed instantly.
+    page: /
+  success_criteria: User is prevented from performing invalid calculations and always
+    receives clear, instant feedback for any input errors.
+  title: Calculation and Error Handling Journey
