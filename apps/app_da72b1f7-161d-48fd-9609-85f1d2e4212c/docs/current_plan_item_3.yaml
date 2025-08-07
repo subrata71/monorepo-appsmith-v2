@@ -1,0 +1,35 @@
+id: result-display
+name: Result and error message display
+page_id: main_page
+sub_items:
+- effort: 1
+  id: result-display-ui
+  name: Result display UI and update
+  page:
+    behaviour: Inputs are validated in real-time. Clicking an operation button calculates
+      and displays the result. Keyboard input and tab navigation are supported. Error
+      messages show unobtrusively when needed.
+    id: main_page
+    purpose: Enables users to input two numbers, select an arithmetic operation, and
+      immediately see the result. Designed for speed and simplicity.
+    queries:
+    - calculate
+    sections:
+    - behaviour: Displays calculation result immediately after operation is triggered.
+        If inputs are invalid or division by zero occurs, shows the corresponding
+        error message instead.
+      blocks:
+      - behaviour: Shows the calculation result or error message based on current
+          input and selected operation.
+        id: result_display
+      id: result_section
+      title: Result Display
+      visual: Large, bold number below the operation buttons. If there is an error,
+        displays a red error message in place of the result.
+    title: Simple Calculator
+    visual: Single card layout, centered on the screen, containing input fields, operation
+      buttons, and result area. All elements are vertically stacked with ample spacing.
+  summary: Create a large, bold result display area below the operation buttons. Show
+    result or error message in red if needed, updating immediately after calculation.
+summary: Display the calculation result in a large, bold font or show a red error
+  message if an error occurs. Update immediately after each operation.

@@ -1,0 +1,251 @@
+client:
+  components:
+    entities:
+    - description: Business entity component for a validated number input field.
+      entity: calculation
+      name: NumberInputField
+      props:
+      - value
+      - onChange
+      - label
+      - error
+    - description: Displays calculation results in large, bold font or error messages
+        in red, below operation buttons. Updates immediately after calculation.
+      entity: calculation
+      name: CalculationResultDisplay
+      props:
+      - result
+      - error
+    features:
+    - description: Handles coordinated input, validation, and operation trigger logic,
+        including error handling.
+      entities:
+      - NumberInputField
+      - CalculationResultDisplay
+      feature: arithmetic-calculation
+      name: CalculationForm
+      props:
+      - onCalculate
+      shared:
+      - Button
+      - Input
+    - description: Renders four large, horizontally arranged operation buttons (+,
+        -, ×, ÷) with accessible selection and highlighting. Triggers calculation
+        when clicked.
+      entities: []
+      feature: operation-selection
+      name: OperationButtons
+      props:
+      - selectedOperation
+      - onSelect(operation)
+      - disabled
+      shared: []
+    shared:
+    - category: ui
+      description: Generic button component for operation selection.
+      name: Button
+      props:
+      - label
+      - onClick
+      - disabled
+      - variant
+      - selected
+    - category: ui
+      description: Large, labeled numeric input with validation.
+      name: Input
+      props:
+      - value
+      - onChange
+      - label
+      - type
+      - error
+    - category: ui
+      description: Displays labels, warnings, and result messages.
+      name: Text
+      props:
+      - children
+      - variant
+    - category: ui
+      description: Centered container for calculator UI.
+      name: Card
+      props:
+      - children
+    widgets:
+    - description: Complete calculator UI section with inputs, operation buttons,
+        and prominent result/error display.
+      entities:
+      - NumberInputField
+      - CalculationResultDisplay
+      features:
+      - CalculationForm
+      name: CalculatorCard
+      props: []
+      shared:
+      - Card
+      - Text
+  pages:
+  - description: Calculator UI with two numeric input fields, four large operation
+      buttons, and a prominent result/error display area below the buttons.
+    queries:
+    - calculate
+    route: /
+    title: Simple Calculator
+    widgets:
+    - CalculatorCard
+  stores:
+  - actions:
+    - 'setFirstNumber(value: number | null)'
+    - 'setSecondNumber(value: number | null)'
+    - 'setOperation(operation: string | null)'
+    - validateInputs()
+    - calculate()
+    - 'setResult(result: number | null)'
+    - 'setErrorMessage(message: string | null)'
+    description: Manages state for input values, validation errors, selected operation,
+      and current result. Responsible for instant result/error update in UI.
+    layer: features
+    name: calculationStore
+    state_shape:
+    - name: firstNumber
+      type: number | null
+    - name: secondNumber
+      type: number | null
+    - name: operation
+      type: '''add'' | ''subtract'' | ''multiply'' | ''divide'' | null'
+    - name: inputErrors
+      type: '{ firstNumber?: string, secondNumber?: string }'
+    - name: result
+      type: number | null
+    - name: errorMessage
+      type: string | null
+domains:
+- apis:
+  - description: Perform calculation using provided input, returning result or error.
+      (Logic handled client-side for instant feedback.)
+    input: CalculationInput
+    method: POST
+    name: calculate
+    output: CalculationResult
+    path: /calculate
+  description: Handles arithmetic calculation logic, input validation, and presentation
+    of results or error messages in a visually prominent way.
+  models:
+  - description: Data structure for calculation input and validation.
+    fields:
+    - name: firstNumber
+      nullable: false
+      pk: false
+      type: number
+    - name: secondNumber
+      nullable: false
+      pk: false
+      type: number
+    - name: operation
+      nullable: false
+      pk: false
+      type: '''add'' | ''subtract'' | ''multiply'' | ''divide'''
+    name: CalculationInput
+  - description: Represents result or error from a calculation.
+    fields:
+    - name: result
+      nullable: true
+      pk: false
+      type: number
+    - name: error
+      nullable: true
+      pk: false
+      type: string
+    name: CalculationResult
+  name: calculation
+  services:
+  - description: Handles arithmetic operations, input validation, and error handling
+      for instant result or error reporting.
+    methods:
+    - 'validateInput(firstNumber: number, secondNumber: number): { valid: boolean,
+      error?: string }'
+    - 'performCalculation(firstNumber: number, secondNumber: number, operation: string):
+      { result?: number, error?: string }'
+    name: CalculationService
+metadata:
+  description: Implements the visually prominent result and error message display
+    area, immediately updated after each calculation or error, for the Simple Calculator.
+  generated_at: '2024-06-12T10:00:00Z'
+  name: calculator-result-display
+  version: 1.3.0
+product:
+  features:
+  - description: Large, bold font for results and red-colored error messages, updated
+      instantly below operation buttons.
+    domains:
+    - calculation
+    id: prominent-result-display
+    priority: high
+    title: Prominent Result and Error Message Display
+  goals:
+  - Ensure that calculation results are highly visible and readable immediately after
+    each operation.
+  - Clearly display any error messages in red, replacing the result, when input is
+    invalid or calculation fails.
+  - Provide instant feedback to users with minimal friction and maximum clarity.
+  personas:
+  - description: A non-technical individual who needs to perform quick arithmetic
+      operations.
+    goals:
+    - Instantly see results or errors in a prominent, readable format.
+    - Avoid confusion when making mistakes during input.
+    name: Casual User
+  - description: A user who relies on keyboard navigation and clear UI cues for accessibility.
+    goals:
+    - Receive unobtrusive but highly visible result and error feedback.
+    - Benefit from accessible result/error presentation that works well with assistive
+      technology.
+    name: Accessibility-Focused User
+  summary: Large, bold result or red error message is displayed below operation buttons,
+    updating instantly after each operation, enhancing clarity and immediacy of user
+    feedback.
+use_cases:
+- actors:
+  - Casual User
+  - Accessibility-Focused User
+  apis:
+  - calculate (client-side/store action)
+  description: After each calculation, the system displays the result in a large,
+    bold font below the operation buttons, or shows a red error message if calculation
+    fails.
+  domains:
+  - calculation
+  happy_path:
+  - User triggers calculation via operation button.
+  - System validates inputs and performs calculation.
+  - Result is displayed instantly in a large, bold font.
+  - If an error occurs (e.g., invalid input or division by zero), a red error message
+    is displayed instead.
+  id: display-calculation-result-or-error
+  pages:
+  - main_page
+  postconditions:
+  - User sees either the result or an error message in the display area.
+  preconditions:
+  - User has entered numbers and selected an operation.
+  title: Display Calculation Result or Error
+user_journeys:
+- id: result-display-feedback-journey
+  persona: Casual User
+  related_use_cases:
+  - display-calculation-result-or-error
+  steps:
+  - action: User enters two valid numbers.
+    page: /
+  - action: User selects an operation.
+    page: /
+  - action: Result is displayed in a large, bold font below the operation buttons.
+    page: /
+  - action: User enters invalid input or causes division by zero.
+    page: /
+  - action: A red error message replaces the result in the result area.
+    page: /
+  - action: User corrects input; result display updates immediately.
+    page: /
+  success_criteria: User always sees a clear, prominent result or error message instantly
+    after each operation.
+  title: Result Display Feedback Journey

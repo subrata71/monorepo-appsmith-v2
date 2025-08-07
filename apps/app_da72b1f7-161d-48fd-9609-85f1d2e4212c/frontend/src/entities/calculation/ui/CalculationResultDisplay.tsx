@@ -19,10 +19,11 @@ interface CalculationResultDisplayProps {
  * CalculationResultDisplay component for showing calculation results
  * 
  * Features:
- * - Displays numeric results with clear formatting
- * - Shows error messages with appropriate styling
+ * - Displays numeric results in large, bold, prominent formatting (text-5xl, font-extrabold)
+ * - Shows error messages with prominent red styling for clear visibility
  * - Uses semantic HTML and ARIA attributes for accessibility
- * - Consistent visual design with the calculator theme
+ * - Immediate visual feedback with proper spacing and visual hierarchy
+ * - Consistent visual design with enhanced typography for maximum clarity
  */
 export function CalculationResultDisplay({ 
   result, 
@@ -34,25 +35,25 @@ export function CalculationResultDisplay({
   }
 
   return (
-    <div className="space-y-3">
-      {/* Result Display */}
+    <div className="space-y-4">
+      {/* Result Display - Large and Bold */}
       {result !== null && !error && (
         <div 
-          className="text-center p-4 bg-green-50 border border-green-200 rounded-lg"
+          className="text-center p-6 bg-green-50 border border-green-200 rounded-lg"
           role="status"
           aria-live="polite"
         >
-          <p className="text-2xl font-bold text-green-800">
+          <p className="text-5xl font-extrabold text-green-800 mb-2">
             {result}
           </p>
-          <p className="text-sm text-green-600 mt-1">Result</p>
+          <p className="text-sm text-green-600">Result</p>
         </div>
       )}
 
-      {/* Error Display */}
+      {/* Error Display - Prominent styling */}
       {error && (
-        <Alert variant="destructive">
-          <AlertDescription className="text-center">
+        <Alert variant="destructive" className="text-center p-6">
+          <AlertDescription className="text-xl font-bold">
             {error}
           </AlertDescription>
         </Alert>
