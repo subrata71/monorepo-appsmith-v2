@@ -1,0 +1,70 @@
+app:
+  access: Open access. No authentication or user management. Anyone can use the calculator.
+  behaviour: Instant calculation and result display when the user performs an operation.
+    Input validation ensures only numbers are entered. Division by zero is prevented
+    and provides an error message. All interactions are performed client-side for
+    speed and simplicity.
+  name: Simple Arithmetic Calculator
+  pages:
+  - behaviour: Inputs are validated in real-time. Clicking an operation button calculates
+      and displays the result. Keyboard input and tab navigation are supported. Error
+      messages show unobtrusively when needed.
+    id: main_page
+    purpose: Enables users to input two numbers, select an arithmetic operation, and
+      immediately see the result. Designed for speed and simplicity.
+    queries:
+    - calculate
+    sections:
+    - behaviour: Accepts numeric input only. If input is invalid or missing, disables
+        the operation buttons and displays an inline warning.
+      blocks:
+      - behaviour: Allows user to input the first operand. Accepts numbers only.
+        id: first_number_input
+      - behaviour: Allows user to input the second operand. Accepts numbers only.
+        id: second_number_input
+      id: input_section
+      title: Number Inputs
+      visual: 'Two horizontally-aligned input fields with labels: ''First Number''
+        and ''Second Number''. Inputs are large and easy to select.'
+    - behaviour: Clicking a button triggers calculation using both input values and
+        the selected operation. If division is selected and the second number is zero,
+        an error is shown instead of a result.
+      blocks:
+      - behaviour: Performs addition of the two numbers.
+        id: add_button
+      - behaviour: Performs subtraction (first minus second).
+        id: subtract_button
+      - behaviour: Performs multiplication of the two numbers.
+        id: multiply_button
+      - behaviour: Performs division (first divided by second), unless second number
+          is zero.
+        id: divide_button
+      id: operation_section
+      title: Operation Selection
+      visual: Four large operation buttons (+, -, ×, ÷) arranged in a row below the
+        number inputs. Selected operation is visually highlighted.
+    - behaviour: Displays calculation result immediately after operation is triggered.
+        If inputs are invalid or division by zero occurs, shows the corresponding
+        error message instead.
+      blocks:
+      - behaviour: Shows the calculation result or error message based on current
+          input and selected operation.
+        id: result_display
+      id: result_section
+      title: Result Display
+      visual: Large, bold number below the operation buttons. If there is an error,
+        displays a red error message in place of the result.
+    title: Simple Calculator
+    visual: Single card layout, centered on the screen, containing input fields, operation
+      buttons, and result area. All elements are vertically stacked with ample spacing.
+  queries:
+  - id: calculate
+    responsibility: Processes two numbers and the selected arithmetic operation (add,
+      subtract, multiply, divide) and returns the result. Handles division by zero
+      and invalid input cases.
+  summary: A basic calculator app that allows users to perform addition, subtraction,
+    multiplication, and division between two numbers. Users enter two numbers, select
+    an arithmetic operation, and see the result.
+  visual: Clean, modern interface with a white background, clearly labeled input fields,
+    large easy-to-click operation buttons, and a simple result display. Focus on readability
+    and accessibility with high contrast and large touch targets.

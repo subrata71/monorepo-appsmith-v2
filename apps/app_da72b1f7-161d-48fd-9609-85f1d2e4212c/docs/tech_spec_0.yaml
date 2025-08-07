@@ -1,0 +1,228 @@
+client:
+  components:
+    entities:
+    - description: Business entity component for a validated number input field.
+      entity: calculation
+      name: NumberInputField
+      props:
+      - value
+      - onChange
+      - label
+      - error
+    - description: Displays calculation results and error messages.
+      entity: calculation
+      name: CalculationResultDisplay
+      props:
+      - result
+      - error
+    features:
+    - description: Handles coordinated input, validation, and operation trigger logic.
+      entities:
+      - NumberInputField
+      - CalculationResultDisplay
+      feature: arithmetic-calculation
+      name: CalculationForm
+      props:
+      - onCalculate
+      shared:
+      - Button
+      - Input
+    shared:
+    - category: ui
+      description: Generic button component for operation selection.
+      name: Button
+      props:
+      - label
+      - onClick
+      - disabled
+    - category: ui
+      description: Large, labeled numeric input with validation.
+      name: Input
+      props:
+      - value
+      - onChange
+      - label
+      - type
+      - error
+    - category: ui
+      description: Displays labels, warnings, and result messages.
+      name: Text
+      props:
+      - children
+      - variant
+    - category: ui
+      description: Centered container for calculator UI.
+      name: Card
+      props:
+      - children
+    widgets:
+    - description: 'Complete calculator UI section: inputs, operations, and result.'
+      entities:
+      - NumberInputField
+      - CalculationResultDisplay
+      features:
+      - CalculationForm
+      name: CalculatorCard
+      props: []
+      shared:
+      - Card
+      - Text
+  pages:
+  - description: Calculator UI with two numeric input fields, operation buttons, and
+      result display.
+    queries:
+    - calculate
+    route: /
+    title: Simple Calculator
+    widgets:
+    - CalculatorCard
+  stores:
+  - actions:
+    - 'setFirstNumber(value: number | null)'
+    - 'setSecondNumber(value: number | null)'
+    - 'setOperation(operation: string | null)'
+    - validateInputs()
+    - calculate()
+    - 'setResult(result: number | null)'
+    - 'setErrorMessage(message: string | null)'
+    description: Manages state for input values, validation errors, selected operation,
+      and current result.
+    layer: features
+    name: calculationStore
+    state_shape:
+    - name: firstNumber
+      type: number | null
+    - name: secondNumber
+      type: number | null
+    - name: operation
+      type: '''add'' | ''subtract'' | ''multiply'' | ''divide'' | null'
+    - name: inputErrors
+      type: '{ firstNumber?: string, secondNumber?: string }'
+    - name: result
+      type: number | null
+    - name: errorMessage
+      type: string | null
+domains:
+- apis:
+  - description: Perform calculation using provided input, returning result or error.
+    input: CalculationInput
+    method: POST
+    name: calculate
+    output: CalculationResult
+    path: /calculate
+  description: Handles arithmetic calculation logic and input validation.
+  models:
+  - description: Data structure for calculation input and validation.
+    fields:
+    - name: firstNumber
+      nullable: false
+      pk: false
+      type: number
+    - name: secondNumber
+      nullable: false
+      pk: false
+      type: number
+    - name: operation
+      nullable: false
+      pk: false
+      type: '''add'' | ''subtract'' | ''multiply'' | ''divide'''
+    name: CalculationInput
+  - description: Represents result or error from a calculation.
+    fields:
+    - name: result
+      nullable: true
+      pk: false
+      type: number
+    - name: error
+      nullable: true
+      pk: false
+      type: string
+    name: CalculationResult
+  name: calculation
+  services:
+  - description: Handles arithmetic operations, input validation, and error handling.
+    methods:
+    - 'validateInput(firstNumber: number, secondNumber: number): { valid: boolean,
+      error?: string }'
+    - 'performCalculation(firstNumber: number, secondNumber: number, operation: string):
+      { result?: number, error?: string }'
+    name: CalculationService
+metadata:
+  description: Implements the main calculator workflow with numeric input fields,
+    real-time validation, arithmetic operation buttons, and result/error display.
+  generated_at: '2024-06-11T14:00:00Z'
+  name: calculator-core-workflow
+  version: 1.0.0
+product:
+  features:
+  - description: Users can input two numbers, select an operation, and get the result
+      instantly.
+    domains:
+    - calculation
+    id: arithmetic-calculation
+    priority: high
+    title: Arithmetic Calculation
+  goals:
+  - Enable users to perform basic arithmetic calculations quickly and intuitively.
+  - Provide real-time input validation and clear error feedback.
+  - Ensure a simple, accessible, and responsive user interface.
+  personas:
+  - description: A non-technical individual who needs to perform quick arithmetic
+      operations.
+    goals:
+    - Perform basic calculations without hassle.
+    - Instantly see results and error messages if something is wrong.
+    name: Casual User
+  - description: A user who relies on keyboard navigation and clear UI cues for accessibility.
+    goals:
+    - Navigate calculator easily using keyboard.
+    - Receive unobtrusive but clear validation feedback.
+    name: Accessibility-Focused User
+  summary: Basic calculator allowing users to input two numbers, select an operation,
+    and see the result or errors instantly.
+use_cases:
+- actors:
+  - Casual User
+  - Accessibility-Focused User
+  apis:
+  - calculate
+  description: User enters two numbers, selects an operation, and gets the result
+    or an error message.
+  domains:
+  - calculation
+  happy_path:
+  - User enters first number.
+  - User enters second number.
+  - System validates both inputs in real-time.
+  - User selects an operation (add, subtract, multiply, divide).
+  - System calculates result and displays it.
+  id: perform-calculation
+  pages:
+  - main_page
+  postconditions:
+  - Result or error is displayed to the user.
+  preconditions:
+  - User is on the calculator main page.
+  title: Perform Calculation
+user_journeys:
+- id: simple-calculation-journey
+  persona: Casual User
+  related_use_cases:
+  - perform-calculation
+  steps:
+  - action: User navigates to 'Simple Calculator' page.
+    page: /
+  - action: User enters valid numbers in both input fields.
+    page: /
+  - action: Operation buttons are enabled.
+    page: /
+  - action: User clicks an operation button or presses Enter.
+    page: /
+  - action: Result is displayed instantly.
+    page: /
+  - action: If user enters invalid data, inline warnings appear and operation buttons
+      are disabled.
+    page: /
+  success_criteria: User successfully sees a correct result or a helpful error message
+    with minimal friction.
+  title: Simple Calculation Journey

@@ -1,0 +1,37 @@
+id: calculator-core-workflow
+name: Basic arithmetic calculation workflow
+page_id: main_page
+sub_items:
+- effort: 2
+  id: number-input-fields
+  name: Number input fields with validation
+  page:
+    behaviour: Inputs are validated in real-time. Clicking an operation button calculates
+      and displays the result. Keyboard input and tab navigation are supported. Error
+      messages show unobtrusively when needed.
+    id: main_page
+    purpose: Enables users to input two numbers, select an arithmetic operation, and
+      immediately see the result. Designed for speed and simplicity.
+    queries:
+    - calculate
+    sections:
+    - behaviour: Accepts numeric input only. If input is invalid or missing, disables
+        the operation buttons and displays an inline warning.
+      blocks:
+      - behaviour: Allows user to input the first operand. Accepts numbers only.
+        id: first_number_input
+      - behaviour: Allows user to input the second operand. Accepts numbers only.
+        id: second_number_input
+      id: input_section
+      title: Number Inputs
+      visual: 'Two horizontally-aligned input fields with labels: ''First Number''
+        and ''Second Number''. Inputs are large and easy to select.'
+    title: Simple Calculator
+    visual: Single card layout, centered on the screen, containing input fields, operation
+      buttons, and result area. All elements are vertically stacked with ample spacing.
+  summary: Create two large, labeled input fields for numeric entry with real-time
+    validation. Disable operation buttons and show inline warnings if inputs are invalid
+    or missing.
+summary: Implements the main calculator page allowing users to input two numbers,
+  select an arithmetic operation, and instantly view the result or error message.
+  Includes input validation, operation buttons, and result display with error handling.
