@@ -11,4 +11,5 @@ export * from '../utils.js';
 export * from './common.js';
 
 // Export entity-specific helper types
-export * from './__entity__.js'; 
+export * from './__entity__.js';
+export * from './item.js'; 

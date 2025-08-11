@@ -14,11 +14,13 @@ import { FastifyInstance } from 'fastify';
 
 // ⬇️  Import service factories here as you create them
 import { make__Entity__Service } from './__entity__.service.template.js';
+import { makeItemService } from './item.service.js';
 // import { makeUserService }      from './user.service.ts'
 // import { makeOrderService }     from './order.service.ts'
 
 export const buildServices = (app: FastifyInstance) => ({
   __entity__: make__Entity__Service(app), // placeholder entry
+  item: makeItemService(app),
   // user:  makeUserService(app),
   // order: makeOrderService(app),
 });

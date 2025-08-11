@@ -1,147 +1,156 @@
 client:
   components:
     entities:
-    - description: Renders a single TODO with completion state and delete button.
-      entity: todo
-      name: TodoItem
+    - description: Displays a single item with status and a 'mark as done' control/button.
+      entity: item
+      name: ItemCard
       props:
-      - todo
-      - onToggle
-      - onDelete
+      - item
+      - onMarkDone
     features:
-    - description: Input and button for adding new TODOs, with validation.
-      entities: []
-      feature: add_todo
-      name: AddTodoForm
-      props:
-      - onAdd
-      shared:
-      - Input
-      - Button
-    - description: Lists all TODOs, handles toggling and deleting.
+    - description: Feature component that triggers markItemDone mutation and toast
+        display.
       entities:
-      - TodoItem
-      feature: todo_list
-      name: TodoList
+      - ItemCard
+      feature: markItemDone
+      name: MarkItemDoneButton
       props:
-      - todos
-      - onToggle
-      - onDelete
-      shared: []
-    shared:
-    - category: ui
-      description: Stylized button for actions (add, delete).
-      name: Button
-      props:
-      - children
-      - onClick
-      - type
-      - aria-label
-    - category: ui
-      description: Stylized text input.
-      name: Input
-      props:
-      - value
-      - onChange
-      - onKeyDown
-      - placeholder
-    - category: ui
-      description: Centered card container for visual structure.
-      name: Card
-      props:
-      - children
-    widgets:
-    - description: Main card layout containing form and list.
+      - itemId
+      shared:
+      - Button
+    - description: Manages toast state, stacking, auto-dismiss, and manual close.
       entities: []
-      features:
-      - AddTodoForm
-      - TodoList
-      name: TodoAppCard
+      feature: showToast
+      name: ToastManager
       props: []
       shared:
-      - Card
-  pages:
-  - description: Main interface for managing TODOs; includes input, list, and controls.
-    queries:
-    - getTodos
-    - addTodo
-    - toggleTodo
-    - deleteTodo
-    route: /
-    title: Minimalist TODO
+      - Toast
+      - ToastStack
+    shared:
+    - category: ui
+      description: Visual component for a single toast notification, styled per design
+        system.
+      name: Toast
+      props:
+      - message
+      - type
+      - onClose
+    - category: ui
+      description: Handles stacking and rendering of up to 3 toasts in the correct
+        overlay position.
+      name: ToastStack
+      props:
+      - toasts
+    - category: ui
+      description: Standard button component, reused throughout the UI.
+      name: Button
+      props:
+      - label
+      - onClick
+    - category: ui
+      description: Standard icon component, supporting success and close icons.
+      name: Icon
+      props:
+      - name
     widgets:
-    - TodoAppCard
+    - description: Widget combining a list of ItemCards with mark as done and toast
+        functionality.
+      entities:
+      - ItemCard
+      features:
+      - MarkItemDoneButton
+      name: ItemList
+      props:
+      - items
+      shared: []
+  pages:
+  - description: Allows users to view their items and mark them as done with immediate
+      feedback via toast notification.
+    queries:
+    - markItemDone
+    - getItems
+    route: /items
+    title: Items List
+    widgets:
+    - ItemList
+    - ToastStack
   stores:
   - actions:
-    - getTodos
-    - addTodo
-    - toggleTodo
-    - deleteTodo
-    description: Manages the in-memory array of TODOs and CRUD operations; triggers
-      UI updates on change.
+    - fetchItems
+    - markItemDone
+    description: State management for items, supports loading, updating, and marking
+      done.
     layer: entities
-    name: todoStore
+    name: itemsStore
     state_shape:
-    - name: todos
-      type: Todo[]
+    - name: items
+      type: Item[]
+    - name: loading
+      type: boolean
+  - actions:
+    - showToast
+    - dismissToast
+    description: State management for toast notifications, stacking, auto-dismiss,
+      and manual close.
+    layer: shared
+    name: toastStore
+    state_shape:
+    - name: toasts
+      type: Toast[]
 components:
-  parameters: []
-  responses: []
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  responses:
+  - code: '200'
+    description: Success
+  - code: '400'
+    description: Bad request
+  - code: '404'
+    description: Not found
+  - code: '500'
+    description: Internal server error
   schemas:
-  - name: Todo
+  - name: Item
+    type: object
+  - name: Toast
     type: object
 domains:
 - apis:
-  - method: GET
-    operation:
-      description: Returns the current array of TODO items from in-memory storage.
-      operation_id: getTodos
-      summary: Get all TODO items
-      tags:
-      - todo
-    path: /todos
   - method: POST
     operation:
-      description: Adds a new TODO object to the in-memory array and triggers list
-        update.
-      operation_id: addTodo
-      summary: Add TODO
+      description: Updates the status of an item to 'done'.
+      operation_id: markItemDone
+      summary: Mark an item as done
       tags:
-      - todo
-    path: /todos
-  - method: PATCH
+      - Item
+    path: /api/items/{id}/markDone
+  - method: GET
     operation:
-      description: Toggles the 'completed' state of a TODO item by ID.
-      operation_id: toggleTodo
-      summary: Toggle TODO
+      description: Fetches the list of items and their statuses.
+      operation_id: getItems
+      summary: Get items list
       tags:
-      - todo
-    path: /todos/{id}/toggle
-  - method: DELETE
-    operation:
-      description: Removes a TODO item from the array by ID.
-      operation_id: deleteTodo
-      summary: Delete TODO
-      tags:
-      - todo
-    path: /todos/{id}
-  description: Domain for managing in-memory TODO items and related operations in
-    the client.
+      - Item
+    path: /api/items
+  description: Represents actionable items that users can mark as done, and supports
+    backend operations for updating item state.
   models:
-  - description: Represents a single TODO item in memory.
+  - description: A single actionable item in the system.
     fields:
     - name: id
       nullable: false
       pk: true
       type: string
-    - name: text
+    - name: title
       nullable: false
       pk: false
       type: string
-    - name: completed
+    - name: status
       nullable: false
       pk: false
-      type: boolean
+      type: string
     - name: createdAt
       nullable: false
       pk: false
@@ -150,139 +159,132 @@ domains:
       nullable: false
       pk: false
       type: string
-    name: Todo
-  name: todo
+    name: Item
+  name: item
   services:
-  - description: Handles in-memory CRUD operations for TODO items, including add,
-      toggle, and delete.
+  - description: Business logic for managing items, including marking as done.
     methods:
-    - getTodos
-    - addTodo
-    - toggleTodo
-    - deleteTodo
-    name: TodoService
+    - markItemDone
+    - getItems
+    name: ItemService
+- apis: []
+  description: Provides client-side logic and UI for displaying stacked, non-blocking
+    toast notifications.
+  models:
+  - description: A single toast notification in the UI.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: message
+      nullable: false
+      pk: false
+      type: string
+    - name: type
+      nullable: false
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: duration
+      nullable: false
+      pk: false
+      type: integer
+    name: Toast
+  name: toast
+  services:
+  - description: Provides methods to show, stack, and dismiss toast notifications.
+      Manages stacking up to 3 concurrent toasts, with auto-dismiss and manual close
+      support.
+    methods:
+    - showToast
+    - dismissToast
+    - stackToasts
+    name: ToastService
 metadata:
-  description: Differential technical specification for a single-page frontend-only
-    TODO app with in-memory task management, no persistence, and no authentication.
-  generated_at: '2024-06-13T07:30:00Z'
-  name: Minimalist TODO App UI
+  description: Show a toast notification to the user when they mark an item as done,
+    providing immediate feedback and confirmation. Toasts follow the design system,
+    stack up to 3, and auto-dismiss or allow manual dismissal.
+  generated_at: '2024-06-10T10:00:00Z'
+  name: Add toast message when item is marked as done
   version: 1.0.0
 product:
   features:
-  - description: Instantly add a new TODO item to the list via input and button or
-      Enter key.
+  - description: When a user marks an item as done, a toast notification is displayed
+      for confirmation.
     domains:
-    - todo
-    id: add_todo
+    - item
+    - toast
+    id: toast_notification_on_item_done
     priority: high
-    title: Add TODO
-  - description: Mark TODOs as complete/incomplete by clicking the item or a checkbox.
-    domains:
-    - todo
-    id: toggle_todo
-    priority: high
-    title: Toggle TODO Completion
-  - description: Remove a TODO item from the list with a single click/tap.
-    domains:
-    - todo
-    id: delete_todo
-    priority: medium
-    title: Delete TODO
-  - description: Seamless experience across desktop and mobile devices.
-    domains: []
-    id: responsive_ui
-    priority: high
-    title: Responsive UI
+    title: Toast Notification on Mark Done
   goals:
-  - Enable users to quickly add, complete, and remove tasks with instant feedback.
-  - Provide a distraction-free, responsive, and accessible experience.
-  - Deliver a lightweight, client-only HTML file with no backend or authentication.
+  - Improve user experience with instant visual confirmation when marking an item
+    as done.
+  - Ensure toasts use the design system and do not interrupt user flow.
+  - Allow stacking and dismissal of multiple toasts.
   personas:
-  - description: Needs a fast, clutter-free way to jot down and check off tasks throughout
-      the day.
-    goals: []
-    name: Busy Individual
-  - description: Prefers simple, elegant interfaces without unnecessary features or
-      distractions.
-    goals: []
-    name: Minimalist User
-  - description: Wants to manage quick tasks on-the-go with a responsive, touch-friendly
-      UI.
-    goals: []
-    name: Mobile User
-  summary: A minimalist single-page TODO application with in-memory task management,
-    instant UI updates, and a clean, modern interface.
+  - description: Any logged-in user who can view and mark items as done.
+    goals:
+    - Manage and complete items efficiently.
+    - Receive clear, unobtrusive feedback after actions.
+    name: Authenticated User
+  summary: Provides immediate, non-blocking feedback to users when they mark an item
+    as done, through visually consistent toast notifications.
 use_cases:
 - actors:
-  - User
+  - Authenticated User
   apis:
-  - addTodo
-  description: User enters a task and adds it to the list. Input is validated and
-    cleared on success.
+  - markItemDone
+  description: When a user marks an item as done, the UI shows a toast confirming
+    the action. Toasts stack and auto-dismiss. The user can continue working without
+    interruption.
   domains:
-  - todo
+  - item
+  - toast
   happy_path:
-  - User types task text in the input.
-  - User clicks 'Add' or presses Enter.
-  - If input is non-empty, task is added to the list and input is cleared.
-  id: add_task
+  - User clicks 'mark as done' button or checkbox.
+  - UI sends 'markItemDone' request to backend.
+  - Item is visually updated to 'done' state in UI.
+  - On success, toast notification appears with confirmation message.
+  - Toast auto-dismisses after 3 seconds or can be closed by user.
+  - If multiple items are marked quickly, up to 3 toasts stack; older toasts fade
+    out.
+  id: mark_item_done_with_toast
   pages:
-  - /
-  postconditions: []
-  preconditions: []
-  title: Add Task
-- actors:
-  - User
-  apis:
-  - toggleTodo
-  description: User toggles the completion state of a task by clicking it or its checkbox.
-  domains:
-  - todo
-  happy_path:
-  - User clicks a task row or checkbox.
-  - Task's completed state is toggled and the UI updates (strike-through/fade).
-  id: toggle_task
-  pages:
-  - /
-  postconditions: []
-  preconditions: []
-  title: Toggle Task Completion
-- actors:
-  - User
-  apis:
-  - deleteTodo
-  description: User removes a task from the list instantly.
-  domains:
-  - todo
-  happy_path:
-  - User clicks the delete icon/button for a task.
-  - Task is removed from the in-memory list and UI updates.
-  id: delete_task
-  pages:
-  - /
-  postconditions: []
-  preconditions: []
-  title: Delete Task
+  - /items
+  postconditions:
+  - Item is marked as done in backend and frontend.
+  - User receives clear confirmation.
+  preconditions:
+  - User is authenticated.
+  - Item is displayed in the items list.
+  title: Mark item as done with toast feedback
 user_journeys:
-- id: quick_task_management
-  persona: Busy Individual
+- id: items_page_toast_journey
+  persona: Authenticated User
   related_use_cases:
-  - add_task
-  - toggle_task
-  - delete_task
+  - mark_item_done_with_toast
   steps:
-  - action: User opens the HTML file; sees an empty TODO list.
-    page: /
-  - action: User enters "Buy milk" and presses Enter; task appears.
-    page: /
-  - action: User adds "Email project update" with Add button; both tasks are listed.
-    page: /
-  - action: User taps "Buy milk" to mark it completed (strike-through).
-    page: /
-  - action: User deletes "Email project update".
-    page: /
-  - action: User closes or refreshes page; all tasks are gone.
-    page: /
-  success_criteria: All actions are instant, visual feedback is clear, and no data
-    is persisted after refresh.
-  title: Quick Task Management
+  - action: User visits Items List page.
+    page: /items
+  - action: User identifies an item to mark as done.
+    page: /items
+  - action: User clicks 'mark as done' control.
+    page: /items
+  - action: Item state updates to done immediately in UI.
+    page: /items
+  - action: Toast notification pops up in bottom right corner confirming action.
+    page: /items
+  - action: User marks additional items; up to 3 toasts stack.
+    page: /items
+  - action: Toasts auto-dismiss after 3 seconds or user closes them.
+    page: /items
+  - action: User continues managing items without interruption.
+    page: /items
+  success_criteria: Each mark as done action results in a clear, non-blocking toast
+    confirmation. No blocking or interruption occurs.
+  title: Marking Items as Done with Toast Feedback

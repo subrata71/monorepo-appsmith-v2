@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import healthRoutes from './health.route.js';
+import itemRoutes from './item.route.js';
 import { isTestEnvironment } from '../utils/env.js';
 import { constants } from '../constants/index.js';
 
@@ -12,6 +13,7 @@ if (isTestEnvironment()) {
 // Create a plugin that registers all routes without prefix
 async function allRoutesPlugin(app: FastifyInstance) {
   await app.register(healthRoutes);
+  await app.register(itemRoutes);
 
   if (isTestEnvironment() && entityTemplateRoutes) {
     await app.register(entityTemplateRoutes.default);

@@ -10,6 +10,7 @@
 
 // Export all entity OpenAPI specifications
 export * from './__entity__.js';
+export * from './item.js';
 
 // Example: When adding a new entity (e.g., user), add:
 // export * from './user.js'; 

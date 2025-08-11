@@ -1,27 +1,20 @@
 plan_items:
 - id: '1'
-  name: Minimalist TODO App UI
+  name: Add toast message when item is marked as done
   sub_items:
   - effort: 1
     id: '1.1'
-    name: Setup Project Structure
-    summary: Create a single HTML file with embedded CSS and JavaScript for the app.
-  - effort: 1
+    name: Detect item marked as done event
+    summary: Update the code to detect when a user marks an item as done (e.g., checkbox
+      or button click).
+  - effort: 2
     id: '1.2'
-    name: Render TODO List
-    summary: Display the list of TODO items dynamically from an in-memory array.
+    name: Implement toast message component
+    summary: Create or use an existing toast message component to display notifications.
   - effort: 1
     id: '1.3'
-    name: Add TODO Item
-    summary: Implement an input and button to add new TODO items to the list.
-  - effort: 1
-    id: '1.4'
-    name: Toggle TODO Completion
-    summary: Allow users to mark TODO items as complete/incomplete (e.g., by clicking
-      the item).
-  - effort: 1
-    id: '1.5'
-    name: Delete TODO Item
-    summary: Add a button to remove a TODO item from the list.
-  summary: Create a single-page frontend-only TODO app with basic add, toggle, and
-    delete functionality. All data is stored in memory (no backend).
+    name: Trigger toast on done event
+    summary: Show the toast message when the item is marked as done, with appropriate
+      success text.
+  summary: Show a toast notification to the user when they mark an item as done in
+    the UI.

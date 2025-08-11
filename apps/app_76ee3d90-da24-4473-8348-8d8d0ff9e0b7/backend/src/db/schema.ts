@@ -14,3 +14,19 @@ export const __entityPlural__ = pgTable('__entityPlural__', {
 export type __Entity__ = typeof __entityPlural__.$inferSelect;
 /** Payload accepted by INSERTs */
 export type New__Entity__ = typeof __entityPlural__.$inferInsert;
+
+/**
+ * Items table for todo/task management
+ */
+export const items = pgTable('items', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  title: varchar('title', { length: 255 }).notNull(),
+  status: varchar('status', { length: 50 }).notNull().default('pending'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+/** Row returned by SELECTs */
+export type Item = typeof items.$inferSelect;
+/** Payload accepted by INSERTs */
+export type NewItem = typeof items.$inferInsert;
