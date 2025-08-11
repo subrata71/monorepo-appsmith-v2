@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { Card } from '@/shared/ui/card';
-import { AddTodoForm } from '@/features/add-todo';
 import { ConnectedTodoList, TodoCounter } from '@/features/todo-list';
 import { useTodoStore } from '@/entities/todo';
 
@@ -19,7 +18,6 @@ export const TodoAppCard = React.memo(() => {
       </div>
 
       <div className="space-y-8">
-        <AddTodoForm />
         <ConnectedTodoList />
         <TodoCounter todos={todos} />
       </div>
