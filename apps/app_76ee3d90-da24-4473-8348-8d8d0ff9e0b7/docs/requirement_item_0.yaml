@@ -1,0 +1,71 @@
+access: No authentication. All users accessing the HTML file have equal access and
+  functionality.
+behaviour: All actions are instant and client-side. Adding, toggling, and deleting
+  TODOs updates the UI without reloads. Input is validated to prevent empty TODOs.
+  UI is responsive and adapts to different device widths. No persistent storage; data
+  is lost on refresh.
+name: Minimalist TODO App UI
+page:
+  behaviour: Page is interactive and responds instantly to user input. All actions
+    manipulate the in-memory array and immediately re-render the list. No page reloads.
+    Input is cleared after adding a task. Prevents empty submissions. UI provides
+    touch-friendly targets.
+  id: main_todo_page
+  purpose: Enable users to quickly jot down, complete, and remove tasks in a distraction-free
+    environment.
+  queries:
+  - getTodos
+  - addTodo
+  - toggleTodo
+  - deleteTodo
+  sections:
+  - behaviour: User enters task and clicks Add or presses Enter. Empty submission
+      is prevented. Input is cleared after successful add.
+    blocks:
+    - behaviour: Accepts text for new TODO. On Enter, triggers add logic if not empty.
+      id: todo_input
+    - behaviour: On click, or when input is submitted by Enter, adds new TODO if input
+        is not empty.
+      id: add_button
+    id: add_todo_section
+    title: Add TODO
+    visual: Horizontal row with input (flexible width) and add button (compact), both
+      with rounded edges and soft borders.
+  - behaviour: Dynamically renders from the in-memory array. Clicking item or checkbox
+      toggles completion. Clicking delete removes that item.
+    blocks:
+    - behaviour: Displays task. Click toggles complete state, changing visual style
+        (strike/fade).
+      id: todo_item
+    - behaviour: Removes this task from the array and updates the view.
+      id: delete_todo_button
+    id: todo_list_section
+    title: TODO List
+    visual: 'Vertical stack of task rows. Each row: left-aligned text, clickable area
+      to toggle complete (strike-through or color fade), and right-aligned delete
+      (icon or button).'
+  title: Minimalist TODO
+  visual: Centered, single-column card with a title at the top, input row beneath,
+    then the TODO list. Uses whitespace and subtle dividers, with soft accent color
+    for buttons and highlights. Responsive layout for mobile and desktop.
+queries:
+- id: getTodos
+  responsibility: Retrieves the current array of TODO items from in-memory storage
+    for display.
+- id: addTodo
+  responsibility: Adds a new TODO object to the in-memory array and triggers list
+    update.
+- id: toggleTodo
+  responsibility: Toggles the 'completed' state of a TODO item (by index or ID) and
+    updates the display.
+- id: deleteTodo
+  responsibility: Removes a TODO item from the array (by index or ID) and updates
+    the display.
+summary: A single-page frontend-only TODO app that allows users to add, toggle, and
+  delete tasks. All data resides in memory; nothing is persisted after a page reload.
+  The app is delivered as a single HTML file with inline CSS and JavaScript, optimized
+  for simplicity and speed.
+visual: Minimalist, clean, and centered UI. White (or near-white) background, subtle
+  card border for the TODO list, gentle shadows, and a single accent color for interactive
+  elements. Tasks are listed with ample spacing and a modern sans-serif font. Completed
+  items appear faded or with a strike-through. Input and button are styled to be unobtrusive.
