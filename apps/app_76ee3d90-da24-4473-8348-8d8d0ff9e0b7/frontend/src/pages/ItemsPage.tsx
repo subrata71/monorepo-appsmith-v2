@@ -10,9 +10,12 @@ import { useQuery } from '@tanstack/react-query';
 import { Container } from '@/shared/ui/container';
 import { fetchItems, ItemCard } from '@/entities/item';
 import { useMarkItemDone } from '@/features/mark-item-done';
+import { useToast } from '@/shared';
 import type { Item } from '@/entities/item';
 
 export const ItemsPage = React.memo(() => {
+  const { showSuccess, showError } = useToast();
+
   // Fetch items using TanStack Query
   const {
     data: itemsResponse,
@@ -27,15 +30,18 @@ export const ItemsPage = React.memo(() => {
   // Callbacks for mark item done feature - wrapped in useMemo for optimization
   const markItemDoneCallbacks = React.useMemo(() => ({
     onSuccess: (item: Item) => {
-      // This is where toast notification will be triggered in sub-item 1.3
+      // Show success toast when item is marked as done
+      showSuccess(`"${item.title}" has been marked as done!`, {
+        duration: 3000, // 3 seconds as per spec
+      });
       console.log(`🎉 Item successfully marked as done: "${item.title}"`);
-      // Future: trigger toast here
     },
     onError: (error: Error) => {
+      // Show error toast when marking item as done fails
+      showError('Failed to mark item as done. Please try again.');
       console.error('Failed to mark item as done:', error);
-      // Future: show error toast here
     }
-  }), []);
+  }), [showSuccess, showError]);
 
   // Use the mark item done feature hook
   const { markDone } = useMarkItemDone(markItemDoneCallbacks);
