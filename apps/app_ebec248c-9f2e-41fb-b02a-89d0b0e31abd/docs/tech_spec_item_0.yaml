@@ -1,0 +1,213 @@
+client:
+  components:
+    entities:
+    - description: Entity component for a single validated numeric input field.
+      entity: numberInput
+      name: NumberInputField
+      props:
+      - value
+      - onChange
+      - label
+      - error
+    features:
+    - description: Feature component for the sum action button, enabled only if inputs
+        are valid.
+      entities:
+      - NumberInputField
+      feature: sumButton
+      name: SumButton
+      props:
+      - enabled
+      - onClick
+      shared:
+      - Button
+    - description: Feature component for rendering the sum result.
+      entities: []
+      feature: resultDisplay
+      name: ResultDisplay
+      props:
+      - result
+      shared:
+      - Text
+    shared:
+    - category: ui
+      description: Reusable button component with primary/disabled states.
+      name: Button
+      props:
+      - label
+      - onClick
+      - disabled
+    - category: ui
+      description: Reusable number input field with validation states.
+      name: Input
+      props:
+      - label
+      - value
+      - onChange
+      - error
+    - category: ui
+      description: Card container with shadow and rounded corners.
+      name: Card
+      props:
+      - children
+    - category: ui
+      description: Text component for labels and results.
+      name: Text
+      props:
+      - children
+      - variant
+    - category: ui
+      description: Provides vertical spacing between elements.
+      name: Spacer
+      props:
+      - size
+    widgets:
+    - description: Widget combining inputs, button, and result into a card layout.
+      entities:
+      - NumberInputField
+      features:
+      - SumButton
+      - ResultDisplay
+      name: SumCalculatorCard
+      props: []
+      shared:
+      - Card
+      - Spacer
+      - Text
+  pages:
+  - description: Main page for inputting numbers and displaying the sum.
+    queries: []
+    route: /sum
+    title: 2-Sum Calculator
+    widgets:
+    - SumCalculatorCard
+  stores:
+  - actions:
+    - 'setFirstNumber(value: string)'
+    - 'setSecondNumber(value: string)'
+    - validateInputs()
+    - calculateSum()
+    - clearResult()
+    description: Local state store for number inputs, validation, button state, and
+      sum result.
+    layer: entities
+    name: sumCalculatorStore
+    state_shape:
+    - name: firstNumber
+      type: string
+    - name: secondNumber
+      type: string
+    - name: isFirstNumberValid
+      type: boolean
+    - name: isSecondNumberValid
+      type: boolean
+    - name: isButtonEnabled
+      type: boolean
+    - name: result
+      type: number | null
+components:
+  parameters: []
+  responses: []
+  schemas:
+  - name: SumCalculationInput
+    type: object
+  - name: SumCalculationResult
+    type: object
+domains:
+- apis: []
+  description: Client-side logic for summing two numbers and managing calculator state.
+  models:
+  - description: Input state for the two numbers in the calculator.
+    fields:
+    - name: firstNumber
+      nullable: false
+      pk: false
+      type: number
+    - name: secondNumber
+      nullable: false
+      pk: false
+      type: number
+    name: SumCalculationInput
+  - description: The computed sum result.
+    fields:
+    - name: result
+      nullable: false
+      pk: false
+      type: number
+    name: SumCalculationResult
+  name: sumCalculation
+  services:
+  - description: Pure client-side service to validate and sum the two input numbers.
+    methods:
+    - 'validateInputs(firstNumber: number, secondNumber: number): boolean'
+    - 'calculateSum(firstNumber: number, secondNumber: number): number'
+    name: sumCalculatorService
+metadata:
+  description: Simple client-side web UI to sum two numbers with no backend or authentication.
+  generated_at: '2024-06-12T12:00:00Z'
+  name: 2-Sum Calculator UI
+  version: 1.0.0
+product:
+  features:
+  - description: Users can input two numbers and instantly see their sum after clicking
+      'Sum'.
+    domains:
+    - sumCalculation
+    id: sum_calculation
+    priority: high
+    title: 2-Sum Calculator
+  goals:
+  - Provide a fast, intuitive way to sum two numbers in-browser with instant feedback.
+  - Ensure accessibility, responsiveness, and clear validation for all users.
+  - Operate entirely client-side with no backend dependencies.
+  personas:
+  - description: Anyone needing to quickly calculate the sum of two numbers.
+    goals:
+    - Quickly sum two numbers without hassle.
+    - Access from any device without login.
+    name: Guest User
+  summary: A minimal, responsive UI for users to input two numbers and see their sum,
+    all on the client side.
+use_cases:
+- actors:
+  - User
+  apis: []
+  description: User enters two numbers, clicks Sum, and sees the result.
+  domains:
+  - sumCalculation
+  happy_path:
+  - User navigates to the 2-Sum Calculator page.
+  - User enters a number in the first input field.
+  - User enters a number in the second input field.
+  - The Sum button becomes enabled once both inputs are valid.
+  - User clicks the Sum button.
+  - 'The sum is displayed as ''Result: X''.'
+  - If either input is changed, the result is cleared and the process can be repeated.
+  id: quick_sum
+  pages:
+  - /sum
+  postconditions:
+  - Sum is displayed after valid input and clicking the button.
+  preconditions:
+  - User can access the calculator page.
+  title: Quick 2-Number Sum
+user_journeys:
+- id: journey_basic_sum
+  persona: Guest User
+  related_use_cases:
+  - quick_sum
+  steps:
+  - action: Arrive at the calculator page.
+    page: /sum
+  - action: Input two numbers.
+    page: /sum
+  - action: See the Sum button activate.
+    page: /sum
+  - action: Click Sum and see the result.
+    page: /sum
+  - action: Change an input; result is cleared.
+    page: /sum
+  - action: Repeat as needed.
+    page: /sum
+  success_criteria: User sees correct sum and can repeat as needed.
+  title: Basic sum calculation journey
