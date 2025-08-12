@@ -1,0 +1,19 @@
+plan_items:
+- id: ui-1
+  name: Simple Calculator UI
+  sub_items:
+  - effort: 1
+    id: ui-1-1
+    name: Create two number input fields
+    summary: Add two input fields to the UI for the user to enter numbers.
+  - effort: 1
+    id: ui-1-2
+    name: Add an Add button
+    summary: Add a button labeled 'Add' that, when clicked, will sum the two input
+      values.
+  - effort: 1
+    id: ui-1-3
+    name: Display the result
+    summary: Show the result of the addition below the button after it is clicked.
+  summary: A single-page UI that allows the user to input two numbers, click an Add
+    button, and see the sum displayed.

@@ -1,0 +1,236 @@
+client:
+  components:
+    entities:
+    - description: Represents the calculation inputs and result
+      entity: calculation
+      name: CalculationEntity
+      props:
+      - number1
+      - number2
+      - sum
+    features:
+    - description: Handles input fields, validation, and triggers calculation
+      entities:
+      - CalculationEntity
+      feature: calculator
+      name: CalculatorForm
+      props: []
+      shared:
+      - Input
+      - Button
+    - description: Shows the calculation result or error message
+      entities:
+      - CalculationEntity
+      feature: calculator
+      name: ResultDisplay
+      props:
+      - result
+      - error
+      shared:
+      - Text
+    shared:
+    - category: ui
+      description: Accessible, styleable button component
+      name: Button
+      props:
+      - children
+      - onClick
+      - disabled
+    - category: ui
+      description: Accessible input field for numbers
+      name: Input
+      props:
+      - label
+      - value
+      - onChange
+      - type
+      - error
+    - category: ui
+      description: Text display component for labels, result, and messages
+      name: Text
+      props:
+      - children
+      - variant
+    widgets:
+    - description: Encapsulates entire calculator UI (inputs, button, result) in a
+        centered card
+      entities:
+      - CalculationEntity
+      features:
+      - CalculatorForm
+      - ResultDisplay
+      name: CalculatorPanel
+      props: []
+      shared:
+      - Text
+  pages:
+  - description: Main page for inputting two numbers and displaying their sum.
+    queries:
+    - calculateSum
+    route: /
+    title: Simple Calculator
+    widgets:
+    - CalculatorPanel
+  stores:
+  - actions:
+    - 'setNumber1(value: string)'
+    - 'setNumber2(value: string)'
+    - validateInputs()
+    - calculateSum()
+    - 'setResult(value: number)'
+    - 'setError(message: string)'
+    - reset()
+    description: Manages state for calculator inputs, validation, loading, and result
+    layer: features
+    name: calculatorStore
+    state_shape:
+    - name: number1
+      type: string
+    - name: number2
+      type: string
+    - name: isNumber1Valid
+      type: boolean
+    - name: isNumber2Valid
+      type: boolean
+    - name: isLoading
+      type: boolean
+    - name: result
+      type: number | null
+    - name: error
+      type: string | null
+components:
+  parameters: []
+  responses:
+  - code: '200'
+    description: Sum calculated successfully
+  - code: '400'
+    description: Invalid input
+  - code: '500'
+    description: Server error
+  schemas:
+  - name: CalculationRequest
+    type: object
+  - name: CalculationResult
+    type: object
+domains:
+- apis:
+  - method: POST
+    operation:
+      description: Adds two numbers and returns the sum.
+      operation_id: calculateSum
+      summary: Calculate sum of two numbers
+      tags:
+      - Calculator
+    path: /api/calculate-sum
+  description: Domain handling arithmetic calculations, specifically addition for
+    the calculator UI.
+  models:
+  - description: Request payload for addition operation.
+    fields:
+    - name: number1
+      nullable: false
+      pk: false
+      type: number
+    - name: number2
+      nullable: false
+      pk: false
+      type: number
+    name: CalculationRequest
+  - description: Result of addition.
+    fields:
+    - name: sum
+      nullable: false
+      pk: false
+      type: number
+    name: CalculationResult
+  name: calculator
+  services:
+  - description: Business logic for performing arithmetic calculations.
+    methods:
+    - 'calculateSum(number1: number, number2: number): CalculationResult'
+    name: CalculatorService
+metadata:
+  description: Technical specification for a single-page calculator that adds two
+    numbers with a clean, accessible UI and server-side calculation.
+  generated_at: '2024-06-11T10:16:00Z'
+  name: Simple Calculator UI
+  version: 1.0.0
+product:
+  features:
+  - description: Add two numbers and view the sum instantly in a clean UI.
+    domains:
+    - calculator
+    id: calculator
+    priority: high
+    title: Simple Addition Calculator
+  goals:
+  - Provide a simple, single-page calculator for addition
+  - Ensure accessibility and responsive design
+  - Perform real-time validation and instant calculation
+  personas:
+  - description: Any user who needs to quickly add two numbers without distractions
+      or setup.
+    goals:
+    - Fast access to addition functionality
+    - No authentication or complex setup
+    - Clear, accessible interface
+    name: Casual User
+  - description: User who relies on keyboard navigation or screen readers.
+    goals:
+    - Full keyboard navigation support
+    - Proper ARIA labeling and accessibility features
+    name: Accessibility User
+  - description: User accessing the calculator from a mobile device.
+    goals:
+    - Responsive design
+    - Large, touch-friendly controls
+    name: Mobile User
+  summary: A fast, distraction-free calculator for adding two numbers in a responsive,
+    accessible UI.
+use_cases:
+- actors:
+  - Casual User
+  apis:
+  - calculateSum
+  description: User enters two numbers, validates input, clicks Add, and sees the
+    result.
+  domains:
+  - calculator
+  happy_path:
+  - User enters number 1
+  - User enters number 2
+  - Inputs are validated in real time
+  - Add button becomes enabled when inputs are valid
+  - User clicks Add
+  - System calculates the sum and displays it below
+  id: add-two-numbers
+  pages:
+  - /
+  postconditions:
+  - User sees the correct sum or error feedback
+  preconditions:
+  - User accesses the calculator page
+  title: Add Two Numbers
+user_journeys:
+- id: simple-addition-journey
+  persona: Casual User
+  related_use_cases:
+  - add-two-numbers
+  steps:
+  - action: User opens calculator page
+    page: /
+  - action: Sees two number input fields, Add button, and result area
+    page: /
+  - action: Enters first number; invalid input shows error
+    page: /
+  - action: Enters second number; invalid input shows error
+    page: /
+  - action: Both inputs valid; Add button enabled
+    page: /
+  - action: Clicks Add; sum appears in result area
+    page: /
+  - action: Changes input; result area updates or clears
+    page: /
+  success_criteria: User sees the correct sum after clicking Add, or receives clear
+    feedback if an error occurs.
+  title: Simple Addition User Journey
