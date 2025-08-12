@@ -1,35 +1,49 @@
 import React from 'react';
 import { TicTacToeBoard } from '@/entities/tictactoe';
+import { useTicTacToeGameStore, GameStatus, ResetGame } from '@/features';
 import { Container } from '@/shared/ui';
-import type { GameBoard } from '@/entities/tictactoe';
 
 export const TicTacToeWidget = React.memo(() => {
-  // Initialize empty board - all cells empty
-  const initialBoard: GameBoard = React.useMemo(
-    () => ['', '', '', '', '', '', '', '', ''],
-    []
-  );
-
-  const [board] = React.useState<GameBoard>(initialBoard);
+  // Use store state following Zustand individual value selection pattern
+  const board = useTicTacToeGameStore(state => state.game.board);
+  const currentPlayer = useTicTacToeGameStore(state => state.game.currentPlayer);
+  const status = useTicTacToeGameStore(state => state.game.status);
+  const winner = useTicTacToeGameStore(state => state.game.winner);
+  const makeMove = useTicTacToeGameStore(state => state.makeMove);
+  const resetGame = useTicTacToeGameStore(state => state.resetGame);
 
   const handleCellClick = React.useCallback((index: number) => {
-    // For now, just log the cell click - game logic will be added in future sub-items
-    console.log(`Cell ${index} clicked`);
-  }, []);
+    makeMove(index);
+  }, [makeMove]);
+
+  const handleReset = React.useCallback(() => {
+    resetGame();
+  }, [resetGame]);
+
+  const isBoardDisabled = React.useMemo(() => {
+    return status !== 'playing';
+  }, [status]);
 
   return (
     <Container className="py-8">
       <div className="flex flex-col items-center space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold text-gray-900">TicTacToe Game</h1>
-          <p className="text-gray-600">Click on any cell to start playing</p>
         </div>
 
-        <TicTacToeBoard board={board} onCellClick={handleCellClick} />
+        <GameStatus
+          status={status}
+          currentPlayer={currentPlayer}
+          winner={winner}
+        />
 
-        <div className="text-center text-sm text-gray-500">
-          Game grid ready - game logic coming soon!
-        </div>
+        <TicTacToeBoard 
+          board={board} 
+          onCellClick={handleCellClick}
+          disabled={isBoardDisabled}
+        />
+
+        <ResetGame onReset={handleReset} />
       </div>
     </Container>
   );
