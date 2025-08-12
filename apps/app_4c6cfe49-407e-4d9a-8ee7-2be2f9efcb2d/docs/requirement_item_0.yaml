@@ -1,0 +1,72 @@
+access: No authentication required. Open to any user accessing the page.
+behaviour: All interactions are instant. Players alternate turns via clicks, with
+  no way to overwrite filled cells. Game status updates after each move, showing current
+  player or result. Reset is always visible and restarts the game immediately. Interface
+  disables interaction when a game is over.
+name: TicTacToe Game UI
+page:
+  behaviour: Page loads with empty board and player X's turn. All interactions update
+    UI state immediately. After a win/draw, no further moves are accepted until reset.
+  id: main_game_page
+  purpose: Allow users to play an entire game of TicTacToe and restart as desired,
+    all within a single, simple interface.
+  sections:
+  - behaviour: 'Shows ''Current Player: X'' or ''Current Player: O'' when game is
+      in progress, or ''Player X wins!'', ''Player O wins!'', or ''Draw!'' when the
+      game ends. Disabled interaction after win/draw.'
+    blocks:
+    - behaviour: Updates every turn to show which player's move it is. Displays result
+        after win/draw and disables further moves.
+      id: current_player_display
+    id: status_section
+    title: Game Status
+    visual: Centered, bold text above the board. Uses accent color for important states
+      (winner/draw).
+  - behaviour: Each cell is clickable if empty and game is not over. Clicking places
+      current player's symbol, disables the cell, and triggers win/draw check. After
+      a win/draw, cells are locked.
+    blocks:
+    - behaviour: Displays blank, X, or O. Clickable if empty and game not ended. On
+        click, marks with current symbol, checks for win/draw, updates state.
+      id: cell_1
+    - behaviour: Same as cell_1.
+      id: cell_2
+    - behaviour: Same as cell_1.
+      id: cell_3
+    - behaviour: Same as cell_1.
+      id: cell_4
+    - behaviour: Same as cell_1.
+      id: cell_5
+    - behaviour: Same as cell_1.
+      id: cell_6
+    - behaviour: Same as cell_1.
+      id: cell_7
+    - behaviour: Same as cell_1.
+      id: cell_8
+    - behaviour: Same as cell_1.
+      id: cell_9
+    id: board_section
+    title: Game Board
+    visual: 3x3 grid (300x300px desktop, responsive for mobile). Square cells with
+      2px solid border and hover effect for empty cells.
+  - behaviour: Clicking resets entire board, current player to X, and status message.
+      All cells become enabled for a new game.
+    blocks:
+    - behaviour: On click, clears board and status, sets turn to X, and enables all
+        cells.
+      id: reset_button
+    id: reset_section
+    title: Reset Game
+    visual: One centered button below the grid. Medium-sized, accent color background,
+      white text, rounded corners.
+  title: TicTacToe Game
+  visual: Page is vertically and horizontally centered using flex or grid. Status
+    text appears above the grid, with the grid in the middle and the reset button
+    below. Spacing is generous, and controls are clearly separated.
+summary: An interactive, browser-based TicTacToe game with a 3x3 grid, alternating
+  two-player turns, current player indicator, automatic win/draw detection, and a
+  reset button. All logic and UI are client-side only.
+visual: 'Minimal, clean layout with centered board and controls. Use a light background
+  and a single accent color (blue: #2563EB) for highlights. Board cells are crisp,
+  square, and have hover/focus effects. Use a modern sans-serif font. Responsive design
+  ensures usability on desktop and mobile.'
