@@ -1,25 +1,19 @@
 /**
  * MoodEntryPage
  *
- * Main page for mood entry functionality. Contains the mood selection interface.
+ * Main page for mood entry functionality. Contains the complete mood entry form
+ * with mood selection, note input, and submission capabilities.
  */
 
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { MoodSelection } from '@/features/mood-selection';
-import { NoteInput } from '@/features/note-input';
-import type { MoodType } from '@/entities/mood-entry';
+import { MoodEntryForm } from '@/widgets/mood-entry-form';
 
 export const MoodEntryPage = () => {
-  const [selectedMood, setSelectedMood] = React.useState<MoodType | null>(null);
-  const [note, setNote] = React.useState<string>('');
-
-  const handleMoodSelect = React.useCallback((mood: MoodType) => {
-    setSelectedMood(mood);
-  }, []);
-
-  const handleNoteChange = React.useCallback((newNote: string) => {
-    setNote(newNote);
+  const handleSubmitSuccess = React.useCallback(() => {
+    // Optional: Add any additional logic after successful submission
+    // For now, the form will reset automatically and show toast feedback
+    console.log('Mood entry submitted successfully');
   }, []);
 
   return (
@@ -37,35 +31,9 @@ export const MoodEntryPage = () => {
             </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-8">
-            <MoodSelection
-              selectedMood={selectedMood}
-              onSelect={handleMoodSelect}
-            />
-
-            {selectedMood && (
-              <div className="border-t border-gray-100 pt-6">
-                <NoteInput
-                  note={note}
-                  onNoteChange={handleNoteChange}
-                  maxLength={200}
-                />
-              </div>
-            )}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <MoodEntryForm onSubmitSuccess={handleSubmitSuccess} />
           </div>
-
-          {selectedMood && (
-            <div className="mt-6 text-center">
-              <p className="text-gray-600">
-                {note.trim()
-                  ? `Selected mood: ${selectedMood} with ${note.trim().split(/\s+/).length} word${note.trim().split(/\s+/).length !== 1 ? 's' : ''} in your note.`
-                  : `Selected mood: ${selectedMood}. Add a note above to complete your entry.`}
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Future updates will allow you to save your mood entries locally.
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </>
