@@ -1,6 +1,6 @@
 /**
  * MoodSelection Feature Public API
- * 
+ *
  * Exports the mood selection feature component and related types.
  */
 

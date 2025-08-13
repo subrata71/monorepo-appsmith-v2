@@ -8,10 +8,10 @@ export const AppRoutes = () => {
       <Route element={<AppLayout />}>
         {/* Redirect root to mood entry page */}
         <Route path="/" element={<Navigate to="/mood-entry" replace />} />
-        
+
         {/* Mood entry page */}
         <Route path="/mood-entry" element={<MoodEntryPage />} />
-        
+
         {/* Catch undefined routes */}
         <Route path="*" element={<Navigate to="/mood-entry" replace />} />
       </Route>

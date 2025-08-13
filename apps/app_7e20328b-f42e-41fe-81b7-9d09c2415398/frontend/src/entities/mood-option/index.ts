@@ -1,6 +1,6 @@
 /**
  * MoodOption Entity Public API
- * 
+ *
  * Exports the mood option component for rendering individual mood selections.
  */
 

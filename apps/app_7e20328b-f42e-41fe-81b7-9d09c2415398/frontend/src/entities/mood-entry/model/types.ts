@@ -1,6 +1,6 @@
 /**
  * MoodEntry Entity Types
- * 
+ *
  * Domain types for mood entry operations and UI state management.
  */
 
@@ -9,8 +9,10 @@ import type { MoodType, MoodOption } from '@shared/api-types/mood-entry.js';
 
 // Generated types from OpenAPI
 export type MoodEntry = components['schemas']['MoodEntry'];
-export type CreateMoodEntryRequest = components['schemas']['CreateMoodEntryRequest'];
-export type UpdateMoodEntryRequest = components['schemas']['UpdateMoodEntryRequest'];
+export type CreateMoodEntryRequest =
+  components['schemas']['CreateMoodEntryRequest'];
+export type UpdateMoodEntryRequest =
+  components['schemas']['UpdateMoodEntryRequest'];
 
 // Re-export utility types
 export type { MoodType, MoodOption } from '@shared/api-types/mood-entry.js';
@@ -21,7 +23,8 @@ export const MOOD_OPTIONS: MoodOption[] = [
     type: 'happy',
     label: 'Happy',
     emoji: '😊',
-    color: 'bg-yellow-100 border-yellow-500 text-yellow-700 hover:bg-yellow-200',
+    color:
+      'bg-yellow-100 border-yellow-500 text-yellow-700 hover:bg-yellow-200',
   },
   {
     type: 'sad',
@@ -39,7 +42,8 @@ export const MOOD_OPTIONS: MoodOption[] = [
     type: 'excited',
     label: 'Excited',
     emoji: '🤩',
-    color: 'bg-orange-100 border-orange-500 text-orange-700 hover:bg-orange-200',
+    color:
+      'bg-orange-100 border-orange-500 text-orange-700 hover:bg-orange-200',
   },
   {
     type: 'anxious',

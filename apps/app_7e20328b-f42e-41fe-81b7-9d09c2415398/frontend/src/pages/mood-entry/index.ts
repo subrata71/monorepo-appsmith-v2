@@ -1,6 +1,6 @@
 /**
  * MoodEntry Page Public API
- * 
+ *
  * Exports the mood entry page component.
  */
 
