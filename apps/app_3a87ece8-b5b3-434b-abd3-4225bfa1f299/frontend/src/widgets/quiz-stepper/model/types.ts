@@ -20,6 +20,7 @@ export interface QuizStepperState {
   step: QuizStep;
   currentQuestionIndex: number;
   attempt: QuizAttempt | null;
+  answers: Record<string, string>; // questionId -> selectedOptionId
   loading: boolean;
   error: string | null;
 }

@@ -5,9 +5,9 @@
  * This is the main component for the quiz interface.
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Container } from '@/shared/ui';
-import { QuizStart } from '@/features';
+import { QuizStart, QuizNavigator, QuizQuestionForm, QuizProgress } from '@/features';
 import type { QuizStepperProps, QuizStepperState } from '../model/types';
 
 export const QuizStepper = ({ quiz }: QuizStepperProps) => {
@@ -15,9 +15,28 @@ export const QuizStepper = ({ quiz }: QuizStepperProps) => {
     step: 'start',
     currentQuestionIndex: 0,
     attempt: null,
+    answers: {},
     loading: false,
     error: null,
   });
+
+  // Computed values
+  const currentQuestion = useMemo(() => {
+    return quiz.questions[state.currentQuestionIndex] || null;
+  }, [quiz.questions, state.currentQuestionIndex]);
+
+  const isLastQuestion = useMemo(() => {
+    return state.currentQuestionIndex === quiz.questions.length - 1;
+  }, [state.currentQuestionIndex, quiz.questions.length]);
+
+  const currentAnswer = useMemo(() => {
+    if (!currentQuestion) return undefined;
+    return state.answers[currentQuestion.id];
+  }, [currentQuestion, state.answers]);
+
+  const canProceedToNext = useMemo(() => {
+    return currentAnswer !== undefined;
+  }, [currentAnswer]);
 
   const handleStart = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));
@@ -39,6 +58,48 @@ export const QuizStepper = ({ quiz }: QuizStepperProps) => {
     }
   }, []);
 
+  const handleAnswer = useCallback((optionId: string) => {
+    if (!currentQuestion) return;
+
+    setState(prev => ({
+      ...prev,
+      answers: {
+        ...prev.answers,
+        [currentQuestion.id]: optionId,
+      },
+    }));
+  }, [currentQuestion]);
+
+  const handleNext = useCallback(async () => {
+    if (!canProceedToNext) return;
+
+    setState(prev => ({ ...prev, loading: true, error: null }));
+
+    try {
+      if (isLastQuestion) {
+        // Move to results step
+        setState(prev => ({
+          ...prev,
+          step: 'results',
+          loading: false,
+        }));
+      } else {
+        // Move to next question
+        setState(prev => ({
+          ...prev,
+          currentQuestionIndex: prev.currentQuestionIndex + 1,
+          loading: false,
+        }));
+      }
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Failed to proceed',
+      }));
+    }
+  }, [canProceedToNext, isLastQuestion]);
+
   const renderStep = () => {
     switch (state.step) {
       case 'start':
@@ -49,11 +110,33 @@ export const QuizStepper = ({ quiz }: QuizStepperProps) => {
           />
         );
       case 'question':
-        // Placeholder for future question navigation
+        if (!currentQuestion) {
+          return (
+            <div className="text-center">
+              <p className="text-muted-foreground">No questions available.</p>
+            </div>
+          );
+        }
+
         return (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Question {state.currentQuestionIndex + 1}</h2>
-            <p className="text-muted-foreground">Question navigation will be implemented in the next sub-item.</p>
+          <div className="space-y-6 w-full max-w-4xl">
+            <QuizProgress.QuizProgress
+              current={state.currentQuestionIndex + 1}
+              total={quiz.questions.length}
+            />
+            
+            <QuizQuestionForm.QuizQuestionForm
+              question={currentQuestion}
+              onAnswer={handleAnswer}
+              selectedOptionId={currentAnswer}
+            />
+            
+            <QuizNavigator.QuizNavigator
+              onNext={handleNext}
+              step={state.currentQuestionIndex + 1}
+              totalSteps={quiz.questions.length}
+              canProceed={canProceedToNext}
+            />
           </div>
         );
       case 'results':
