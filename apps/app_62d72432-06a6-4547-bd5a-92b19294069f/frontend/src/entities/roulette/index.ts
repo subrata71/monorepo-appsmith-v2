@@ -5,3 +5,4 @@ export type {
   RouletteSlot as RouletteSlotType,
 } from './model/types';
 export { ROULETTE_SLOTS } from './model/types';
+export { useRouletteStore } from './model/store';

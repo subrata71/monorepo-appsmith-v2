@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState, useEffect } from 'react';
 import { RouletteSlot } from './RouletteSlot';
 import { ROULETTE_SLOTS } from '../model/types';
 import type { RouletteSlot as RouletteSlotType } from '../model/types';
@@ -20,10 +20,57 @@ export const RouletteWheel = memo<RouletteWheelProps>(
     const radius = 160;
     const centerX = 200;
     const centerY = 200;
+    const [rotation, setRotation] = useState(0);
+    const [previousWinningSlot, setPreviousWinningSlot] = useState<number | null>(null);
 
-    const wheelRotation = useMemo(() => {
-      return isSpinning ? 'animate-spin' : '';
-    }, [isSpinning]);
+    // Calculate final rotation when winning slot changes
+    const finalRotation = useMemo(() => {
+      if (highlightedSlot === null || highlightedSlot === previousWinningSlot) return rotation;
+      
+      // Find the index of the winning slot
+      const winningIndex = slots.findIndex(slot => slot.number === highlightedSlot);
+      if (winningIndex === -1) return rotation;
+      
+      // Calculate the angle for this slot (accounting for the pointer at top)
+      const slotAngle = (360 / slots.length) * winningIndex;
+      // Add multiple full rotations for visual effect (3-5 full spins)
+      const fullRotations = 3 + Math.random() * 2;
+      const totalRotation = rotation + (fullRotations * 360) + (360 - slotAngle);
+      
+      return totalRotation;
+    }, [highlightedSlot, slots, rotation, previousWinningSlot]);
+
+    // Handle spinning animation
+    useEffect(() => {
+      if (isSpinning && highlightedSlot === null) {
+        // Start spinning - continuous rotation
+        setRotation(prev => prev + 1800); // 5 full rotations for effect
+      } else if (!isSpinning && highlightedSlot !== null && highlightedSlot !== previousWinningSlot) {
+        // Spin completed - animate to final position
+        setRotation(finalRotation);
+        setPreviousWinningSlot(highlightedSlot);
+      }
+    }, [isSpinning, highlightedSlot, finalRotation, previousWinningSlot]);
+
+    const wheelStyle = useMemo(() => {
+      if (isSpinning && highlightedSlot === null) {
+        // Fast initial spin
+        return {
+          transform: `rotate(${rotation}deg)`,
+          transition: 'transform 2s linear',
+        };
+      } else if (!isSpinning && highlightedSlot !== null) {
+        // Slow down to final position
+        return {
+          transform: `rotate(${rotation}deg)`,
+          transition: 'transform 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)',
+        };
+      }
+      return {
+        transform: `rotate(${rotation}deg)`,
+        transition: 'none',
+      };
+    }, [isSpinning, highlightedSlot, rotation]);
 
     return (
       <div className={`flex items-center justify-center ${className}`}>
@@ -32,7 +79,7 @@ export const RouletteWheel = memo<RouletteWheelProps>(
             width="400"
             height="400"
             viewBox="0 0 400 400"
-            className={`${wheelRotation} transition-all duration-300`}
+            style={wheelStyle}
           >
             {/* Outer rim */}
             <circle
