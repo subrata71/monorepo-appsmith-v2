@@ -1,0 +1,358 @@
+client:
+  components:
+    entities:
+    - description: Component rendering the smiley SVG based on props.
+      entity: smiley
+      name: SmileyFace
+      props:
+      - mouth
+      - eyes
+      - color
+    features:
+    - description: Feature for selecting mouth shape.
+      entities:
+      - SmileyFace
+      feature: smiley_customization
+      name: MouthControl
+      props:
+      - value
+      - onChange
+      shared:
+      - Dropdown
+    - description: Feature for selecting eye type.
+      entities:
+      - SmileyFace
+      feature: smiley_customization
+      name: EyeControl
+      props:
+      - value
+      - onChange
+      shared:
+      - Dropdown
+    - description: Feature for selecting face color.
+      entities:
+      - SmileyFace
+      feature: smiley_customization
+      name: ColorControl
+      props:
+      - value
+      - onChange
+      shared:
+      - ColorPicker
+    - description: Feature for randomizing smiley features.
+      entities:
+      - SmileyFace
+      feature: smiley_randomizer
+      name: RandomizeButton
+      props:
+      - onClick
+      shared:
+      - Button
+      - Icon
+    shared:
+    - category: ui
+      description: Standard accessible button component.
+      name: Button
+      props:
+      - onClick
+      - children
+      - aria-label
+    - category: ui
+      description: Accessible dropdown/select component.
+      name: Dropdown
+      props:
+      - options
+      - value
+      - onChange
+      - label
+    - category: ui
+      description: Accessible slider component.
+      name: Slider
+      props:
+      - min
+      - max
+      - value
+      - onChange
+      - label
+    - category: ui
+      description: Accessible color picker component.
+      name: ColorPicker
+      props:
+      - value
+      - onChange
+      - label
+    - category: ui
+      description: Icon component for UI accents.
+      name: Icon
+      props:
+      - name
+      - size
+      - color
+    widgets:
+    - description: Widget holding the SmileyFace entity.
+      entities:
+      - SmileyFace
+      features: []
+      name: SmileyDisplay
+      props:
+      - mouth
+      - eyes
+      - color
+      shared: []
+    - description: Widget holding all smiley feature controls.
+      entities: []
+      features:
+      - MouthControl
+      - EyeControl
+      - ColorControl
+      name: SmileyControlsPanel
+      props: []
+      shared: []
+    - description: Widget holding the randomize button.
+      entities: []
+      features:
+      - RandomizeButton
+      name: SmileyRandomizerSection
+      props: []
+      shared: []
+  pages:
+  - description: Single page app for customizing and randomizing a smiley face.
+    queries: []
+    route: /
+    title: Smiley Generator
+    widgets:
+    - SmileyDisplay
+    - SmileyControlsPanel
+    - SmileyRandomizerSection
+  stores:
+  - actions:
+    - 'setMouth(mouth: string)'
+    - 'setEyes(eyes: string)'
+    - 'setColor(color: string)'
+    - randomize()
+    description: Manages the state of the current smiley features, handles updates
+      and randomization.
+    layer: entities
+    name: smileyStore
+    state_shape:
+    - name: mouth
+      type: string
+    - name: eyes
+      type: string
+    - name: color
+      type: string
+components:
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  responses:
+  - code: '200'
+    description: Success
+  - code: '201'
+    description: Created
+  - code: '204'
+    description: Deleted
+  - code: '400'
+    description: Invalid input
+  - code: '404'
+    description: Not found
+  - code: '500'
+    description: Server error
+  schemas:
+  - name: Smiley
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns a list of all smileys (if persistence implemented).
+      operation_id: getSmileys
+      summary: Get all saved smileys
+      tags:
+      - smiley
+    path: /smileys
+  - method: GET
+    operation:
+      description: Returns a specific smiley by id.
+      operation_id: getSmileyById
+      summary: Get a smiley by ID
+      tags:
+      - smiley
+    path: /smileys/{id}
+  - method: POST
+    operation:
+      description: Creates a new smiley with given features (if persistence implemented).
+      operation_id: createSmiley
+      summary: Create a new smiley
+      tags:
+      - smiley
+    path: /smileys
+  - method: PUT
+    operation:
+      description: Updates a smiley by id (if persistence implemented).
+      operation_id: updateSmiley
+      summary: Update a smiley by ID
+      tags:
+      - smiley
+    path: /smileys/{id}
+  - method: DELETE
+    operation:
+      description: Deletes a smiley by id (if persistence implemented).
+      operation_id: deleteSmiley
+      summary: Delete a smiley by ID
+      tags:
+      - smiley
+    path: /smileys/{id}
+  description: Domain modeling the state, features, and operations of a customizable
+    smiley face.
+  models:
+  - description: Represents a customizable smiley face with user-selected features.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: mouth
+      nullable: false
+      pk: false
+      type: string
+    - name: eyes
+      nullable: false
+      pk: false
+      type: string
+    - name: color
+      nullable: false
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Smiley
+  name: smiley
+  services:
+  - description: Business logic for generating, customizing, randomizing, and managing
+      smiley faces.
+    methods:
+    - randomizeSmiley
+    - updateSmileyFeatures
+    name: SmileyService
+metadata:
+  description: Technical specification for an interactive smiley face generator web
+    app supporting real-time customization and randomization of face features.
+  generated_at: '2024-06-09T18:31:00Z'
+  name: Smiley Generator UI
+  version: 1.0.0
+product:
+  features:
+  - description: Users can select the mouth shape, eye type, and face color using
+      intuitive controls.
+    domains:
+    - smiley
+    id: smiley_customization
+    priority: high
+    title: Smiley Customization
+  - description: Users can randomize all smiley features with one click.
+    domains:
+    - smiley
+    id: smiley_randomizer
+    priority: medium
+    title: Randomize Smiley
+  - description: The smiley face updates instantly as users interact with controls.
+    domains:
+    - smiley
+    id: smiley_display
+    priority: high
+    title: Real-Time Display
+  goals:
+  - Enable users to interactively customize a smiley face’s appearance.
+  - Provide instant visual feedback for all changes.
+  - Ensure accessibility and mobile responsiveness.
+  - Offer a fun and engaging user experience with no authentication required.
+  personas:
+  - description: Anyone looking for a quick, fun way to create or customize a smiley
+      face for personal enjoyment or sharing.
+    goals:
+    - Create and customize smiley faces for fun.
+    name: Casual User
+  - description: Parent and child using the app together for creativity or fun.
+    goals:
+    - Enjoy a creative activity together.
+    - Teach color and emotion concepts interactively.
+    name: Parent/Child
+  - description: A designer seeking inspiration or assets for projects.
+    goals:
+    - Quickly generate smiley face variations for use or inspiration.
+    name: Designer
+  summary: A web app that lets users generate and customize a smiley face with real-time
+    updates and randomization, all in a playful, accessible UI.
+use_cases:
+- actors:
+  - Casual User
+  - Parent/Child
+  - Designer
+  apis: []
+  description: User selects different mouth, eye, and color options to see the smiley
+    update in real time.
+  domains:
+  - smiley
+  happy_path:
+  - User visits the Smiley Generator page.
+  - User changes the mouth shape using a control.
+  - User selects a different eye type.
+  - User picks a new face color.
+  - Smiley face updates with each change.
+  id: customize_smiley
+  pages:
+  - /
+  postconditions:
+  - Smiley face displays selected features.
+  preconditions:
+  - User is on the Smiley Generator page.
+  title: Customize Smiley Face
+- actors:
+  - Casual User
+  - Parent/Child
+  - Designer
+  apis: []
+  description: User clicks the randomize button to set all smiley features to random
+    values.
+  domains:
+  - smiley
+  happy_path:
+  - User visits the Smiley Generator page.
+  - User clicks the "Randomize" button.
+  - Smiley face updates with new random features.
+  id: randomize_smiley
+  pages:
+  - /
+  postconditions:
+  - Smiley face displays new random features.
+  preconditions:
+  - User is on the Smiley Generator page.
+  title: Randomize Smiley Face
+user_journeys:
+- id: journey_customize_and_randomize
+  persona: Casual User
+  related_use_cases:
+  - customize_smiley
+  - randomize_smiley
+  steps:
+  - action: Open the Smiley Generator app on desktop or mobile.
+    page: /
+  - action: Change face color using the color picker.
+    page: /
+  - action: Adjust mouth shape and eye type via dropdowns/sliders.
+    page: /
+  - action: Click the randomize button.
+    page: /
+  - action: See the smiley face instantly update after each interaction.
+    page: /
+  success_criteria: User sees instant visual feedback and can easily create a smiley
+    they enjoy.
+  title: Customization and Randomization Journey
