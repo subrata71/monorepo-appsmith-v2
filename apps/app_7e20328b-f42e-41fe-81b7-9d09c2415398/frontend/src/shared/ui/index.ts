@@ -248,6 +248,7 @@ export {
 export { Skeleton } from './skeleton';
 export { Slider } from './slider';
 export { Toaster } from './sonner';
+export { Confetti } from './confetti';
 export { Switch } from './switch';
 export {
   Table,

@@ -9,6 +9,7 @@ import React from 'react';
 import { MoodSelection } from '@/features/mood-selection';
 import { NoteInput } from '@/features/note-input';
 import { SubmitMoodEntry } from '@/features/submit-mood-entry';
+import { AffirmationOverlay } from '@/widgets/affirmation-overlay';
 import type { MoodType } from '@/entities/mood-entry';
 
 export interface MoodEntryFormProps {
@@ -22,6 +23,7 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
       null
     );
     const [note, setNote] = React.useState<string>('');
+    const [showAffirmation, setShowAffirmation] = React.useState<boolean>(false);
 
     const handleMoodSelect = React.useCallback((mood: MoodType) => {
       setSelectedMood(mood);
@@ -32,6 +34,9 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
     }, []);
 
     const handleSubmitSuccess = React.useCallback(() => {
+      // Show affirmation overlay first
+      setShowAffirmation(true);
+      
       // Reset form after successful submission
       setSelectedMood(null);
       setNote('');
@@ -39,6 +44,10 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
       // Call external success callback if provided
       onSubmitSuccess?.();
     }, [onSubmitSuccess]);
+
+    const handleCloseAffirmation = React.useCallback(() => {
+      setShowAffirmation(false);
+    }, []);
 
     return (
       <div className={className}>
@@ -83,6 +92,12 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
             </p>
           </div>
         )}
+
+        {/* Affirmation Overlay */}
+        <AffirmationOverlay
+          open={showAffirmation}
+          onClose={handleCloseAffirmation}
+        />
       </div>
     );
   }
