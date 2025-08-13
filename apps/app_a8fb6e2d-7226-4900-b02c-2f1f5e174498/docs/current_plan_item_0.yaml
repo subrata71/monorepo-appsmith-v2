@@ -1,0 +1,17 @@
+id: ui-1
+name: Stopwatch UI Layout
+sub_items:
+- effort: 1
+  id: ui-1-1
+  name: Create time display element
+  summary: Add a large, prominent element to show the elapsed time (e.g., 00:00:00).
+- effort: 1
+  id: ui-1-2
+  name: Add Start/Stop button
+  summary: Add a button to start and stop the stopwatch.
+- effort: 1
+  id: ui-1-3
+  name: Add Reset button
+  summary: Add a button to reset the stopwatch to zero.
+summary: Design the basic UI for the stopwatch, including time display and control
+  buttons.

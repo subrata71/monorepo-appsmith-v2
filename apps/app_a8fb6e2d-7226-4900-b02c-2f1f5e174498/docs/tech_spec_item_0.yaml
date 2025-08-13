@@ -1,0 +1,266 @@
+client:
+  components:
+    entities:
+    - description: Displays formatted elapsed time and reacts to state updates.
+      entity: Stopwatch
+      name: StopwatchDisplay
+      props:
+      - elapsedTime
+    features:
+    - description: Contains Start/Stop and Reset buttons, manages enabling/disabling
+        and label changes based on stopwatch state.
+      entities:
+      - Stopwatch
+      feature: stopwatch
+      name: StopwatchControls
+      props:
+      - isRunning
+      - elapsedTime
+      - onStartStop
+      - onReset
+      shared:
+      - Button
+    shared:
+    - category: ui
+      description: Reusable button component with style variants and visual feedback.
+      name: Button
+      props:
+      - label
+      - onClick
+      - disabled
+      - variant
+    - category: ui
+      description: Monospace styled text for displaying time.
+      name: TimeText
+      props:
+      - value
+    widgets:
+    - description: Combines time display and controls into a centered, responsive
+        panel.
+      entities:
+      - StopwatchDisplay
+      features:
+      - StopwatchControls
+      name: StopwatchPanel
+      props: []
+      shared:
+      - TimeText
+  pages:
+  - description: UI page for operating the stopwatch, including time display and control
+      buttons.
+    queries: []
+    route: /stopwatch
+    title: Stopwatch
+    widgets:
+    - StopwatchPanel
+  - description: Redirects to /stopwatch.
+    queries: []
+    route: /
+    title: Home (redirects to Stopwatch)
+    widgets: []
+  stores:
+  - actions:
+    - start
+    - stop
+    - reset
+    - tick
+    description: Manages stopwatch state, including running/paused, elapsed time,
+      and provides start/stop/reset actions and derived state for UI.
+    layer: entities
+    name: stopwatchStore
+    state_shape:
+    - name: elapsedTime
+      type: number
+    - name: isRunning
+      type: boolean
+components:
+  parameters: []
+  responses: []
+  schemas:
+  - name: Stopwatch
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns the current stopwatch state.
+      operation_id: getStopwatch
+      summary: Get current stopwatch state
+      tags:
+      - stopwatch
+    path: /api/stopwatch
+  - method: POST
+    operation:
+      description: Creates a new stopwatch and returns its initial state.
+      operation_id: createStopwatch
+      summary: Create a new stopwatch instance
+      tags:
+      - stopwatch
+    path: /api/stopwatch
+  - method: PUT
+    operation:
+      description: Updates stopwatch running state or elapsed time.
+      operation_id: updateStopwatch
+      summary: Update stopwatch state (start, stop, set elapsedTime)
+      tags:
+      - stopwatch
+    path: /api/stopwatch
+  - method: DELETE
+    operation:
+      description: Deletes the current stopwatch.
+      operation_id: deleteStopwatch
+      summary: Delete the current stopwatch instance
+      tags:
+      - stopwatch
+    path: /api/stopwatch
+  description: Domain for managing the state and operations of a single stopwatch
+    instance.
+  models:
+  - description: Represents a single stopwatch's state and timing data.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: elapsedTime
+      nullable: false
+      pk: false
+      type: integer
+    - name: isRunning
+      nullable: false
+      pk: false
+      type: boolean
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Stopwatch
+  name: stopwatch
+  services:
+  - description: Handles business logic for stopwatch state transitions (start, stop,
+      reset, tick).
+    methods:
+    - start
+    - stop
+    - reset
+    - tick
+    name: StopwatchService
+metadata:
+  description: Implements the basic stopwatch interface, including time display and
+    control buttons with responsive, accessible design.
+  generated_at: '2024-06-13T15:30:00Z'
+  name: Stopwatch UI Layout
+  version: 1.0.0
+product:
+  features:
+  - description: Real-time display of the elapsed time in HH:MM:SS format.
+    domains:
+    - stopwatch
+    id: stopwatch_time_display
+    priority: high
+    title: Stopwatch Time Display
+  - description: Start/Stop and Reset buttons with dynamic labels, feedback, and accessibility
+      features.
+    domains:
+    - stopwatch
+    id: stopwatch_controls
+    priority: high
+    title: Stopwatch Controls
+  goals:
+  - Provide an intuitive stopwatch interface with clear, readable time display.
+  - Enable users to easily start, stop, and reset the timer with immediate visual
+    feedback.
+  - Ensure accessibility and responsiveness across devices and input methods.
+  personas:
+  - description: Any visitor who needs to time an activity or interval, such as students,
+      athletes, or professionals.
+    goals:
+    - Track elapsed time with precision.
+    - Operate stopwatch controls easily via mouse or keyboard.
+    - Clearly see the current timer state.
+    name: General User
+  summary: A web-based stopwatch featuring a modern, accessible UI with real-time
+    time display and control buttons for starting, stopping, and resetting the timer.
+use_cases:
+- actors:
+  - General User
+  apis: []
+  description: User navigates to the stopwatch page to see the current elapsed time
+    and control buttons.
+  domains:
+  - stopwatch
+  happy_path:
+  - User opens the stopwatch page.
+  - UI displays the time at 00:00:00 and the Start/Stop and Reset buttons.
+  id: view_stopwatch
+  pages:
+  - /stopwatch
+  postconditions:
+  - User sees the time at 00:00:00 and operational controls.
+  preconditions: []
+  title: View Stopwatch
+- actors:
+  - General User
+  apis: []
+  description: User starts and stops the stopwatch using the Start/Stop button.
+  domains:
+  - stopwatch
+  happy_path:
+  - User clicks or presses 'Start'.
+  - Timer begins counting and updates every second.
+  - Start button label changes to 'Stop'.
+  - User clicks or presses 'Stop'; timer pauses and label changes back to 'Start'.
+  id: start_stop_stopwatch
+  pages:
+  - /stopwatch
+  postconditions:
+  - Stopwatch state toggles between running and paused; label updates accordingly.
+  preconditions:
+  - User is on the stopwatch page.
+  title: Start/Stop Stopwatch
+- actors:
+  - General User
+  apis: []
+  description: User resets the stopwatch to zero using the Reset button.
+  domains:
+  - stopwatch
+  happy_path:
+  - User clicks or presses 'Reset'.
+  - Timer stops and resets to 00:00:00.
+  - Reset button is disabled if timer is already at zero.
+  id: reset_stopwatch
+  pages:
+  - /stopwatch
+  postconditions:
+  - Timer stops and resets to 00:00:00.
+  - Reset button is disabled if timer is already at zero.
+  preconditions:
+  - User is on the stopwatch page.
+  title: Reset Stopwatch
+user_journeys:
+- id: stopwatch_basic_flow
+  persona: General User
+  related_use_cases:
+  - view_stopwatch
+  - start_stop_stopwatch
+  - reset_stopwatch
+  steps:
+  - action: Open stopwatch page.
+    page: /stopwatch
+  - action: Start the stopwatch.
+    page: /stopwatch
+  - action: Observe the time incrementing in the display.
+    page: /stopwatch
+  - action: Stop the stopwatch.
+    page: /stopwatch
+  - action: Reset the stopwatch to zero.
+    page: /stopwatch
+  - action: Repeat actions as needed.
+    page: /stopwatch
+  success_criteria: User is able to control the stopwatch and see immediate, clear
+    feedback on actions.
+  title: Basic Stopwatch Operation

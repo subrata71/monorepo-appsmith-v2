@@ -1,0 +1,47 @@
+access: No special access restrictions. All users can view and operate the stopwatch.
+behaviour: All interactions are immediately reflected in the UI (e.g., pressing Start
+  begins timer, pressing Stop pauses, pressing Reset returns to 00:00:00). Button
+  states (enabled/disabled) adapt to the stopwatch state. Layout is responsive and
+  supports keyboard navigation.
+name: Stopwatch UI Layout
+page:
+  behaviour: Page auto-centers content and adapts to screen size. Controls are accessible
+    via keyboard and provide focus indication. Button states update dynamically.
+  id: stopwatch_ui
+  purpose: 'Allows users to operate a stopwatch: displaying elapsed time, starting,
+    stopping, and resetting the timer.'
+  sections:
+  - behaviour: Displays elapsed time, updates in real time when running. Resets to
+      00:00:00 on reset.
+    blocks:
+    - behaviour: Shows the current elapsed time in HH:MM:SS; updates every second
+        when running; resets to zero on reset.
+      id: elapsed_time_display
+    id: display_section
+    title: Time Display
+    visual: Large, centered, bold monospace font for displaying time (e.g., 00:00:00).
+      Clearly separated from controls below.
+  - behaviour: '''Start/Stop'' button toggles the running state of the stopwatch and
+      updates its label; ''Reset'' button sets time to zero and disables itself when
+      already at zero.'
+    blocks:
+    - behaviour: Toggles between running and stopped states. Label updates to 'Start'
+        or 'Stop' accordingly. Keyboard accessible.
+      id: start_stop_button
+    - behaviour: Resets stopwatch to zero and stops it. Disabled if time is already
+        at zero. Keyboard accessible.
+      id: reset_button
+    id: controls_section
+    title: Stopwatch Controls
+    visual: Row of two large, rounded buttons ('Start/Stop' and 'Reset'), spaced apart,
+      below the time display. Buttons change color or style when pressed/active.
+  title: Stopwatch
+  visual: Vertically and horizontally centered content. Time display at the top, followed
+    by control buttons laid out horizontally below. Clear separation and spacing between
+    display and controls.
+summary: Design the basic UI for the stopwatch, including time display and control
+  buttons (Start/Stop, Reset).
+visual: Simple, modern layout with a dark or neutral background, large, centered time
+  display in a monospace font, and prominent control buttons with clear labels. Use
+  high contrast for readability. Buttons have rounded corners and visual feedback
+  on interaction.
