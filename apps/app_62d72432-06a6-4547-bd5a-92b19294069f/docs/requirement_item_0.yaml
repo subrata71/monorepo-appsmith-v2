@@ -1,0 +1,54 @@
+access: No authentication required. Open to any visitor. All controls should be accessible
+  via keyboard and have aria-labels as appropriate for screen readers.
+behaviour: All interactions are client-side. The wheel animates smoothly when spun,
+  randomly lands on a slot, and visually highlights the result. The 'Spin' button
+  is disabled during spinning. Results are shown immediately after the spin completes.
+  Accessible via keyboard and screen reader.
+name: Roulette Wheel UI Prototype
+page:
+  behaviour: User clicks 'Spin'; wheel animates for a few seconds and randomly selects
+    a slot. The UI makes it clear which slot won and disables the spin button until
+    the animation ends. Everything runs in the browser, with no persistence.
+  id: roulette_ui
+  purpose: Allow users to interactively spin a roulette wheel and see the randomly
+    chosen result for UI/UX prototyping purposes.
+  sections:
+  - behaviour: Renders the wheel and animates the spin. Once the animation ends, highlights
+      the slot that was selected.
+    blocks:
+    - behaviour: Draws and animates the roulette wheel. Controls highlighting and
+        selection states for slots.
+      id: roulette_canvas
+    id: wheel_display
+    title: Roulette Wheel Display
+    visual: Large, colorful wheel with numbered segments. The winning slot is visually
+      highlighted after a spin.
+  - behaviour: On click, if not already spinning, disables itself and triggers the
+      wheel animation. Re-enables when the animation completes.
+    blocks:
+    - behaviour: Triggers a random wheel spin and disables itself during the animation.
+      id: spin_button
+    id: spin_action
+    title: Spin Control
+    visual: Large, themed 'Spin' button aligned below the wheel, visually distinct
+      when enabled or disabled.
+  - behaviour: Empty by default, shows the winning number after each spin. Resets
+      when a new spin starts.
+    blocks:
+    - behaviour: Displays the winning number after the spin completes. Clears on new
+        spin.
+      id: result_text
+    id: result_section
+    title: Result Display
+    visual: Winning number shown in large, bold type. May use color or animation to
+      draw attention.
+  title: Roulette Wheel
+  visual: A single centered roulette wheel, with the 'Spin' button below. Winning
+    result is shown below or beside the wheel. Ample white space and a clear, uncluttered
+    layout.
+summary: An interactive front-end prototype of a roulette wheel that can be spun by
+  the user, visually highlights the winning number, and does not require any backend
+  or data persistence.
+visual: Focus on a central, visually appealing roulette wheel rendered in canvas or
+  SVG, with vibrant alternating colors for slots. UI is modern, clean, minimal, and
+  mobile responsive. The spin button is prominent and matches the theme of the wheel.
