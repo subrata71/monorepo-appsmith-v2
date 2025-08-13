@@ -35,7 +35,19 @@ export const RouletteSlot = memo<RouletteSlotProps>(
     const textY = centerY + textRadius * Math.sin(textAngle);
 
     const getSlotColor = () => {
-      if (highlighted) return '#fbbf24'; // yellow for highlighting
+      if (highlighted) {
+        // Enhanced highlighting with glow effect colors
+        switch (slot.color) {
+          case 'red':
+            return '#fbbf24'; // gold for highlighted red
+          case 'black':
+            return '#fbbf24'; // gold for highlighted black
+          case 'green':
+            return '#fbbf24'; // gold for highlighted green
+          default:
+            return '#fbbf24';
+        }
+      }
       switch (slot.color) {
         case 'red':
           return '#dc2626';
@@ -59,12 +71,30 @@ export const RouletteSlot = memo<RouletteSlotProps>(
 
     return (
       <g>
+        {/* Glow effect for highlighted slot */}
+        {highlighted && (
+          <path
+            d={`M ${x1} ${y1} L ${x2} ${y2} A ${radius} ${radius} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${radius - 40} ${radius - 40} 0 0 0 ${x1} ${y1}`}
+            fill="none"
+            stroke="#fbbf24"
+            strokeWidth="6"
+            opacity="0.7"
+          >
+            <animate
+              attributeName="opacity"
+              values="0.7;0.3;0.7"
+              dur="1s"
+              repeatCount="indefinite"
+            />
+          </path>
+        )}
+
         {/* Slot segment */}
         <path
           d={`M ${x1} ${y1} L ${x2} ${y2} A ${radius} ${radius} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${radius - 40} ${radius - 40} 0 0 0 ${x1} ${y1}`}
           fill={getSlotColor()}
-          stroke="#ffffff"
-          strokeWidth="1"
+          stroke={highlighted ? "#fbbf24" : "#ffffff"}
+          strokeWidth={highlighted ? "3" : "1"}
         />
 
         {/* Number text */}
@@ -74,12 +104,31 @@ export const RouletteSlot = memo<RouletteSlotProps>(
           textAnchor="middle"
           dominantBaseline="middle"
           fill={highlighted ? '#000000' : textColor}
-          fontSize="12"
+          fontSize={highlighted ? "14" : "12"}
           fontWeight="bold"
           transform={`rotate(${angle}, ${textX}, ${textY})`}
         >
           {slot.number}
         </text>
+        
+        {/* Additional glow for text when highlighted */}
+        {highlighted && (
+          <text
+            x={textX}
+            y={textY}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="1"
+            fontSize="14"
+            fontWeight="bold"
+            transform={`rotate(${angle}, ${textX}, ${textY})`}
+            opacity="0.8"
+          >
+            {slot.number}
+          </text>
+        )}
       </g>
     );
   }
