@@ -20,7 +20,7 @@ export const MoodHistoryList = React.memo<MoodHistoryListProps>(
     const [entries, setEntries] = React.useState<MoodEntry[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
 
-    // Load entries from localStorage on mount
+    // Load entries from localStorage on mount and when storage changes
     React.useEffect(() => {
       const loadEntries = () => {
         try {
@@ -35,6 +35,29 @@ export const MoodHistoryList = React.memo<MoodHistoryListProps>(
       };
 
       loadEntries();
+
+      // Listen for custom storage events to refresh when entries are added/changed
+      const handleStorageUpdate = () => {
+        loadEntries();
+      };
+
+      // Listen for window focus to refresh when returning to the page
+      const handleWindowFocus = () => {
+        loadEntries();
+      };
+
+      // Listen for custom mood entry events
+      window.addEventListener('mood-entry-added', handleStorageUpdate);
+      window.addEventListener('mood-entry-updated', handleStorageUpdate);
+      window.addEventListener('mood-entry-deleted', handleStorageUpdate);
+      window.addEventListener('focus', handleWindowFocus);
+
+      return () => {
+        window.removeEventListener('mood-entry-added', handleStorageUpdate);
+        window.removeEventListener('mood-entry-updated', handleStorageUpdate);
+        window.removeEventListener('mood-entry-deleted', handleStorageUpdate);
+        window.removeEventListener('focus', handleWindowFocus);
+      };
     }, []);
 
     if (isLoading) {
