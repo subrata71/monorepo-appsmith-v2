@@ -7,11 +7,17 @@ interface StopwatchDisplayProps {
   className?: string;
 }
 
-export const StopwatchDisplay = ({ elapsedTime, className }: StopwatchDisplayProps) => {
+export const StopwatchDisplay = ({
+  elapsedTime,
+  className,
+}: StopwatchDisplayProps) => {
   const formattedTime = useMemo(() => formatTime(elapsedTime), [elapsedTime]);
 
   return (
-    <div className="flex justify-center items-center" data-testid="stopwatch-display">
+    <div
+      className="flex justify-center items-center"
+      data-testid="stopwatch-display"
+    >
       <TimeText value={formattedTime} className={className} />
     </div>
   );

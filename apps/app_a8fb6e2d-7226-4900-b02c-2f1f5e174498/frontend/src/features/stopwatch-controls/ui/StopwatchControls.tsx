@@ -8,11 +8,11 @@ interface StopwatchControlsProps {
   onReset: () => void;
 }
 
-export const StopwatchControls = ({ 
-  isRunning, 
-  elapsedTime, 
-  onStartStop, 
-  onReset 
+export const StopwatchControls = ({
+  isRunning,
+  elapsedTime,
+  onStartStop,
+  onReset,
 }: StopwatchControlsProps) => {
   const handleStartStop = useCallback(() => {
     onStartStop();
@@ -23,7 +23,10 @@ export const StopwatchControls = ({
   }, [onReset]);
 
   return (
-    <div className="flex items-center justify-center gap-4" data-testid="stopwatch-controls">
+    <div
+      className="flex items-center justify-center gap-4"
+      data-testid="stopwatch-controls"
+    >
       <Button
         onClick={handleStartStop}
         size="lg"
@@ -31,7 +34,7 @@ export const StopwatchControls = ({
       >
         {isRunning ? 'Stop' : 'Start'}
       </Button>
-      
+
       <Button
         onClick={handleReset}
         variant="outline"

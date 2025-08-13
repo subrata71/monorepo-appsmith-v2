@@ -7,7 +7,7 @@ export const StopwatchPage = () => {
       <Helmet>
         <title>Stopwatch</title>
       </Helmet>
-      
+
       <main className="flex-1 overflow-auto">
         <div className="container mx-auto px-4 py-8">
           <StopwatchPanel />

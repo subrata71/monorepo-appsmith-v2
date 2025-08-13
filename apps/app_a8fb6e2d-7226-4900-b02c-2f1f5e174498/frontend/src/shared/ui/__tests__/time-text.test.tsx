@@ -6,7 +6,7 @@ describe('TimeText', () => {
   it('renders the time value correctly', () => {
     const { getByTestId } = render(<TimeText value="01:23:45" />);
     const timeElement = getByTestId('time-text');
-    
+
     expect(timeElement).toBeInTheDocument();
     expect(timeElement).toHaveTextContent('01:23:45');
   });
@@ -14,7 +14,7 @@ describe('TimeText', () => {
   it('applies correct CSS classes', () => {
     const { getByTestId } = render(<TimeText value="00:00:00" />);
     const timeElement = getByTestId('time-text');
-    
+
     expect(timeElement).toHaveClass('font-mono');
     expect(timeElement).toHaveClass('text-6xl');
     expect(timeElement).toHaveClass('font-bold');
@@ -27,7 +27,7 @@ describe('TimeText', () => {
       <TimeText value="00:00:00" className="custom-class" />
     );
     const timeElement = getByTestId('time-text');
-    
+
     expect(timeElement).toHaveClass('custom-class');
     expect(timeElement).toHaveClass('font-mono'); // Should still have default classes
   });

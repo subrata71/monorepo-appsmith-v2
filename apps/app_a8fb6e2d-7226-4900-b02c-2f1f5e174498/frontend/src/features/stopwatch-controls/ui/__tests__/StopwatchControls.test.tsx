@@ -13,7 +13,7 @@ describe('StopwatchControls', () => {
   describe('Start/Stop Button', () => {
     it('shows "Start" when stopwatch is not running', () => {
       render(
-        <StopwatchControls 
+        <StopwatchControls
           isRunning={false}
           elapsedTime={0}
           onStartStop={mockOnStartStop}
@@ -27,7 +27,7 @@ describe('StopwatchControls', () => {
 
     it('shows "Stop" when stopwatch is running', () => {
       render(
-        <StopwatchControls 
+        <StopwatchControls
           isRunning={true}
           elapsedTime={5000}
           onStartStop={mockOnStartStop}
@@ -41,7 +41,7 @@ describe('StopwatchControls', () => {
 
     it('calls onStartStop when clicked', () => {
       render(
-        <StopwatchControls 
+        <StopwatchControls
           isRunning={false}
           elapsedTime={0}
           onStartStop={mockOnStartStop}
@@ -59,7 +59,7 @@ describe('StopwatchControls', () => {
   describe('Reset Button', () => {
     it('is disabled when elapsed time is 0', () => {
       render(
-        <StopwatchControls 
+        <StopwatchControls
           isRunning={false}
           elapsedTime={0}
           onStartStop={mockOnStartStop}
@@ -73,7 +73,7 @@ describe('StopwatchControls', () => {
 
     it('is enabled when elapsed time is greater than 0', () => {
       render(
-        <StopwatchControls 
+        <StopwatchControls
           isRunning={false}
           elapsedTime={5000}
           onStartStop={mockOnStartStop}
@@ -87,7 +87,7 @@ describe('StopwatchControls', () => {
 
     it('calls onReset when clicked and enabled', () => {
       render(
-        <StopwatchControls 
+        <StopwatchControls
           isRunning={false}
           elapsedTime={5000}
           onStartStop={mockOnStartStop}
@@ -104,7 +104,7 @@ describe('StopwatchControls', () => {
 
   it('renders both buttons', () => {
     render(
-      <StopwatchControls 
+      <StopwatchControls
         isRunning={false}
         elapsedTime={0}
         onStartStop={mockOnStartStop}

@@ -9,7 +9,7 @@ export const AppRoutes = () => {
         {/* Redirect root to stopwatch page */}
         <Route path="/" element={<Navigate to="/stopwatch" replace />} />
         <Route path="/stopwatch" element={<StopwatchPage />} />
-        
+
         {/* Catch undefined routes */}
         <Route path="*" element={<Navigate to="/stopwatch" replace />} />
       </Route>

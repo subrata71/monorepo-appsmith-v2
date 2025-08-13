@@ -1,0 +1,47 @@
+access: No authentication required. All users can access the stopwatch functionality
+  from the browser.
+behaviour: The stopwatch responds instantly to Start/Stop and Reset actions. Buttons
+  update state and label based on timer status. Timer is accurate to at least 1 second.
+  Keyboard navigation is supported.
+name: Stopwatch Prototype Logic
+page:
+  behaviour: Page initializes with timer at 00:00:00, Start/Stop button enabled, Reset
+    disabled. Pressing Start begins the timer (button changes to Stop), which updates
+    every second. Pressing Stop halts the time (button changes to Start). Reset sets
+    the time to 00:00:00 and disables Reset if timer is already zero or running.
+  id: stopwatch
+  purpose: Provide users with an interactive stopwatch interface that can be started,
+    stopped, and reset easily for timing activities.
+  sections:
+  - behaviour: Displays current elapsed time, updates every second when running, resets
+      to 00:00:00 when Reset is pressed.
+    blocks:
+    - behaviour: Renders and updates the elapsed time in real-time. Always shows the
+        actual timer value (HH:MM:SS).
+      id: timer_display_block
+    id: timer_display_section
+    title: Time Display
+    visual: Large, bold, centered time in HH:MM:SS format using a monospace font.
+  - behaviour: Start/Stop button toggles the timer; label changes based on state.
+      Reset resets timer to zero and disables when timer is zero or running. Both
+      buttons are keyboard accessible and visually indicate active/disabled states.
+    blocks:
+    - behaviour: On press, starts or stops the timer depending on current state. Button
+        label dynamically changes between Start and Stop.
+      id: start_stop_button_block
+    - behaviour: On press, resets the timer to 00:00:00. Button disabled if timer
+        is running or at 00:00:00.
+      id: reset_button_block
+    id: controls_section
+    title: Controls
+    visual: Two large horizontally aligned buttons labeled Start/Stop and Reset, spaced
+      evenly below the display.
+  title: Stopwatch
+  visual: 'Centered column layout: Large digital time display at the top, followed
+    by horizontally aligned Start/Stop and Reset buttons below. Clear visual feedback
+    on button states. Uses monospace font for the time display.'
+summary: Implement simple front-end logic to make the stopwatch UI interactive, allowing
+  users to start, stop, and reset the timer.
+visual: Minimal, clean interface with a large digital time display and two prominent
+  buttons (Start/Stop, Reset). Use of high-contrast colors for accessibility. Layout
+  is centered with clear spacing around elements.

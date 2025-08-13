@@ -1,0 +1,13 @@
+id: proto-1
+name: Stopwatch Prototype Logic
+sub_items:
+- effort: 2
+  id: proto-1-1
+  name: Implement timer logic
+  summary: Use JavaScript (or similar) to increment the time display when started,
+    and stop when stopped.
+- effort: 1
+  id: proto-1-2
+  name: Wire up buttons to logic
+  summary: Connect the Start/Stop and Reset buttons to the timer logic.
+summary: Implement simple front-end logic to make the stopwatch UI interactive.

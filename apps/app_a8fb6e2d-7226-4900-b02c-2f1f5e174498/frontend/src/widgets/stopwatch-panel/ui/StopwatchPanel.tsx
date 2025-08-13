@@ -35,7 +35,7 @@ export const StopwatchPanel = () => {
   }, [isRunning, tick]);
 
   return (
-    <div 
+    <div
       className="flex flex-col items-center justify-center min-h-[400px] space-y-8"
       data-testid="stopwatch-panel"
     >
@@ -43,8 +43,8 @@ export const StopwatchPanel = () => {
         <h1 className="text-4xl font-bold text-foreground mb-8">Stopwatch</h1>
         <StopwatchDisplay elapsedTime={elapsedTime} />
       </div>
-      
-      <StopwatchControls 
+
+      <StopwatchControls
         isRunning={isRunning}
         elapsedTime={elapsedTime}
         onStartStop={handleStartStop}
