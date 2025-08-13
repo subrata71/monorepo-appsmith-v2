@@ -1,0 +1,326 @@
+client:
+  components:
+    entities:
+    - description: Renders a single mood option icon/button; handles selection state.
+      entity: mood
+      name: MoodOption
+      props:
+      - type
+      - selected
+      - onSelect
+    - description: Renders a single mood entry (if needed in future).
+      entity: moodEntry
+      name: MoodEntryItem
+      props:
+      - mood
+      - note
+      - createdAt
+    features:
+    - description: Feature component for rendering all mood options and managing selection
+        state.
+      entities:
+      - MoodOption
+      feature: mood-selection
+      name: MoodSelection
+      props:
+      - selectedMood
+      - onSelect
+      shared:
+      - Icon
+    - description: Feature component for multiline note input, enforcing character
+        limit.
+      entities: []
+      feature: note-entry
+      name: NoteInput
+      props:
+      - note
+      - onNoteChange
+      - maxLength
+      shared:
+      - Input
+    - description: Feature component for validating and submitting the mood entry.
+      entities: []
+      feature: local-storage
+      name: SubmitMoodEntry
+      props:
+      - disabled
+      - onSubmit
+      shared:
+      - Button
+      - Snackbar
+    shared:
+    - category: ui
+      description: Reusable primary and secondary button component.
+      name: Button
+      props:
+      - onClick
+      - disabled
+      - children
+    - category: ui
+      description: Reusable text input or textarea component with character counter.
+      name: Input
+      props:
+      - value
+      - onChange
+      - maxLength
+      - placeholder
+    - category: ui
+      description: Renders mood icons.
+      name: Icon
+      props:
+      - type
+      - selected
+    - category: ui
+      description: Displays feedback/toast messages.
+      name: Snackbar
+      props:
+      - message
+      - open
+    widgets:
+    - description: Widget combining mood selection, note input, and submit button
+        into a card UI.
+      entities:
+      - MoodOption
+      features:
+      - MoodSelection
+      - NoteInput
+      - SubmitMoodEntry
+      name: MoodEntryForm
+      props: []
+      shared:
+      - Button
+      - Input
+      - Icon
+      - Snackbar
+  pages:
+  - description: Page for logging a mood and optional note. Centered form card, mood
+      options, note input, and submit button.
+    queries: []
+    route: /mood-entry
+    title: Mood Entry
+    widgets:
+    - MoodEntryForm
+  stores:
+  - actions:
+    - 'selectMood(mood: string)'
+    - 'setNote(note: string)'
+    - submitEntry()
+    - resetForm()
+    - 'showFeedback(message: string)'
+    - loadEntries()
+    description: State management for mood entry form and local mood entries. Handles
+      form state, validation, submission, and feedback.
+    layer: entities
+    name: moodEntryStore
+    state_shape:
+    - name: selectedMood
+      type: string | null
+    - name: note
+      type: string
+    - name: isSubmitting
+      type: boolean
+    - name: showSnackbar
+      type: boolean
+    - name: snackbarMessage
+      type: string
+    - name: entries
+      type: MoodEntry[]
+components:
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  responses:
+  - code: '404'
+    description: Mood entry not found.
+  - code: '400'
+    description: Invalid input data.
+  - code: '500'
+    description: Unexpected server error.
+  schemas:
+  - name: MoodEntry
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Get all mood entries from local storage.
+      operation_id: getMoodEntries
+      summary: Get all mood entries
+      tags:
+      - MoodEntry
+    path: /mood-entries
+  - method: GET
+    operation:
+      description: Get a single mood entry by ID from local storage.
+      operation_id: getMoodEntryById
+      summary: Get mood entry by ID
+      tags:
+      - MoodEntry
+    path: /mood-entries/{id}
+  - method: POST
+    operation:
+      description: Create a new mood entry in local storage.
+      operation_id: createMoodEntry
+      summary: Create mood entry
+      tags:
+      - MoodEntry
+    path: /mood-entries
+  - method: PUT
+    operation:
+      description: Update an existing mood entry in local storage.
+      operation_id: updateMoodEntry
+      summary: Update mood entry
+      tags:
+      - MoodEntry
+    path: /mood-entries/{id}
+  - method: DELETE
+    operation:
+      description: Delete a mood entry from local storage.
+      operation_id: deleteMoodEntry
+      summary: Delete mood entry
+      tags:
+      - MoodEntry
+    path: /mood-entries/{id}
+  description: Domain for managing mood entries stored on the client side (local only).
+  models:
+  - description: A single mood entry containing selected mood, optional note, and
+      timestamps.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: mood
+      nullable: false
+      pk: false
+      type: string
+    - name: note
+      nullable: true
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: MoodEntry
+  name: moodEntry
+  services:
+  - description: Handles CRUD operations for mood entries in local storage or in-memory
+      store. Provides validation and feedback utilities.
+    methods:
+    - getAll
+    - getById
+    - create
+    - update
+    - delete
+    name: MoodEntryService
+metadata:
+  description: Technical specification for a mood entry interface allowing users to
+    select a mood, enter a note, and store the entry locally with privacy.
+  generated_at: '2024-06-11T10:00:00Z'
+  name: Mood Entry UI
+  version: 1.0.0
+product:
+  features:
+  - description: Users select one mood from a predefined list of common moods.
+    domains:
+    - moodEntry
+    id: mood-selection
+    priority: high
+    title: Mood Selection
+  - description: Users can enter an optional note up to 200 characters.
+    domains:
+    - moodEntry
+    id: note-entry
+    priority: medium
+    title: Note Entry
+  - description: Mood entries are saved to localStorage or in-memory and never transmitted
+      externally.
+    domains:
+    - moodEntry
+    id: local-storage
+    priority: high
+    title: Local Entry Storage
+  - description: Users receive confirmation (e.g., snackbar) on successful entry submission.
+    domains:
+    - moodEntry
+    id: visual-feedback
+    priority: medium
+    title: Visual Feedback
+  - description: Interface adapts to mobile and desktop layouts.
+    domains:
+    - moodEntry
+    id: responsive-ui
+    priority: medium
+    title: Responsive UI
+  goals:
+  - Enable users to quickly log their mood and an optional note.
+  - Ensure privacy by storing entries only in local browser storage.
+  - Provide a clean, accessible, and responsive user interface.
+  - Give immediate feedback on successful mood logging.
+  personas:
+  - description: Wants to quickly log their mood and thoughts throughout the day for
+      personal reflection.
+    goals:
+    - Log mood and thoughts quickly.
+    - Review mood history (future expansion).
+    name: Everyday User
+  - description: Cares about data privacy and does not want their mood data stored
+      on external servers.
+    goals:
+    - Keep mood entries private.
+    - Control local data only.
+    name: Privacy-Conscious User
+  summary: A simple and private interface for users to log their current mood and
+    an optional note, with all data stored only in the user's browser.
+use_cases:
+- actors:
+  - User
+  apis:
+  - createMoodEntry
+  description: User selects a mood, optionally enters a note, and submits the entry
+    to be stored locally.
+  domains:
+  - moodEntry
+  happy_path:
+  - Navigate to the Mood Entry page.
+  - Select a mood from the available options.
+  - Optionally enter a note (up to 200 characters).
+  - Click the submit button (enabled only after mood is selected).
+  - See a confirmation message and cleared form.
+  id: log-mood-entry
+  pages:
+  - /mood-entry
+  postconditions:
+  - Mood entry is saved to local storage or memory.
+  - Form is reset.
+  - User sees confirmation feedback.
+  preconditions:
+  - User is on the Mood Entry page.
+  title: Log a Mood Entry
+user_journeys:
+- id: quick-mood-log
+  persona: Everyday User
+  related_use_cases:
+  - log-mood-entry
+  steps:
+  - action: User opens the Mood Entry UI.
+    page: /mood-entry
+  - action: User taps the "Happy" icon.
+    page: /mood-entry
+  - action: 'User adds a short note: "Great day at work!"'
+    page: /mood-entry
+  - action: User taps "Submit".
+    page: /mood-entry
+  - action: 'User sees a snackbar: "Mood entry saved!" and the form resets.'
+    page: /mood-entry
+  - action: User closes or continues logging.
+    page: /mood-entry
+  success_criteria: Mood entry is saved locally, user receives feedback, and form
+    is reset.
+  title: Quick Mood Logging Journey

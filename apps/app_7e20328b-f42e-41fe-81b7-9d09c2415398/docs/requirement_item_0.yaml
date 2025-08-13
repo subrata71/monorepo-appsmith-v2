@@ -1,0 +1,56 @@
+access: All users can access and use the UI. Entries are private and stored only in
+  the user's browser (not shared or synced).
+behaviour: User must select a mood before submitting. Optional short note. Submit
+  button disabled until a mood is chosen. On submit, store entry in localStorage or
+  in-memory and clear/reset the form. Visual feedback (e.g., toast/snackbar) on successful
+  submission.
+name: Mood Entry UI
+page:
+  behaviour: Responsive design. Mood selection visually highlighted. Note input enforces
+    a reasonable character limit (e.g., 200 chars). Submit button is only enabled
+    after a mood is selected. On submit, entry is saved and the form resets with a
+    confirmation message.
+  id: mood-entry-ui
+  purpose: Allow users to quickly and easily log their current mood and an optional
+    note, with data privacy ensured through local storage.
+  sections:
+  - behaviour: One mood may be selected at a time. Clicking an icon updates the selected
+      mood and highlights the chosen option.
+    blocks:
+    - behaviour: Renders the predefined mood options as icons/buttons. Updates internal
+        state on click to reflect the selected mood.
+      id: mood-icons
+    id: mood-selection
+    title: Mood Selection Options
+    visual: Horizontal row (or grid on small screens) of large, easily-tappable mood
+      icon buttons (smiley, neutral, sad, etc).
+  - behaviour: Optional input. Input is trimmed. Enforces character limit. Updates
+      internal state on input.
+    blocks:
+    - behaviour: Captures and stores user note for this mood entry. Tracks and restricts
+        input to maximum allowed characters.
+      id: note-text-input
+    id: note-input
+    title: Note Input Field
+    visual: Single-line or expandable multi-line text input below the mood icons.
+      Placeholder guides user. Character counter if limit enforced.
+  - behaviour: On click, validates selection and note, saves to localStorage or in-memory,
+      resets form, and shows a non-intrusive confirmation (e.g. snackbar).
+    blocks:
+    - behaviour: Validates and saves the entry (mood + note) locally. Triggers UI
+        reset and feedback on success.
+      id: submit-mood
+    id: submit-section
+    title: Submit Mood Entry
+    visual: Large, full-width primary button at the bottom of the card. Disabled until
+      a mood is selected.
+  title: Mood Entry
+  visual: Form card is centered both vertically and horizontally. Mood options displayed
+    as a row or grid of icons/buttons at the top. Text input below. Submit button
+    at the bottom. Use of color highlights for selection. Rounded UI elements.
+summary: Create a main interface for users to select their mood (from common options
+  such as happy, sad, neutral, etc.), enter a short note, and submit the entry, storing
+  it locally.
+visual: Clean and minimalistic, centered layout. Use clear mood iconography and simple
+  input fields. Primary color accents to indicate selection. Adequate spacing between
+  selectable moods, input, and button. Responsive design for mobile and desktop.
