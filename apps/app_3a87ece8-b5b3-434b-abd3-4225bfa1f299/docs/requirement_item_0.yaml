@@ -1,0 +1,59 @@
+access: Open access for all users. No authentication required. Fully accessible for
+  visually impaired users.
+behaviour: 'Step-based walkthrough: Start screen → question screens (one at a time)
+  → results. Animated transitions. ''Next'' is disabled until a question is answered.
+  Results are only shown at the end. Accessible via keyboard and screen readers.'
+name: Quiz UI and Navigation
+page:
+  behaviour: Transitions between sections are animated. Users may not go back once
+    an answer is submitted. Progress is tracked and displayed.
+  id: quiz_ui
+  purpose: Provides a single, directed experience for users to take a quiz from start
+    to finish, including navigating questions and seeing results.
+  sections:
+  - behaviour: Only visible at the beginning. Clicking 'Start Quiz' begins the quiz
+      and advances to the first question.
+    blocks:
+    - behaviour: Static title at the top; visually prominent.
+      id: quiz_title
+    - behaviour: Brief instructions beneath the title; static text.
+      id: quiz_instructions
+    - behaviour: Primary button; on click, advances to first question.
+      id: start_button
+    id: start
+    title: Quiz Start Screen
+    visual: Single card centered on screen with quiz logo/title, brief text, and a
+      large 'Start Quiz' button.
+  - behaviour: One question shown per page. 'Next' is disabled until an answer is
+      selected. On last question, button changes to 'See Results'.
+    blocks:
+    - behaviour: Displays current question.
+      id: question_text
+    - behaviour: Radio option inputs; required selection.
+      id: question_options
+    - behaviour: Primary button; enabled only when an answer is selected. On click,
+        advances to the next question or results.
+      id: next_button
+    id: question
+    title: Question Navigation
+    visual: Question card with question text at top, answer options below (radio buttons
+      for single select), and large 'Next' button. Progress indicator at top right.
+  - behaviour: Visible only after last question answered. Animated score reveal. Restart
+      button resets quiz state to start.
+    blocks:
+    - behaviour: Shows user's score out of total.
+      id: results_score
+    - behaviour: On click, resets quiz and shows start screen.
+      id: restart_button
+    id: results
+    title: Quiz Results
+    visual: Card with score in large font, feedback text, and a 'Restart Quiz' button.
+      Use green for pass, red for fail if applicable.
+  title: Quiz Interface
+  visual: Centered card-style layout. Blue (#2563EB) accent buttons. Large, clear
+    navigation buttons. Success state (results) uses green highlights.
+summary: Create a user interface for taking a quiz, including a start screen, question
+  delivery, navigation between questions, and result display.
+visual: Modern, clean UI with prominent blue accents. Responsive layout for desktop
+  and mobile. Clear separation between header, content, and navigation. Sufficient
+  spacing between interactive elements. Use of cards or panels for step transitions.

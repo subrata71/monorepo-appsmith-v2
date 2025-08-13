@@ -1,0 +1,488 @@
+client:
+  components:
+    entities:
+    - description: Displays quiz title and instructions
+      entity: Quiz
+      name: QuizCard
+      props:
+      - quiz
+    - description: Displays question text and options
+      entity: Question
+      name: QuestionCard
+      props:
+      - question
+      - onAnswer
+    - description: Displays an individual answer option
+      entity: Option
+      name: OptionItem
+      props:
+      - option
+      - selected
+      - onSelect
+    - description: Displays summary of answers in results view
+      entity: Answer
+      name: AnswerSummary
+      props:
+      - answers
+    features:
+    - description: Feature for quiz start screen logic
+      entities:
+      - QuizCard
+      feature: quiz_start_screen
+      name: QuizStart
+      props:
+      - onStart
+      shared:
+      - Button
+    - description: Feature for handling navigation between quiz steps
+      entities:
+      - QuestionCard
+      feature: question_navigation
+      name: QuizNavigator
+      props:
+      - onNext
+      - step
+      - totalSteps
+      shared:
+      - ProgressBar
+    - description: Feature for rendering and handling answer input for a question
+      entities:
+      - QuestionCard
+      - OptionItem
+      feature: question_navigation
+      name: QuizQuestionForm
+      props:
+      - question
+      - onAnswer
+      shared:
+      - RadioGroup
+      - Button
+    - description: Feature for displaying quiz progress
+      entities: []
+      feature: question_navigation
+      name: QuizProgress
+      props:
+      - current
+      - total
+      shared:
+      - ProgressBar
+    - description: Feature for results display and animated reveal
+      entities:
+      - AnswerSummary
+      feature: quiz_results
+      name: QuizResultsDisplay
+      props:
+      - score
+      - total
+      - onRestart
+      shared:
+      - Card
+      - Button
+    - description: Feature for restarting the quiz
+      entities: []
+      feature: quiz_results
+      name: QuizRestart
+      props:
+      - onRestart
+      shared:
+      - Button
+    shared:
+    - category: ui
+      description: Clickable button for actions
+      name: Button
+      props:
+      - children
+      - onClick
+      - disabled
+    - category: ui
+      description: Card container for layout
+      name: Card
+      props:
+      - children
+    - category: ui
+      description: Progress indication bar
+      name: ProgressBar
+      props:
+      - value
+      - max
+    - category: ui
+      description: Text display component
+      name: Text
+      props:
+      - children
+    - category: ui
+      description: Radio button group for options
+      name: RadioGroup
+      props:
+      - options
+      - value
+      - onChange
+    - category: ui
+      description: Announces state changes to screen readers
+      name: ScreenReaderAnnouncer
+      props:
+      - message
+    widgets:
+    - description: Widget orchestrating quiz step flow (start, questions, results)
+      entities:
+      - QuizCard
+      - QuestionCard
+      - OptionItem
+      - AnswerSummary
+      features:
+      - QuizStart
+      - QuizNavigator
+      - QuizQuestionForm
+      - QuizProgress
+      - QuizResultsDisplay
+      - QuizRestart
+      name: QuizStepper
+      props:
+      - quiz
+      - onSubmit
+      shared:
+      - Card
+      - Button
+      - ProgressBar
+    - description: Widget for showing result summary and controls
+      entities:
+      - AnswerSummary
+      features:
+      - QuizResultsDisplay
+      - QuizRestart
+      name: QuizResultWidget
+      props:
+      - score
+      - total
+      - onRestart
+      shared:
+      - Card
+      - Button
+  pages:
+  - description: Provides a single, directed experience for users to take a quiz from
+      start to finish, including navigating questions and seeing results.
+    queries:
+    - getQuizById
+    - createQuizAttempt
+    - updateQuizAttempt
+    route: /quiz
+    title: Quiz Interface
+    widgets:
+    - QuizStepper
+    - QuizResultWidget
+  stores:
+  - actions:
+    - fetchQuizById
+    description: State for current quiz, questions, and options.
+    layer: entities
+    name: quizStore
+    state_shape:
+    - name: quizzes
+      type: Quiz[]
+    - name: currentQuiz
+      type: Quiz | null
+  - actions:
+    - startAttempt
+    - answerQuestion
+    - nextQuestion
+    - finishQuiz
+    - restartQuiz
+    description: State for user's quiz attempt, answers, progress, and score.
+    layer: features
+    name: quizAttemptStore
+    state_shape:
+    - name: currentAttempt
+      type: QuizAttempt | null
+    - name: currentQuestionIndex
+      type: number
+    - name: answers
+      type: Answer[]
+    - name: score
+      type: number
+    - name: completed
+      type: boolean
+components:
+  parameters:
+  - in_: path},{
+    name: id
+    required: true
+  - in_: body
+    name: quizId
+    required: true
+  responses:
+  - code: '200'
+    description: OK
+  - code: '201'
+    description: Created
+  - code: '204'
+    description: No Content
+  - code: '400'
+    description: Invalid input
+  - code: '404'
+    description: Not Found
+  - code: '500'
+    description: Server error
+  schemas:
+  - name: Quiz
+    type: object
+  - name: Question
+    type: object
+  - name: Option
+    type: object
+  - name: QuizAttempt
+    type: object
+  - name: Answer
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Get quiz details and questions by quiz ID.
+      operation_id: getQuizById
+      summary: Get quiz by ID
+      tags:
+      - Quiz
+    path: /api/quizzes/{id}
+  - method: POST
+    operation:
+      description: Start a new quiz attempt for a user session.
+      operation_id: createQuizAttempt
+      summary: Create quiz attempt
+      tags:
+      - QuizAttempt
+    path: /api/quiz-attempts
+  - method: PUT
+    operation:
+      description: Update a quiz attempt with answers and progress.
+      operation_id: updateQuizAttempt
+      summary: Update quiz attempt
+      tags:
+      - QuizAttempt
+    path: /api/quiz-attempts/{id}
+  description: Core domain for quiz structure, questions, user answers, and scoring.
+  models:
+  - description: Represents a quiz, containing a set of questions.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: title
+      nullable: false
+      pk: false
+      type: string
+    - name: instructions
+      nullable: true
+      pk: false
+      type: string
+    - name: questions
+      nullable: false
+      pk: false
+      type: Question[]
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Quiz
+  - description: A single quiz question with possible answer options.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: quizId
+      nullable: false
+      pk: false
+      type: string
+    - name: text
+      nullable: false
+      pk: false
+      type: string
+    - name: options
+      nullable: false
+      pk: false
+      type: Option[]
+    - name: correctOptionId
+      nullable: false
+      pk: false
+      type: string
+    - name: order
+      nullable: false
+      pk: false
+      type: integer
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Question
+  - description: An answer option for a question.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: questionId
+      nullable: false
+      pk: false
+      type: string
+    - name: text
+      nullable: false
+      pk: false
+      type: string
+    name: Option
+  - description: Represents a user's attempt at a quiz, including answers and score.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: quizId
+      nullable: false
+      pk: false
+      type: string
+    - name: answers
+      nullable: false
+      pk: false
+      type: Answer[]
+    - name: score
+      nullable: false
+      pk: false
+      type: integer
+    - name: completed
+      nullable: false
+      pk: false
+      type: boolean
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: QuizAttempt
+  - description: An answer to a single question in a quiz attempt.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: questionId
+      nullable: false
+      pk: false
+      type: string
+    - name: selectedOptionId
+      nullable: false
+      pk: false
+      type: string
+    - name: isCorrect
+      nullable: false
+      pk: false
+      type: boolean
+    name: Answer
+  name: quiz
+  services:
+  - description: Manage quizzes, questions, and options.
+    methods:
+    - getQuizById
+    name: QuizService
+  - description: Manage quiz attempt lifecycle and scoring.
+    methods:
+    - createQuizAttempt
+    - updateQuizAttempt
+    name: QuizAttemptService
+metadata:
+  description: User interface for taking a quiz with step-based navigation, animated
+    transitions, and results display.
+  generated_at: '2024-06-11T12:00:00Z'
+  name: Quiz UI and Navigation
+  version: 1.0.0
+product:
+  features:
+  - description: Welcome and instructions for the quiz, with a clear entry point to
+      begin.
+    domains:
+    - quiz
+    id: quiz_start_screen
+    priority: high
+    title: Quiz Start Screen
+  - description: Step-by-step delivery of quiz questions, with answer selection and
+      progress tracking.
+    domains:
+    - quiz
+    id: question_navigation
+    priority: high
+    title: Question Navigation
+  - description: Animated score display, feedback, and option to restart the quiz.
+    domains:
+    - quiz
+    id: quiz_results
+    priority: high
+    title: Quiz Results
+  goals:
+  - Deliver a seamless, step-based quiz-taking experience
+  - Ensure accessibility and responsive design
+  - Track and display user progress and results
+  personas:
+  - description: Any visitor wanting to take a quiz without authentication requirements.
+      May use desktop, mobile, or assistive technologies.
+    goals:
+    - Easily start and complete a quiz
+    - Understand progress and results
+    - Navigate using keyboard or screen reader
+    name: General User
+  summary: Provides a modern, accessible user experience for taking a quiz from start
+    to finish, including navigation between questions and displaying results.
+use_cases:
+- actors:
+  - General User
+  apis:
+  - getQuizById
+  - createQuizAttempt
+  - updateQuizAttempt
+  description: User starts a quiz, answers each question in sequence, and views their
+    results at the end.
+  domains:
+  - quiz
+  happy_path:
+  - User visits quiz page and sees start screen
+  - User clicks "Start Quiz"
+  - User answers each question in turn, clicking "Next" each time
+  - After the last question, user sees animated results screen
+  - User may restart the quiz
+  id: take-quiz
+  pages:
+  - /quiz
+  postconditions:
+  - User sees quiz results and may restart the quiz
+  preconditions:
+  - Quiz exists and is available for the user
+  title: Take a Quiz
+user_journeys:
+- id: basic-quiz-attempt
+  persona: General User
+  related_use_cases:
+  - take-quiz
+  steps:
+  - action: Land on the quiz interface and read instructions.
+    page: /quiz
+  - action: Click 'Start Quiz' and see the first question.
+    page: /quiz
+  - action: Select an answer and click 'Next'.
+    page: /quiz
+  - action: Repeat for each question, with progress displayed.
+    page: /quiz
+  - action: Complete the last question and see results.
+    page: /quiz
+  - action: Click 'Restart Quiz' to try again, returning to start.
+    page: /quiz
+  success_criteria: User completes quiz, sees results, and can restart.
+  title: Basic Quiz Attempt

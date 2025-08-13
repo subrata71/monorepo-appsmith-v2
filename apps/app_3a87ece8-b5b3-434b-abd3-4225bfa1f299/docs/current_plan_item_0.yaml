@@ -1,0 +1,15 @@
+id: '1'
+name: Quiz UI and Navigation
+sub_items:
+- effort: 1
+  id: '1.1'
+  name: Quiz Start Screen
+  summary: Implement a simple start screen with a button to begin the quiz and brief
+    instructions.
+- effort: 1
+  id: '1.2'
+  name: Question Navigation
+  summary: Allow users to move to the next question after answering, or see results
+    at the end.
+summary: Create the main UI for the quiz, including navigation between questions and
+  a start screen.
