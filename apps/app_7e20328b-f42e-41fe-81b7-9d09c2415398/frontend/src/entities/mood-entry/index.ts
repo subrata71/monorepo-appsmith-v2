@@ -14,3 +14,7 @@ export type {
 export type { MoodOption as MoodOptionData } from './model/types.js';
 
 export { MOOD_OPTIONS, getMoodOption, isValidMoodType } from './model/types.js';
+
+// UI Components
+export { MoodEntryItem } from './ui/MoodEntryItem.js';
+export type { MoodEntryItemProps } from './ui/MoodEntryItem.js';

@@ -1,0 +1,12 @@
+id: '2'
+name: Mood History Display
+sub_items:
+- effort: 2
+  id: '2.1'
+  name: History List UI
+  summary: Display a chronological list of mood entries with mood and note.
+- effort: 1
+  id: '2.2'
+  name: Local Storage Integration
+  summary: Persist mood entries in localStorage so history is retained on refresh.
+summary: Show a list of previous mood entries with their notes.

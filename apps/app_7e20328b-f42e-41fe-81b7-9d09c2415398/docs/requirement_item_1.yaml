@@ -1,0 +1,43 @@
+access: No login is required. All data is stored locally for the current browser profile
+  only. Anyone with access to the browser can see the mood history.
+behaviour: On page load, the app retrieves existing mood entries from localStorage
+  and displays them with the most recent first. When a new mood is logged, it's added
+  to the top of the list and saved to localStorage. All changes are reflected immediately
+  in the UI. Scrolling is enabled for long lists. No server communication is required.
+name: Mood History Display
+page:
+  behaviour: On page load, retrieve and display mood history from localStorage in
+    reverse chronological order. New entries are immediately added to localStorage
+    and the top of the list. Seamless UI updates. Scrolling enabled if necessary.
+  id: mood_history
+  purpose: Enable users to review previous moods and attached notes, providing a persistent,
+    private log of emotional state over time.
+  sections:
+  - behaviour: Static, always visible at the top.
+    blocks:
+    - behaviour: Displays the static page title.
+      id: title_block
+    id: header
+    title: Page Header
+    visual: Large, bold title ('Mood History') centered at the top with a divider
+      below.
+  - behaviour: Maps over mood history data from localStorage and renders each as a
+      list item. Updates in real time as the list changes.
+    blocks:
+    - behaviour: Displays mood icon/color, note, and timestamp for a single entry.
+        Repeats for each entry from data.
+      id: mood_entry_item
+    id: history_list
+    title: Mood Entry List
+    visual: 'Stacked cards or rows. Each card: mood icon/color, user note, timestamp,
+      consistent padding and margin.'
+  title: Mood History
+  visual: Centered, vertical list layout. Title at the top, followed by the list of
+    entries. Each entry is a card or row with a visual indicator for mood, the note,
+    and timestamp. Soft card shadows and spacing for clarity.
+summary: Show a list of previous mood entries with their notes. Persists entries using
+  browser localStorage so history is retained between sessions and page refreshes.
+visual: Clean, minimal, and calming UI. Use cards or list rows for each mood entry.
+  Mood is represented visually (color/icon). Notes are displayed below or beside the
+  mood. Use soft background colors and clear separation between entries. Responsive
+  design for mobile and desktop.

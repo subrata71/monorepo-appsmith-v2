@@ -11,7 +11,7 @@ export function App() {
       <HelmetProvider>
         <BrowserRouter>
           <AppRoutes />
-          <Toaster 
+          <Toaster
             position="top-center"
             richColors
             closeButton

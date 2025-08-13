@@ -7,9 +7,9 @@
 
 import React from 'react';
 import { Button } from '@/shared/ui/button';
-import { 
-  createMoodEntry, 
-  validateMoodEntryRequest 
+import {
+  createMoodEntry,
+  validateMoodEntryRequest,
 } from '@/shared/lib/mood-entry-storage';
 import type { MoodType, CreateMoodEntryRequest } from '@/entities/mood-entry';
 import { toast } from 'sonner';
@@ -23,13 +23,7 @@ export interface SubmitMoodEntryProps {
 }
 
 export const SubmitMoodEntry = React.memo<SubmitMoodEntryProps>(
-  ({ 
-    selectedMood, 
-    note, 
-    onSubmitSuccess, 
-    disabled = false,
-    className 
-  }) => {
+  ({ selectedMood, note, onSubmitSuccess, disabled = false, className }) => {
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     const isFormValid = React.useMemo(() => {
@@ -58,12 +52,12 @@ export const SubmitMoodEntry = React.memo<SubmitMoodEntryProps>(
 
         // Create the mood entry
         createMoodEntry(request);
-        
+
         // Show success message
-        const noteWords = request.note 
-          ? request.note.trim().split(/\s+/).length 
+        const noteWords = request.note
+          ? request.note.trim().split(/\s+/).length
           : 0;
-        
+
         const successMessage = request.note
           ? `Mood entry saved! ${selectedMood} with ${noteWords} word${noteWords !== 1 ? 's' : ''} in your note.`
           : `Mood entry saved! Feeling ${selectedMood}.`;
@@ -72,12 +66,11 @@ export const SubmitMoodEntry = React.memo<SubmitMoodEntryProps>(
 
         // Call success callback if provided
         onSubmitSuccess?.();
-
       } catch (error) {
         console.error('Failed to save mood entry:', error);
         toast.error(
-          error instanceof Error 
-            ? error.message 
+          error instanceof Error
+            ? error.message
             : 'Failed to save mood entry. Please try again.'
         );
       } finally {
@@ -98,12 +91,11 @@ export const SubmitMoodEntry = React.memo<SubmitMoodEntryProps>(
 
         {!isFormValid && selectedMood && (
           <p className="text-sm text-red-600 mt-2 text-center">
-            {!selectedMood 
+            {!selectedMood
               ? 'Please select a mood to continue'
-              : note.length > 200 
+              : note.length > 200
                 ? `Note is ${note.length - 200} characters over the limit`
-                : 'Please check your entry'
-            }
+                : 'Please check your entry'}
           </p>
         )}
       </div>

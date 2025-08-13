@@ -1,0 +1,229 @@
+client:
+  components:
+    entities:
+    - description: Renders a single mood entry card or row, displaying mood icon/color,
+        note, and timestamp.
+      entity: moodEntry
+      name: MoodEntryItem
+      props:
+      - mood
+      - note
+      - createdAt
+    features: []
+    shared:
+    - category: ui
+      description: Reusable primary and secondary button component.
+      name: Button
+      props:
+      - onClick
+      - disabled
+      - children
+    - category: ui
+      description: Reusable text input or textarea component with character counter.
+      name: Input
+      props:
+      - value
+      - onChange
+      - maxLength
+      - placeholder
+    - category: ui
+      description: Renders mood icons.
+      name: Icon
+      props:
+      - type
+      - selected
+    - category: ui
+      description: Displays feedback/toast messages.
+      name: Snackbar
+      props:
+      - message
+      - open
+    widgets:
+    - description: Widget that maps over mood history data and renders each entry
+        as a MoodEntryItem in a scrollable, styled list. Handles reverse chronological
+        order and responsive layout.
+      entities:
+      - MoodEntryItem
+      features: []
+      name: MoodHistoryList
+      props:
+      - entries
+      shared:
+      - Icon
+  pages:
+  - description: Page for reviewing all previously logged mood entries in a scrollable,
+      visually distinct list.
+    queries:
+    - load mood history from localStorage on mount
+    route: /mood-history
+    title: Mood History
+    widgets:
+    - MoodHistoryList
+  stores:
+  - actions:
+    - 'selectMood(mood: string)'
+    - 'setNote(note: string)'
+    - submitEntry()
+    - resetForm()
+    - 'showFeedback(message: string)'
+    - loadEntries()
+    description: State management for mood entry form and mood entry history. Handles
+      loading, sorting, and updating the list of entries from localStorage, as well
+      as form state and feedback.
+    layer: entities
+    name: moodEntryStore
+    state_shape:
+    - name: selectedMood
+      type: string | null
+    - name: note
+      type: string
+    - name: isSubmitting
+      type: boolean
+    - name: showSnackbar
+      type: boolean
+    - name: snackbarMessage
+      type: string
+    - name: entries
+      type: MoodEntry[]
+components:
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  responses:
+  - code: '404'
+    description: Mood entry not found.
+  - code: '400'
+    description: Invalid input data.
+  - code: '500'
+    description: Unexpected server error.
+  schemas:
+  - name: MoodEntry
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Get all mood entries from local storage, sorted by most recent
+        first.
+      operation_id: getMoodEntries
+      summary: Get all mood entries
+      tags:
+      - MoodEntry
+    path: /mood-entries
+  description: Domain for managing mood entries stored on the client side (local only).
+  models:
+  - description: A single mood entry containing selected mood, optional note, and
+      timestamps.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: mood
+      nullable: false
+      pk: false
+      type: string
+    - name: note
+      nullable: true
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: MoodEntry
+  name: moodEntry
+  services:
+  - description: Handles CRUD operations for mood entries in local storage or in-memory
+      store. Provides validation and feedback utilities.
+    methods:
+    - getAll
+    - getById
+    - create
+    - update
+    - delete
+    name: MoodEntryService
+metadata:
+  description: Technical specification for displaying a persistent, private mood entry
+    history using localStorage, providing a reviewable log of previous moods and notes.
+  generated_at: '2024-06-11T12:00:00Z'
+  name: Mood History Display
+  version: 1.1.0
+product:
+  features:
+  - description: Users can view a chronological list of all their prior mood entries
+      with notes and timestamps, presented in a visually distinct and calming interface.
+    domains:
+    - moodEntry
+    id: mood-history
+    priority: high
+    title: Mood History Display
+  goals:
+  - Allow users to review all past mood entries in a visually clear and calming interface.
+  - Ensure mood history persists between sessions and page refreshes, with no external
+    server communication.
+  - Keep data private to the browser profile; no login required.
+  - Seamless, responsive UI for both mobile and desktop.
+  personas:
+  - description: Wants to reflect on their mood trends and notes over time without
+      worrying about privacy.
+    goals:
+    - Easily browse a personal log of moods and notes.
+    - See clear visual cues for mood at a glance.
+    name: Everyday User
+  - description: Wants a mood tracking experience that is strictly local and confidential.
+    goals:
+    - Ensure historical mood data is never transmitted externally.
+    - Access and manage mood history privately.
+    name: Privacy-Conscious User
+  summary: Displays a persistent, private list of all previously logged mood entries,
+    including moods, notes, and timestamps, using browser localStorage.
+use_cases:
+- actors:
+  - User
+  apis:
+  - getMoodEntries
+  description: User reviews a list of previously entered moods and notes, with most
+    recent entries first.
+  domains:
+  - moodEntry
+  happy_path:
+  - User navigates to the Mood History page.
+  - Application loads all mood entries from localStorage.
+  - The list displays each entry with mood icon/color, note, and timestamp, most recent
+    first.
+  - User scrolls to browse older entries.
+  id: view-mood-history
+  pages:
+  - /mood-history
+  postconditions:
+  - User sees a complete, up-to-date mood history list.
+  - Any new entries logged are reflected immediately in the list.
+  preconditions:
+  - User has previously logged at least one mood entry.
+  - User is on the Mood History page.
+  title: View Mood History
+user_journeys:
+- id: review-mood-history
+  persona: Everyday User
+  related_use_cases:
+  - view-mood-history
+  steps:
+  - action: User opens the "Mood History" page from the app menu or direct route.
+    page: /mood-history
+  - action: App retrieves all mood entries from localStorage and renders them in reverse
+      chronological order.
+    page: /mood-history
+  - action: User scrolls through the list, visually reviewing each mood, note, and
+      timestamp.
+    page: /mood-history
+  - action: User closes the page or switches to another page.
+    page: /mood-history
+  success_criteria: User can see all prior mood entries with notes and timestamps,
+    with a clear and calming UI.
+  title: Reviewing Mood History

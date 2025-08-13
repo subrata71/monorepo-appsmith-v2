@@ -18,7 +18,9 @@ export interface MoodEntryFormProps {
 
 export const MoodEntryForm = React.memo<MoodEntryFormProps>(
   ({ className, onSubmitSuccess }) => {
-    const [selectedMood, setSelectedMood] = React.useState<MoodType | null>(null);
+    const [selectedMood, setSelectedMood] = React.useState<MoodType | null>(
+      null
+    );
     const [note, setNote] = React.useState<string>('');
 
     const handleMoodSelect = React.useCallback((mood: MoodType) => {
@@ -33,7 +35,7 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
       // Reset form after successful submission
       setSelectedMood(null);
       setNote('');
-      
+
       // Call external success callback if provided
       onSubmitSuccess?.();
     }, [onSubmitSuccess]);
