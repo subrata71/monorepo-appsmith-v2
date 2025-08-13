@@ -11,3 +11,4 @@ export {
   EYE_OPTIONS,
   COLOR_OPTIONS
 } from './model/types';
+export { useSmileyStore } from './model/store';
