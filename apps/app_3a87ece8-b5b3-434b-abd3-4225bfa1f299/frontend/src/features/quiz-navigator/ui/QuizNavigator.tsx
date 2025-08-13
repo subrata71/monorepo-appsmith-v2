@@ -9,11 +9,11 @@ import React, { useCallback, useState } from 'react';
 import { Button } from '@/shared/ui';
 import type { QuizNavigatorProps, QuizNavigatorState } from '../model/types';
 
-export const QuizNavigator = ({ 
-  onNext, 
-  step, 
-  totalSteps, 
-  canProceed = false 
+export const QuizNavigator = ({
+  onNext,
+  step,
+  totalSteps,
+  canProceed = false,
 }: QuizNavigatorProps) => {
   const [state, setState] = useState<QuizNavigatorState>({
     isProcessing: false,
@@ -21,9 +21,9 @@ export const QuizNavigator = ({
 
   const handleNext = useCallback(async () => {
     if (!canProceed) return;
-    
+
     setState(prev => ({ ...prev, isProcessing: true }));
-    
+
     try {
       await onNext();
     } finally {
@@ -38,16 +38,16 @@ export const QuizNavigator = ({
       <div className="text-sm text-muted-foreground">
         Question {step} of {totalSteps}
       </div>
-      
+
       <Button
         onClick={handleNext}
         disabled={!canProceed || state.isProcessing}
         size="lg"
       >
-        {state.isProcessing 
-          ? 'Processing...' 
-          : isLastStep 
-            ? 'View Results' 
+        {state.isProcessing
+          ? 'Processing...'
+          : isLastStep
+            ? 'View Results'
             : 'Next Question'}
       </Button>
     </div>

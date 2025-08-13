@@ -1,0 +1,250 @@
+client:
+  components:
+    entities:
+    - description: Displays question text and options, now styled for immediate feedback
+        and accessibility.
+      entity: Question
+      name: QuestionCard
+      props:
+      - question
+      - onAnswer
+      - disabled
+      - feedback
+      - selectedOptionId
+    - description: Displays an individual answer option, now with immediate highlight
+        and disabled state after selection.
+      entity: Option
+      name: OptionItem
+      props:
+      - option
+      - selected
+      - disabled
+      - onSelect
+    features:
+    - description: Handles answer selection, triggers immediate feedback display,
+        manages disabling of options, and provides accessible feedback (visual/screen
+        reader).
+      entities:
+      - QuestionCard
+      - OptionItem
+      feature: qa_logic
+      name: QAImmediateFeedback
+      props:
+      - question
+      - onAnswered
+      shared:
+      - RadioGroup
+      - Button
+      - ScreenReaderAnnouncer
+    shared:
+    - category: ui
+      description: Clickable button for actions
+      name: Button
+      props:
+      - children
+      - onClick
+      - disabled
+    - category: ui
+      description: Card container for layout
+      name: Card
+      props:
+      - children
+    - category: ui
+      description: Text display component
+      name: Text
+      props:
+      - children
+    - category: ui
+      description: Radio button group for options
+      name: RadioGroup
+      props:
+      - options
+      - value
+      - onChange
+    - category: ui
+      description: Announces state changes to screen readers
+      name: ScreenReaderAnnouncer
+      props:
+      - message
+    widgets:
+    - description: Widget to present a single question, manage answer selection, feedback
+        display, and accessibility. Composes QuestionCard, OptionItem(s), and feedback
+        section.
+      entities:
+      - QuestionCard
+      - OptionItem
+      features:
+      - QAImmediateFeedback
+      name: QAInteractionCard
+      props:
+      - question
+      shared:
+      - Card
+      - Text
+      - ScreenReaderAnnouncer
+  pages:
+  - description: Page for presenting a single multiple-choice question, capturing
+      answer selection, and providing immediate feedback in an accessible card layout.
+    queries: []
+    route: /qa-logic
+    title: Question and Answer
+    widgets:
+    - QAInteractionCard
+  stores:
+  - actions: []
+    description: State for current question, selected answer, disabled state, and
+      feedback message for immediate Q&A logic.
+    layer: features
+    name: qaLogicStore
+    state_shape:
+    - name: currentQuestion
+      type: Question | null
+    - name: selectedOptionId
+      type: string | null
+    - name: feedback
+      type: string | null
+    - name: disabled
+      type: boolean
+components:
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  - in_: body
+    name: quizId
+    required: true
+  responses:
+  - code: '200'
+    description: OK
+  - code: '201'
+    description: Created
+  - code: '204'
+    description: No Content
+  - code: '400'
+    description: Invalid input
+  - code: '404'
+    description: Not Found
+  - code: '500'
+    description: Server error
+  schemas:
+  - name: Quiz
+    type: object
+  - name: Question
+    type: object
+  - name: Option
+    type: object
+  - name: QuizAttempt
+    type: object
+  - name: Answer
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Get quiz details and questions by quiz ID.
+      operation_id: getQuizById
+      summary: Get quiz by ID
+      tags:
+      - Quiz
+    path: /api/quizzes/{id}
+  - method: POST
+    operation:
+      description: Start a new quiz attempt for a user session.
+      operation_id: createQuizAttempt
+      summary: Create quiz attempt
+      tags:
+      - QuizAttempt
+    path: /api/quiz-attempts
+  - method: PUT
+    operation:
+      description: Update a quiz attempt with answers and progress.
+      operation_id: updateQuizAttempt
+      summary: Update quiz attempt
+      tags:
+      - QuizAttempt
+    path: /api/quiz-attempts/{id}
+  description: Core domain for quiz structure, questions, user answers, and scoring,
+    now including immediate answer feedback logic.
+  models: []
+  name: quiz
+  services:
+  - description: Manage quizzes, questions, and options.
+    methods:
+    - getQuizById
+    name: QuizService
+  - description: Manage quiz attempt lifecycle and scoring.
+    methods:
+    - createQuizAttempt
+    - updateQuizAttempt
+    name: QuizAttemptService
+metadata:
+  description: Display multiple-choice questions, handle answer selection, and provide
+    immediate feedback to users.
+  generated_at: '2024-06-11T13:00:00Z'
+  name: Question and Answer Logic
+  version: 1.1.0
+product:
+  features:
+  - description: Enable immediate feedback for answer selection, with accessible UI
+      and clear feedback messages.
+    domains:
+    - quiz
+    id: qa_logic
+    priority: high
+    title: Question and Answer Feedback
+  goals:
+  - Provide immediate feedback after answer selection
+  - Ensure accessibility for keyboard and screen reader users
+  - Enhance clarity and responsiveness of the question interface
+  personas:
+  - description: Any visitor wanting to take a quiz without authentication requirements.
+      May use desktop, mobile, or assistive technologies.
+    goals:
+    - Easily start and complete a quiz
+    - Understand progress and results
+    - Navigate using keyboard or screen reader
+    name: General User
+  summary: Adds immediate feedback logic and accessible, responsive UI for single
+    question-and-answer interactions within the quiz system.
+use_cases:
+- actors:
+  - General User
+  apis:
+  - getQuizById
+  - createQuizAttempt
+  - updateQuizAttempt
+  description: User selects an answer to a quiz question and immediately sees whether
+    it is correct, with accessible visual and screen reader feedback.
+  domains:
+  - quiz
+  happy_path:
+  - User visits the Question and Answer page
+  - User sees a question and answer options
+  - User selects an answer
+  - Inputs become disabled, and feedback is revealed
+  - User understands whether their answer was correct or incorrect
+  id: answer-question-immediate-feedback
+  pages:
+  - /qa-logic
+  postconditions:
+  - User receives feedback before moving on
+  preconditions:
+  - Quiz and questions are available
+  title: Immediate Feedback on Answer Selection
+user_journeys:
+- id: qa-immediate-feedback
+  persona: General User
+  related_use_cases:
+  - answer-question-immediate-feedback
+  steps:
+  - action: Navigate to the Question and Answer page
+    page: /qa-logic
+  - action: Review the displayed question and available choices
+    page: /qa-logic
+  - action: Select one answer choice (via click or keyboard)
+    page: /qa-logic
+  - action: Immediately receive feedback (visual and screen reader)
+    page: /qa-logic
+  success_criteria: User receives clear, immediate feedback (correct/incorrect) after
+    answer selection, and interface remains accessible.
+  title: Single Question Immediate Feedback

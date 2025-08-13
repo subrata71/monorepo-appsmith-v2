@@ -17,7 +17,7 @@ export const QuizStart = ({ quiz, onStart }: QuizStartProps) => {
 
   const handleStart = useCallback(async () => {
     setState(prev => ({ ...prev, isStarting: true }));
-    
+
     try {
       await onStart();
     } finally {

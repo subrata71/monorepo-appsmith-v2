@@ -1,0 +1,17 @@
+id: '2'
+name: Question and Answer Logic
+sub_items:
+- effort: 1
+  id: '2.1'
+  name: Display Question and Choices
+  summary: Show the current question and its multiple-choice options.
+- effort: 1
+  id: '2.2'
+  name: Handle Answer Selection
+  summary: Detect when a user selects an answer and check if it is correct.
+- effort: 1
+  id: '2.3'
+  name: Immediate Feedback
+  summary: Show feedback (correct/incorrect) immediately after an answer is selected.
+summary: Display multiple-choice questions, handle answer selection, and provide immediate
+  feedback.

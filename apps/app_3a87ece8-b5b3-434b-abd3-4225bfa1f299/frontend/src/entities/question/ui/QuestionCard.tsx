@@ -17,13 +17,11 @@ export const QuestionCard = ({ question, onAnswer }: QuestionCardProps) => {
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
-        <CardTitle className="text-xl">
-          {question.text}
-        </CardTitle>
+        <CardTitle className="text-xl">{question.text}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {question.options.map((option) => (
+          {question.options.map(option => (
             <button
               key={option.id}
               onClick={() => onAnswer(option.id)}

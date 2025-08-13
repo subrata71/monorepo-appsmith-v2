@@ -24,7 +24,7 @@ export const QuizPage = () => {
       try {
         // Simulate API call delay
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         setState(prev => ({
           ...prev,
           quiz: mockQuiz,
@@ -74,16 +74,13 @@ export const QuizPage = () => {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="max-w-md text-center">
           <h1 className="text-2xl font-bold mb-4">Quiz Not Found</h1>
-          <p className="text-muted-foreground">The requested quiz could not be found.</p>
+          <p className="text-muted-foreground">
+            The requested quiz could not be found.
+          </p>
         </div>
       </div>
     );
   }
 
-  return (
-    <QuizStepper
-      quiz={state.quiz}
-      onSubmit={handleSubmit}
-    />
-  );
+  return <QuizStepper quiz={state.quiz} onSubmit={handleSubmit} />;
 };

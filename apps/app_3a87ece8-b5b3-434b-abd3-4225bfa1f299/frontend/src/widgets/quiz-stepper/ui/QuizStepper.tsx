@@ -7,7 +7,12 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { Container } from '@/shared/ui';
-import { QuizStart, QuizNavigator, QuizQuestionForm, QuizProgress } from '@/features';
+import {
+  QuizStart,
+  QuizNavigator,
+  QuizQuestionForm,
+  QuizProgress,
+} from '@/features';
 import type { QuizStepperProps, QuizStepperState } from '../model/types';
 
 export const QuizStepper = ({ quiz }: QuizStepperProps) => {
@@ -58,17 +63,20 @@ export const QuizStepper = ({ quiz }: QuizStepperProps) => {
     }
   }, []);
 
-  const handleAnswer = useCallback((optionId: string) => {
-    if (!currentQuestion) return;
+  const handleAnswer = useCallback(
+    (optionId: string) => {
+      if (!currentQuestion) return;
 
-    setState(prev => ({
-      ...prev,
-      answers: {
-        ...prev.answers,
-        [currentQuestion.id]: optionId,
-      },
-    }));
-  }, [currentQuestion]);
+      setState(prev => ({
+        ...prev,
+        answers: {
+          ...prev.answers,
+          [currentQuestion.id]: optionId,
+        },
+      }));
+    },
+    [currentQuestion]
+  );
 
   const handleNext = useCallback(async () => {
     if (!canProceedToNext) return;
@@ -103,12 +111,7 @@ export const QuizStepper = ({ quiz }: QuizStepperProps) => {
   const renderStep = () => {
     switch (state.step) {
       case 'start':
-        return (
-          <QuizStart.QuizStart
-            quiz={quiz}
-            onStart={handleStart}
-          />
-        );
+        return <QuizStart.QuizStart quiz={quiz} onStart={handleStart} />;
       case 'question':
         if (!currentQuestion) {
           return (
@@ -124,13 +127,13 @@ export const QuizStepper = ({ quiz }: QuizStepperProps) => {
               current={state.currentQuestionIndex + 1}
               total={quiz.questions.length}
             />
-            
+
             <QuizQuestionForm.QuizQuestionForm
               question={currentQuestion}
               onAnswer={handleAnswer}
               selectedOptionId={currentAnswer}
             />
-            
+
             <QuizNavigator.QuizNavigator
               onNext={handleNext}
               step={state.currentQuestionIndex + 1}
@@ -144,7 +147,9 @@ export const QuizStepper = ({ quiz }: QuizStepperProps) => {
         return (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Results</h2>
-            <p className="text-muted-foreground">Results display will be implemented in a future sub-item.</p>
+            <p className="text-muted-foreground">
+              Results display will be implemented in a future sub-item.
+            </p>
           </div>
         );
       default:

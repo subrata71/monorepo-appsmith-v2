@@ -5,7 +5,13 @@
  * Used in the quiz start screen.
  */
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/shared/ui';
 import type { Quiz } from '../model/types';
 
 interface QuizCardProps {
@@ -27,7 +33,8 @@ export const QuizCard = ({ quiz }: QuizCardProps) => {
       </CardHeader>
       <CardContent>
         <div className="text-center text-sm text-muted-foreground">
-          {quiz.questions.length} {quiz.questions.length === 1 ? 'question' : 'questions'}
+          {quiz.questions.length}{' '}
+          {quiz.questions.length === 1 ? 'question' : 'questions'}
         </div>
       </CardContent>
     </Card>

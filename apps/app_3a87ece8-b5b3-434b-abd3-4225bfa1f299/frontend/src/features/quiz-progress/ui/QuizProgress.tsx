@@ -18,7 +18,9 @@ export const QuizProgress = ({ current, total }: QuizProgressProps) => {
     <div className="w-full space-y-2">
       <div className="flex justify-between items-center text-sm text-muted-foreground">
         <span>Progress</span>
-        <span>{current} of {total} questions</span>
+        <span>
+          {current} of {total} questions
+        </span>
       </div>
       <Progress value={progressValue} className="w-full" />
     </div>

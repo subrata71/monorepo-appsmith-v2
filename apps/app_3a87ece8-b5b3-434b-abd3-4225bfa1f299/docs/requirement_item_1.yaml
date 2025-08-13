@@ -1,0 +1,54 @@
+access: Accessible to all users without authentication. Anyone can interact with the
+  question and answer component.
+behaviour: 'The page is interactive: users can select one answer per question. Once
+  an answer is selected, all choices become disabled, and visual feedback appears
+  immediately. The component is keyboard and screen reader accessible. Transitions
+  (e.g., fading in feedback) are smooth and quick.'
+name: Question and Answer Logic
+page:
+  behaviour: On page load, a single question and its choices are presented. When a
+    user selects a choice, inputs are disabled, and feedback is shown. No submission
+    button is present; feedback is immediate.
+  id: qa_logic_page
+  purpose: Present a multiple-choice question to the user, let them select an answer,
+    and immediately show if their choice is correct or incorrect.
+  sections:
+  - behaviour: Shows the current question. Does not change until a new question is
+      loaded.
+    blocks:
+    - behaviour: Displays the current multiple-choice question.
+      id: question_text
+    id: question_section
+    title: Question Display
+    visual: Large, bold question text centered at the top of the card.
+  - behaviour: Each choice can be selected only once. All choices are disabled after
+      selection. Only one can be chosen.
+    blocks:
+    - behaviour: Displays all answer choices. Clicking a choice records the answer
+        and triggers feedback logic.
+      id: choices_list
+    id: choices_section
+    title: Multiple-choice Answers
+    visual: Vertically stacked choices with clear clickable areas. Selected choice
+      is highlighted. Hover effect for desktop users.
+  - behaviour: Displays feedback immediately after an answer is chosen. Shows 'Correct!'
+      if right, or 'Incorrect. The correct answer is...' if wrong.
+    blocks:
+    - behaviour: Shows immediate feedback message (correct/incorrect) and optionally
+        explanation.
+      id: feedback_message
+    id: feedback_section
+    title: Immediate Feedback
+    visual: Feedback message below choices. Green text for correct; red for incorrect.
+      Optionally, an explanation can be shown.
+  title: Question and Answer
+  visual: 'Center-aligned card containing: question text at the top, a list of clickable
+    answer choices, and a feedback message area below the choices. Use clear spacing
+    and visual hierarchy.'
+summary: Display multiple-choice questions, handle answer selection, and provide immediate
+  feedback to users.
+visual: A clean card-based layout with a prominent question at the top, followed by
+  distinct, clickable answer options. Feedback appears below the choices, using bold
+  colors for correct (green) and incorrect (red) responses. All elements have good
+  contrast and spacing for readability. Use modern, sans-serif fonts (such as Inter
+  or Arial).

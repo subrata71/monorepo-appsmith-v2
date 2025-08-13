@@ -17,7 +17,8 @@ export interface QuizPageState {
 export const mockQuiz: Quiz = {
   id: '1',
   title: 'Sample Quiz',
-  instructions: 'Welcome to this sample quiz! Answer the questions to the best of your ability.',
+  instructions:
+    'Welcome to this sample quiz! Answer the questions to the best of your ability.',
   questions: [
     {
       id: '1',
