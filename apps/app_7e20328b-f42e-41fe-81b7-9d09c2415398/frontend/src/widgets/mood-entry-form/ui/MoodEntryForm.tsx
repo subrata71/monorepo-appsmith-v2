@@ -49,17 +49,19 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
           />
 
           {selectedMood && (
-            <div className="border-t border-gray-100 pt-6">
-              <NoteInput
-                note={note}
-                onNoteChange={handleNoteChange}
-                maxLength={200}
-              />
+            <div className="border-t border-accent/20 pt-8">
+              <div className="bg-gradient-to-r from-accent/10 to-primary/10 rounded-2xl p-6">
+                <NoteInput
+                  note={note}
+                  onNoteChange={handleNoteChange}
+                  maxLength={200}
+                />
+              </div>
             </div>
           )}
 
           {selectedMood && (
-            <div className="border-t border-gray-100 pt-6">
+            <div className="border-t border-accent/20 pt-8">
               <SubmitMoodEntry
                 selectedMood={selectedMood}
                 note={note}
@@ -70,14 +72,14 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
         </div>
 
         {selectedMood && (
-          <div className="mt-6 text-center">
-            <p className="text-gray-600">
+          <div className="mt-8 text-center bg-muted/30 rounded-xl p-6">
+            <p className="text-foreground font-medium">
               {note.trim()
-                ? `Selected mood: ${selectedMood} with ${note.trim().split(/\s+/).length} word${note.trim().split(/\s+/).length !== 1 ? 's' : ''} in your note.`
-                : `Selected mood: ${selectedMood}. Add a note above to complete your entry.`}
+                ? `💫 Mood: ${selectedMood} with ${note.trim().split(/\s+/).length} word${note.trim().split(/\s+/).length !== 1 ? 's' : ''} in your note 💫`
+                : `💫 Mood: ${selectedMood}. Add a note above to complete your entry! 💫`}
             </p>
-            <p className="text-sm text-gray-500 mt-2">
-              All entries are stored privately in your browser only.
+            <p className="text-sm text-muted-foreground mt-2 flex items-center justify-center gap-1">
+              🔒 All entries are stored privately in your browser only
             </p>
           </div>
         )}

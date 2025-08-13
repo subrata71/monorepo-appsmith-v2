@@ -1,0 +1,381 @@
+client:
+  components:
+    entities:
+    - description: Renders a single large, colorful mood icon/button with bounce &
+        highlight on selection.
+      entity: mood
+      name: MoodOption
+      props:
+      - type
+      - selected
+      - onSelect
+    - description: (No change) Renders a single mood entry row/card.
+      entity: moodEntry
+      name: MoodEntryItem
+      props:
+      - mood
+      - note
+      - createdAt
+    - description: Displays a positive affirmation message in playful font, with confetti
+        animation.
+      entity: affirmation
+      name: AffirmationMessage
+      props:
+      - message
+    features:
+    - description: Renders mood options in a row with bounce/select animation.
+      entities:
+      - MoodOption
+      feature: mood-selection
+      name: MoodSelection
+      props:
+      - selectedMood
+      - onSelect
+      shared:
+      - Icon
+    - description: (No change) Feature for note input.
+      entities: []
+      feature: note-entry
+      name: NoteInput
+      props:
+      - note
+      - onNoteChange
+      - maxLength
+      shared:
+      - Input
+    - description: (No change) Feature for mood entry submission.
+      entities: []
+      feature: local-storage
+      name: SubmitMoodEntry
+      props:
+      - disabled
+      - onSubmit
+      shared:
+      - Button
+      - Snackbar
+    - description: Handles random selection of affirmation and triggers overlay/animation
+        after mood submission.
+      entities:
+      - AffirmationMessage
+      feature: affirmation-feedback
+      name: AffirmationFeedback
+      props:
+      - open
+      - onClose
+      shared:
+      - Confetti
+    shared:
+    - category: ui
+      description: Reusable, large, rounded primary/secondary button with cheerful
+        colors and subtle shadow. Supports celebratory animation trigger.
+      name: Button
+      props:
+      - onClick
+      - disabled
+      - children
+    - category: ui
+      description: Reusable input/textarea with friendly font, accent border, and
+        playful focus animation.
+      name: Input
+      props:
+      - value
+      - onChange
+      - maxLength
+      - placeholder
+    - category: ui
+      description: Renders mood icons with bright colors, rounded shapes, and smiley
+        faces.
+      name: Icon
+      props:
+      - type
+      - selected
+    - category: ui
+      description: Displays feedback messages in uplifting style.
+      name: Snackbar
+      props:
+      - message
+      - open
+    - category: ui
+      description: Renders celebratory confetti or animation for overlay.
+      name: Confetti
+      props:
+      - active
+    widgets:
+    - description: Card UI combining MoodSelection, NoteInput, and SubmitMoodEntry,
+        styled with cheerful colors, rounded corners, and soft shadow.
+      entities:
+      - MoodOption
+      features:
+      - MoodSelection
+      - NoteInput
+      - SubmitMoodEntry
+      name: MoodEntryForm
+      props: []
+      shared:
+      - Button
+      - Input
+      - Icon
+      - Snackbar
+    - description: Overlay card that appears after mood submission, displaying randomly
+        selected affirmation with confetti animation. Disables background interaction,
+        auto-dismisses after delay or on tap.
+      entities: []
+      features:
+      - AffirmationFeedback
+      name: AffirmationOverlay
+      props: []
+      shared:
+      - Confetti
+  pages:
+  - description: Central, cheerful mood entry UI with playful mood icons, bright background,
+      large submit button, and celebratory overlay for affirmations.
+    queries: []
+    route: /mood-entry
+    title: Mood Entry
+    widgets:
+    - MoodEntryForm
+    - AffirmationOverlay
+  stores:
+  - actions:
+    - 'selectMood(mood: string)'
+    - 'setNote(note: string)'
+    - submitEntry()
+    - resetForm()
+    - 'showFeedback(message: string)'
+    - loadEntries()
+    description: (No change) State management for mood entry form and entries.
+    layer: entities
+    name: moodEntryStore
+    state_shape:
+    - name: selectedMood
+      type: string | null
+    - name: note
+      type: string
+    - name: isSubmitting
+      type: boolean
+    - name: showSnackbar
+      type: boolean
+    - name: snackbarMessage
+      type: string
+    - name: entries
+      type: MoodEntry[]
+  - actions:
+    - loadAffirmations()
+    - showRandomAffirmation()
+    - hideAffirmation()
+    - 'addAffirmation(message: string)'
+    - 'updateAffirmation(id: string, message: string)'
+    - 'deleteAffirmation(id: string)'
+    description: Manages local affirmation list, random selection, and overlay state.
+      Handles fetching, adding, updating, deleting affirmations, and exposing a method
+      to get a random message for overlay.
+    layer: entities
+    name: affirmationStore
+    state_shape:
+    - name: affirmations
+      type: Affirmation[]
+    - name: showOverlay
+      type: boolean
+    - name: currentAffirmation
+      type: Affirmation | null
+components:
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  - in_: path
+    name: affirmationId
+    required: true
+  responses:
+  - code: '404'
+    description: Affirmation not found
+  - code: '400'
+    description: Invalid affirmation data
+  - code: '500'
+    description: Unexpected server error
+  schemas:
+  - name: Affirmation
+    type: object
+  - name: MoodEntry
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns the full list of positive affirmation messages.
+      operation_id: getAffirmations
+      summary: Get all available affirmations
+      tags:
+      - Affirmation
+    path: /affirmations
+  - method: GET
+    operation:
+      description: Returns a randomly selected affirmation message.
+      operation_id: getRandomAffirmation
+      summary: Get a random affirmation
+      tags:
+      - Affirmation
+    path: /affirmations/random
+  - method: POST
+    operation:
+      description: Add a new affirmation message to the local list.
+      operation_id: createAffirmation
+      summary: Create an affirmation
+      tags:
+      - Affirmation
+    path: /affirmations
+  - method: PUT
+    operation:
+      description: Update an existing affirmation message.
+      operation_id: updateAffirmation
+      summary: Update an affirmation
+      tags:
+      - Affirmation
+    path: /affirmations/{id}
+  - method: DELETE
+    operation:
+      description: Remove an affirmation from the list.
+      operation_id: deleteAffirmation
+      summary: Delete an affirmation
+      tags:
+      - Affirmation
+    path: /affirmations/{id}
+  description: Domain for managing positive affirmation messages shown after mood
+    submission, including logic for random selection and celebratory animations.
+  models:
+  - description: A positive affirmation message used to encourage users after submitting
+      a mood.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: message
+      nullable: false
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Affirmation
+  name: affirmation
+  services:
+  - description: Provides CRUD operations for affirmations and random selection logic
+      for overlay display after mood submission.
+    methods:
+    - getAll
+    - getById
+    - getRandom
+    - create
+    - update
+    - delete
+    name: AffirmationService
+metadata:
+  description: Introduces a cheerful, uplifting visual style with affirmations and
+    celebratory animations upon mood entry, adapting all Mood Entry UI elements and
+    interactions accordingly.
+  generated_at: '2024-06-12T10:00:00Z'
+  name: Cheerful Visual Design Enhancement
+  version: 1.2.0
+product:
+  features:
+  - description: The app adopts a bright, playful palette, rounded icons, and friendly
+      typography. Mood icons, buttons, and overlays use soft edges, gentle shadows,
+      and smooth, cheerful animations.
+    domains: []
+    id: cheerful-visual-style
+    priority: high
+    title: Cheerful Visual Style
+  - description: After submitting a mood, the user is shown a randomly selected positive
+      affirmation in an overlay, accompanied by celebratory animation (confetti, etc.),
+      for 2-3 seconds or until dismissed.
+    domains:
+    - affirmation
+    id: affirmation-feedback
+    priority: high
+    title: Positive Affirmation Overlay
+  - description: Upon mood submission, a confetti or other celebratory animation plays
+      to reinforce positive action.
+    domains:
+    - affirmation
+    id: celebratory-animation
+    priority: medium
+    title: Celebratory Animation
+  - description: All cheerful visual elements are accessible and responsive, adapting
+      layouts, contrast, and animation timing as needed.
+    domains: []
+    id: accessible-responsive-ui
+    priority: high
+    title: Accessible & Responsive Cheerful UI
+  goals:
+  - Encourage regular and enjoyable mood tracking through positive, visually engaging
+    feedback.
+  - Reinforce positive behaviors with celebratory animations and affirmations.
+  - Ensure the interface is accessible, responsive, and friendly for all users.
+  - Maintain privacy and simplicity of local-only mood logging.
+  personas:
+  - description: Wants to log moods in a positive, engaging environment and be encouraged
+      to return daily.
+    goals:
+    - Feel uplifted and encouraged after every mood entry.
+    - Enjoy a delightful, friendly interface.
+    name: Everyday User
+  - description: Wants privacy but also appreciates positive reinforcement and accessibility.
+    goals:
+    - Experience cheerful design without compromising privacy.
+    - Use an interface that is both accessible and uplifting.
+    name: Privacy-Conscious User
+  summary: Applies a cheerful, playful, and visually uplifting style throughout the
+    app, including affirmations and celebration on mood submission, to encourage user
+    engagement and positivity.
+use_cases:
+- actors:
+  - User
+  apis: []
+  description: User selects a mood and submits it. The app responds with a cheerful
+    overlay featuring a randomly chosen affirmation and celebratory animation, reinforcing
+    the positive action.
+  domains:
+  - moodEntry
+  - affirmation
+  happy_path:
+  - User selects a mood (and optionally enters a note).
+  - User clicks the submit button.
+  - App saves the mood entry locally.
+  - Immediately, an overlay appears with a positive affirmation and celebratory animation.
+  - After 2-3 seconds (or on click/tap), the overlay dismisses and the form resets.
+  id: mood-entry-with-affirmation
+  pages:
+  - /mood-entry
+  postconditions:
+  - Mood entry is stored locally.
+  - User sees uplifting feedback and is encouraged to return.
+  preconditions:
+  - User is on the Mood Entry page.
+  title: Submit Mood Entry and Receive Affirmation
+user_journeys:
+- id: cheerful-mood-log
+  persona: Everyday User
+  related_use_cases:
+  - mood-entry-with-affirmation
+  steps:
+  - action: User opens the Mood Entry page with playful colors and inviting mood icons.
+    page: /mood-entry
+  - action: User selects a mood icon, which bounces and highlights with cheerful animation.
+    page: /mood-entry
+  - action: User submits their mood.
+    page: /mood-entry
+  - action: Immediately, an overlay pops up with a random positive affirmation ("You're
+      doing great!" etc.) and confetti animation.
+    page: /mood-entry
+  - action: Overlay auto-dismisses after a short period; the user feels encouraged
+      and can log another mood.
+    page: /mood-entry
+  success_criteria: User feels positively reinforced after every mood entry through
+    affirmations and visual celebration.
+  title: Cheerful Mood Logging Experience

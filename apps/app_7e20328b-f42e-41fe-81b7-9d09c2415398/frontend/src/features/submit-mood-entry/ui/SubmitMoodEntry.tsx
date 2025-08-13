@@ -59,8 +59,8 @@ export const SubmitMoodEntry = React.memo<SubmitMoodEntryProps>(
           : 0;
 
         const successMessage = request.note
-          ? `Mood entry saved! ${selectedMood} with ${noteWords} word${noteWords !== 1 ? 's' : ''} in your note.`
-          : `Mood entry saved! Feeling ${selectedMood}.`;
+          ? `🎉 Amazing! Your ${selectedMood} mood with ${noteWords} thoughtful word${noteWords !== 1 ? 's' : ''} has been saved! 🎉`
+          : `🌟 Wonderful! Your ${selectedMood} mood has been captured! 🌟`;
 
         toast.success(successMessage);
 
@@ -84,19 +84,29 @@ export const SubmitMoodEntry = React.memo<SubmitMoodEntryProps>(
           onClick={handleSubmit}
           disabled={!isFormValid || disabled || isSubmitting}
           size="lg"
-          className="w-full"
+          className="w-full h-14 text-lg font-semibold rounded-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
         >
-          {isSubmitting ? 'Saving...' : 'Save Mood Entry'}
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              ⏳ Saving your mood...
+            </span>
+          ) : (
+            <span className="flex items-center gap-2">
+              ✨ Save My Mood Entry ✨
+            </span>
+          )}
         </Button>
 
         {!isFormValid && selectedMood && (
-          <p className="text-sm text-red-600 mt-2 text-center">
-            {!selectedMood
-              ? 'Please select a mood to continue'
-              : note.length > 200
-                ? `Note is ${note.length - 200} characters over the limit`
-                : 'Please check your entry'}
-          </p>
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
+            <p className="text-sm text-amber-800 text-center flex items-center justify-center gap-2">
+              {!selectedMood
+                ? '🤔 Please select a mood to continue'
+                : note.length > 200
+                  ? `✏️ Note is ${note.length - 200} characters over the limit - let's trim it down a bit!`
+                  : '💭 Please check your entry'}
+            </p>
+          </div>
         )}
       </div>
     );

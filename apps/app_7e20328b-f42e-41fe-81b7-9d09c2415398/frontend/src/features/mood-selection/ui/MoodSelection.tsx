@@ -21,15 +21,17 @@ export const MoodSelection = React.memo<MoodSelectionProps>(
     const moodOptions = React.useMemo(() => MOOD_OPTIONS, []);
 
     return (
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-gray-900">
-            How are you feeling?
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            ✨ How are you feeling today? ✨
           </h2>
-          <p className="text-sm text-gray-600 mt-1">Select your current mood</p>
+          <p className="text-base text-muted-foreground mt-2 font-medium">
+            Choose the mood that best represents your current feelings
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
           {moodOptions.map(option => (
             <MoodOption
               key={option.type}
@@ -43,10 +45,16 @@ export const MoodSelection = React.memo<MoodSelectionProps>(
         </div>
 
         {selectedMood && (
-          <div className="text-center">
-            <p className="text-sm text-gray-500">
-              Selected:{' '}
-              <span className="font-medium capitalize">{selectedMood}</span>
+          <div className="text-center p-4 bg-accent/20 rounded-xl border border-accent/30">
+            <p className="text-lg text-accent-foreground">
+              🎉 You selected:{' '}
+              <span className="font-bold capitalize text-primary">
+                {selectedMood}
+              </span>{' '}
+              🎉
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">
+              Great choice! Your feelings are important and valid.
             </p>
           </div>
         )}

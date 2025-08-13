@@ -17,45 +17,43 @@ export type UpdateMoodEntryRequest =
 // Re-export utility types
 export type { MoodType, MoodOption } from '@shared/api-types/mood-entry.js';
 
-// Available mood options with UI metadata
+// Available mood options with UI metadata - cheerful colors and friendly emojis
 export const MOOD_OPTIONS: MoodOption[] = [
   {
     type: 'happy',
     label: 'Happy',
-    emoji: '😊',
-    color:
-      'bg-yellow-100 border-yellow-500 text-yellow-700 hover:bg-yellow-200',
+    emoji: '😃',
+    color: 'bg-mood-happy text-mood-happy-fg hover:brightness-105 border-mood-happy-fg/20',
   },
   {
     type: 'sad',
     label: 'Sad',
-    emoji: '😢',
-    color: 'bg-blue-100 border-blue-500 text-blue-700 hover:bg-blue-200',
+    emoji: '🥺',
+    color: 'bg-mood-sad text-mood-sad-fg hover:brightness-105 border-mood-sad-fg/20',
   },
   {
     type: 'neutral',
     label: 'Neutral',
-    emoji: '😐',
-    color: 'bg-gray-100 border-gray-500 text-gray-700 hover:bg-gray-200',
+    emoji: '😊',
+    color: 'bg-mood-neutral text-mood-neutral-fg hover:brightness-105 border-mood-neutral-fg/20',
   },
   {
     type: 'excited',
     label: 'Excited',
-    emoji: '🤩',
-    color:
-      'bg-orange-100 border-orange-500 text-orange-700 hover:bg-orange-200',
+    emoji: '🤗',
+    color: 'bg-mood-excited text-mood-excited-fg hover:brightness-105 border-mood-excited-fg/20',
   },
   {
     type: 'anxious',
     label: 'Anxious',
-    emoji: '😰',
-    color: 'bg-red-100 border-red-500 text-red-700 hover:bg-red-200',
+    emoji: '🌻',
+    color: 'bg-mood-anxious text-mood-anxious-fg hover:brightness-105 border-mood-anxious-fg/20',
   },
   {
     type: 'calm',
     label: 'Calm',
-    emoji: '😌',
-    color: 'bg-green-100 border-green-500 text-green-700 hover:bg-green-200',
+    emoji: '🌸',
+    color: 'bg-mood-calm text-mood-calm-fg hover:brightness-105 border-mood-calm-fg/20',
   },
 ] as const;
 

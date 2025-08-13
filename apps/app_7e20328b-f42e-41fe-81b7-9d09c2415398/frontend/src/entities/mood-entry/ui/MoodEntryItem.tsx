@@ -57,13 +57,13 @@ export const MoodEntryItem = React.memo<MoodEntryItemProps>(
 
     return (
       <div
-        className={`flex items-start gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-shadow ${className}`}
+        className={`flex items-start gap-4 p-6 bg-gradient-to-br from-background to-muted/20 border-2 border-border/50 rounded-2xl hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 hover:scale-[1.02] ${className}`}
       >
         {/* Mood Icon and Color */}
         <div
-          className={`flex items-center justify-center w-12 h-12 rounded-full border-2 ${moodOption.color}`}
+          className={`flex items-center justify-center w-16 h-16 rounded-2xl border-2 shadow-sm ${moodOption.color}`}
         >
-          <span className="text-xl" role="img" aria-label={moodOption.label}>
+          <span className="text-2xl animate-pulse" role="img" aria-label={moodOption.label}>
             {moodOption.emoji}
           </span>
         </div>
@@ -71,23 +71,31 @@ export const MoodEntryItem = React.memo<MoodEntryItemProps>(
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Mood Label */}
-          <h3 className="font-medium text-gray-900 mb-1">{moodOption.label}</h3>
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="font-bold text-lg text-foreground">{moodOption.label}</h3>
+            <span className="text-sm text-primary">✨</span>
+          </div>
 
           {/* Note */}
           {moodEntry.note && (
-            <p className="text-gray-600 text-sm leading-relaxed mb-2 break-words">
-              {moodEntry.note}
-            </p>
+            <div className="bg-accent/10 rounded-lg p-3 mb-3 border border-accent/20">
+              <p className="text-foreground text-sm leading-relaxed break-words">
+                💭 {moodEntry.note}
+              </p>
+            </div>
           )}
 
           {/* Timestamp */}
-          <time
-            className="text-xs text-gray-400"
-            dateTime={moodEntry.createdAt}
-            title={new Date(moodEntry.createdAt).toLocaleString()}
-          >
-            {formatDate(moodEntry.createdAt)}
-          </time>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">🕒</span>
+            <time
+              className="text-xs text-muted-foreground font-medium"
+              dateTime={moodEntry.createdAt}
+              title={new Date(moodEntry.createdAt).toLocaleString()}
+            >
+              {formatDate(moodEntry.createdAt)}
+            </time>
+          </div>
         </div>
       </div>
     );

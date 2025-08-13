@@ -1,0 +1,12 @@
+id: '3'
+name: Cheerful Visual Design
+sub_items:
+- effort: 1
+  id: '3.1'
+  name: Color Palette and Icons
+  summary: Choose bright, cheerful colors and friendly icons for moods.
+- effort: 1
+  id: '3.2'
+  name: Encouraging Messages
+  summary: Display positive messages or affirmations after mood entry.
+summary: Apply a cheerful and encouraging visual style to the app.

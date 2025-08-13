@@ -15,25 +15,51 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --radius: 0.875rem;
+  
+  /* Base colors - warm and cheerful */
+  --background: oklch(0.99 0.005 85);
+  --foreground: oklch(0.15 0.01 240);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  
+  /* Primary - warm cheerful blue */
+  --primary: oklch(0.58 0.18 235);
+  --primary-foreground: oklch(0.99 0 0);
+  
+  /* Secondary - soft warm gray */
+  --secondary: oklch(0.95 0.01 85);
+  --secondary-foreground: oklch(0.25 0.02 240);
+  
+  /* Muted - very light warm background */
+  --muted: oklch(0.97 0.01 85);
+  --muted-foreground: oklch(0.5 0.02 240);
+  
+  /* Accent - cheerful warm pink */
+  --accent: oklch(0.92 0.03 330);
+  --accent-foreground: oklch(0.25 0.05 330);
+  
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.9 0.02 85);
+  --input: oklch(0.95 0.01 85);
+  --ring: oklch(0.58 0.18 235);
+  
+  /* Cheerful mood colors */
+  --mood-happy: oklch(0.85 0.15 75);
+  --mood-happy-fg: oklch(0.4 0.12 75);
+  --mood-sad: oklch(0.85 0.12 220);
+  --mood-sad-fg: oklch(0.4 0.15 220);
+  --mood-neutral: oklch(0.88 0.02 85);
+  --mood-neutral-fg: oklch(0.45 0.03 85);
+  --mood-excited: oklch(0.85 0.18 40);
+  --mood-excited-fg: oklch(0.4 0.15 40);
+  --mood-anxious: oklch(0.87 0.12 25);
+  --mood-anxious-fg: oklch(0.45 0.12 25);
+  --mood-calm: oklch(0.87 0.12 150);
+  --mood-calm-fg: oklch(0.35 0.15 150);
+  
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -84,6 +110,18 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-mood-happy: var(--mood-happy);
+  --color-mood-happy-fg: var(--mood-happy-fg);
+  --color-mood-sad: var(--mood-sad);
+  --color-mood-sad-fg: var(--mood-sad-fg);
+  --color-mood-neutral: var(--mood-neutral);
+  --color-mood-neutral-fg: var(--mood-neutral-fg);
+  --color-mood-excited: var(--mood-excited);
+  --color-mood-excited-fg: var(--mood-excited-fg);
+  --color-mood-anxious: var(--mood-anxious);
+  --color-mood-anxious-fg: var(--mood-anxious-fg);
+  --color-mood-calm: var(--mood-calm);
+  --color-mood-calm-fg: var(--mood-calm-fg);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -95,37 +133,62 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Dark mode base colors - still warm but suitable for dark backgrounds */
+  --background: oklch(0.08 0.005 240);
+  --foreground: oklch(0.95 0.01 85);
+  --card: oklch(0.12 0.01 240);
+  --card-foreground: oklch(0.95 0.01 85);
+  --popover: oklch(0.12 0.01 240);
+  --popover-foreground: oklch(0.95 0.01 85);
+  
+  /* Primary - bright cheerful blue for dark mode */
+  --primary: oklch(0.75 0.2 235);
+  --primary-foreground: oklch(0.08 0.01 240);
+  
+  /* Secondary */
+  --secondary: oklch(0.2 0.01 240);
+  --secondary-foreground: oklch(0.9 0.01 85);
+  
+  /* Muted */
+  --muted: oklch(0.16 0.01 240);
+  --muted-foreground: oklch(0.7 0.02 85);
+  
+  /* Accent - cheerful pink for dark mode */
+  --accent: oklch(0.25 0.05 330);
+  --accent-foreground: oklch(0.9 0.02 330);
+  
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: oklch(0.3 0.02 240);
+  --input: oklch(0.2 0.01 240);
+  --ring: oklch(0.75 0.2 235);
+  
+  /* Dark mode cheerful mood colors - slightly desaturated but still vibrant */
+  --mood-happy: oklch(0.4 0.12 75);
+  --mood-happy-fg: oklch(0.9 0.15 75);
+  --mood-sad: oklch(0.35 0.1 220);
+  --mood-sad-fg: oklch(0.85 0.12 220);
+  --mood-neutral: oklch(0.3 0.02 85);
+  --mood-neutral-fg: oklch(0.8 0.03 85);
+  --mood-excited: oklch(0.4 0.15 40);
+  --mood-excited-fg: oklch(0.9 0.18 40);
+  --mood-anxious: oklch(0.35 0.1 25);
+  --mood-anxious-fg: oklch(0.85 0.12 25);
+  --mood-calm: oklch(0.35 0.1 150);
+  --mood-calm-fg: oklch(0.85 0.12 150);
+  
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: oklch(0.12 0.01 240);
+  --sidebar-foreground: oklch(0.95 0.01 85);
+  --sidebar-primary: oklch(0.75 0.2 235);
+  --sidebar-primary-foreground: oklch(0.08 0.01 240);
+  --sidebar-accent: oklch(0.2 0.01 240);
+  --sidebar-accent-foreground: oklch(0.9 0.01 85);
+  --sidebar-border: oklch(0.3 0.02 240);
+  --sidebar-ring: oklch(0.75 0.2 235);
 }
 
 @layer base {

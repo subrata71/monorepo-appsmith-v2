@@ -23,7 +23,7 @@ export const NoteInput = React.memo<NoteInputProps>(
     onNoteChange,
     maxLength = 200,
     disabled = false,
-    placeholder = 'Add a note about your mood (optional)...',
+    placeholder = 'What made you feel this way? Share your thoughts here... 💭',
   }) => {
     const remainingChars = maxLength - note.length;
     const isOverLimit = remainingChars < 0;
@@ -38,11 +38,13 @@ export const NoteInput = React.memo<NoteInputProps>(
     );
 
     return (
-      <div className="space-y-2">
-        <div className="text-left">
-          <h3 className="text-base font-medium text-gray-900">Add a Note</h3>
-          <p className="text-sm text-gray-600 mt-1">
-            Share what's on your mind (optional)
+      <div className="space-y-4">
+        <div className="text-center">
+          <h3 className="text-xl font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            📝 Add a Personal Note
+          </h3>
+          <p className="text-base text-muted-foreground mt-2">
+            Express yourself freely - every thought matters! ✨
           </p>
         </div>
 
@@ -53,18 +55,20 @@ export const NoteInput = React.memo<NoteInputProps>(
             placeholder={placeholder}
             disabled={disabled}
             className={cn(
-              'min-h-20 resize-none',
+              'min-h-24 resize-none rounded-xl border-2 text-base',
+              'focus:ring-2 focus:ring-primary/20 focus:border-primary',
+              'placeholder:text-muted-foreground/70',
               isOverLimit &&
                 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500/20'
             )}
             maxLength={maxLength + 50} // Allow some overflow for better UX
           />
 
-          <div className="flex justify-between items-center mt-2">
-            <div className="text-xs text-gray-500">
+          <div className="flex justify-between items-center mt-3">
+            <div className="text-sm text-muted-foreground font-medium">
               {note.trim() && (
-                <span>
-                  {note.trim().split(/\s+/).length} word
+                <span className="flex items-center gap-1">
+                  ✏️ {note.trim().split(/\s+/).length} word
                   {note.trim().split(/\s+/).length !== 1 ? 's' : ''}
                 </span>
               )}
@@ -72,12 +76,12 @@ export const NoteInput = React.memo<NoteInputProps>(
 
             <div
               className={cn(
-                'text-xs',
+                'text-sm font-medium',
                 isOverLimit
                   ? 'text-red-600'
                   : remainingChars <= 20
                     ? 'text-amber-600'
-                    : 'text-gray-500'
+                    : 'text-muted-foreground'
               )}
             >
               {remainingChars} character
@@ -87,9 +91,11 @@ export const NoteInput = React.memo<NoteInputProps>(
           </div>
 
           {isOverLimit && (
-            <p className="text-xs text-red-600 mt-1">
-              Please keep your note under {maxLength} characters
-            </p>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
+              <p className="text-sm text-red-700 flex items-center gap-2">
+                ⚠️ Please keep your note under {maxLength} characters for the best experience
+              </p>
+            </div>
           )}
         </div>
       </div>

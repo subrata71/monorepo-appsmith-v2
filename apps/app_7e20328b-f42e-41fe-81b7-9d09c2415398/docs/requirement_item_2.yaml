@@ -1,0 +1,51 @@
+access: All users and roles experience the cheerful visual style. No access restrictions
+  based on user role.
+behaviour: User interactions trigger smooth, cheerful animations (e.g., bounce, fade-in).
+  After submitting a mood, users are shown a randomly selected positive affirmation
+  or encouraging message alongside a celebratory animation. All content is accessible
+  and responsive on all supported devices.
+name: Cheerful Visual Design
+page:
+  behaviour: Mood icons respond to hover/click with a bounce animation and highlight.
+    Only one mood can be selected. After mood submission, an overlay appears with
+    an encouraging message for 2-3 seconds (or until dismissed). Confetti or celebratory
+    animation appears on mood submission. Overlay disables interactions with background
+    until dismissed.
+  id: mood_entry
+  purpose: To allow users to select and submit their current mood in an uplifting,
+    positive, and friendly environment, encouraging regular engagement.
+  sections:
+  - behaviour: Pressing a mood icon selects it (highlights, bounces), only one can
+      be selected. Selection is visually clear.
+    blocks:
+    - behaviour: Displays moods as large, clickable icons. Handles selection and visual
+        feedback (highlight, bounce).
+      id: mood_icons
+    id: mood_selection
+    title: Mood Selection
+    visual: Row of 5-7 large, round mood icons, each with a unique bright color and
+      friendly face. Spaced evenly with hover and selection highlights.
+  - behaviour: Appears immediately after mood submission, disables background interaction.
+      Auto-dismisses after 2-3 seconds or on click/tap. Message is randomly selected
+      from affirmations.
+    blocks:
+    - behaviour: Renders a randomly-chosen affirmation and triggers confetti animation.
+      id: affirmation_message
+    id: affirmation_overlay
+    title: Encouraging Message Overlay
+    visual: Overlay card pops up post-submission featuring a positive affirmation
+      in playful font, surrounded by confetti or cheerful decoration. Card has soft
+      edges and bright accent color.
+  title: Mood Entry
+  visual: 'Central card layout featuring a white background and bright accent borders.
+    At the top: a friendly greeting. Below: a horizontal row of large, colorful mood
+    icons (e.g. happy, neutral, sad, excited, calm), each styled with cheerful faces
+    and distinct, vibrant colors. Submission button is large and rounded. After submission,
+    an overlay displays a positive message and confetti animation.'
+summary: Apply a cheerful and encouraging visual style to the app by using bright,
+  cheerful colors, friendly icons, and positive affirmations after mood entry.
+visual: Use a bright, playful color palette (e.g. yellows, sky blues, coral, mint
+  green) and high-contrast, inviting colors. Icons are rounded, smiley, and approachable.
+  UI elements have soft edges, gentle drop shadows, and generous whitespace. Typography
+  uses friendly, sans-serif fonts with clear readability. Visual feedback (e.g. confetti,
+  animations) is used for positive reinforcement.
