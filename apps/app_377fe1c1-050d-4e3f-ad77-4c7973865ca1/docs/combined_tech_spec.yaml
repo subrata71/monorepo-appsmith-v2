@@ -1,0 +1,327 @@
+metadata:
+  description: Comprehensive technical specification combining all individual plan
+    specifications
+  generated_from_files:
+  - tech_spec_item_0.yaml
+  title: Combined Technical Specification
+  total_plans: 1
+plans:
+- plan_name: item_0
+  source_file: tech_spec_item_0.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Entity component representing the collection of contact form
+            fields and their validation state
+          entity: ContactForm
+          name: ContactFormFields
+          props:
+          - formValues
+          - errors
+          - touched
+          - onChange
+          - onBlur
+        features:
+        - description: Handles validation logic, error display, and field blur/submit
+            events
+          entities:
+          - ContactFormFields
+          feature: Validation
+          name: ContactFormValidation
+          props:
+          - formValues
+          - setErrors
+          - setTouched
+          shared:
+          - Input
+          - Textarea
+        - description: Handles submit button logic, form reset, and success message
+            display
+          entities:
+          - ContactFormFields
+          feature: Submission
+          name: ContactFormSubmission
+          props:
+          - formValues
+          - errors
+          - onSubmit
+          - isSubmitting
+          - isSuccess
+          shared:
+          - Button
+          - Alert
+        shared:
+        - category: ui
+          description: Reusable styled button for form actions
+          name: Button
+          props:
+          - type
+          - disabled
+          - onClick
+          - children
+        - category: ui
+          description: Reusable styled input field with label and error display
+          name: Input
+          props:
+          - label
+          - value
+          - onChange
+          - onBlur
+          - error
+          - type
+          - name
+          - required
+        - category: ui
+          description: Styled multiline textarea with label and error display
+          name: Textarea
+          props:
+          - label
+          - value
+          - onChange
+          - onBlur
+          - error
+          - name
+          - required
+        - category: ui
+          description: Reusable alert/notification component for success feedback
+          name: Alert
+          props:
+          - type
+          - children
+          - visible
+        - category: ui
+          description: Card-style container with shadow, padding, rounded corners
+          name: FormCard
+          props:
+          - children
+        - category: ui
+          description: Inline loading indicator for button (if used)
+          name: Spinner
+          props:
+          - size
+        widgets:
+        - description: Complete Contact Us Form section, combining fields, validation,
+            and feedback into a single widget for the page
+          entities:
+          - ContactFormFields
+          features:
+          - ContactFormValidation
+          - ContactFormSubmission
+          name: ContactUsFormWidget
+          props: []
+          shared:
+          - FormCard
+          - Button
+          - Input
+          - Textarea
+          - Alert
+      pages:
+      - description: The main page featuring the Contact Us form UI prototype. Card-style
+          centered form with modern, responsive design and instant feedback.
+        queries: []
+        route: /contact
+        title: Contact Us
+        widgets:
+        - ContactUsFormWidget
+      stores:
+      - actions:
+        - 'setField(field: string, value: string)'
+        - 'setTouched(field: string, value: boolean)'
+        - 'setErrors(errors: { [field: string]: string })'
+        - submitForm()
+        - resetForm()
+        description: State management for the Contact Us form fields, errors, touched
+          states, isSubmitting, isSuccess, and timing for success message dismissal
+        layer: entities
+        name: contactFormStore
+        state_shape:
+        - name: name
+          type: string
+        - name: email
+          type: string
+        - name: subject
+          type: string
+        - name: message
+          type: string
+        - name: errors
+          type: '{ [field: string]: string }'
+        - name: touched
+          type: '{ [field: string]: boolean }'
+        - name: isSubmitting
+          type: boolean
+        - name: isSuccess
+          type: boolean
+        - name: successTimeout
+          type: any
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: ContactForm
+        type: object
+    domains:
+    - apis: []
+      description: Client-side domain modeling the Contact Us form state, validation,
+        and submission feedback. No backend or persistent storage.
+      models:
+      - description: Client-side model for Contact Us form data and validation state.
+        fields:
+        - name: name
+          nullable: false
+          pk: false
+          type: string
+        - name: email
+          nullable: false
+          pk: false
+          type: string
+        - name: subject
+          nullable: true
+          pk: false
+          type: string
+        - name: message
+          nullable: false
+          pk: false
+          type: string
+        - name: errors
+          nullable: true
+          pk: false
+          type: object
+        - name: isSubmitting
+          nullable: true
+          pk: false
+          type: boolean
+        - name: isSuccess
+          nullable: true
+          pk: false
+          type: boolean
+        - name: touched
+          nullable: true
+          pk: false
+          type: object
+        - name: lastSubmittedAt
+          nullable: true
+          pk: false
+          type: string
+        name: ContactForm
+      name: contactForm
+      services:
+      - description: Client-side form validation logic. Validates field values and
+          returns error messages for fields that fail validation.
+        methods:
+        - 'validateField(fieldName: string, value: string): string | null'
+        - 'validateForm(form: ContactForm): { [field: string]: string }'
+        name: validateContactForm
+      - description: Handles form submission. If valid, resets form and triggers success
+          message. No backend interaction.
+        methods:
+        - 'submit(): void'
+        name: submitContactForm
+    metadata:
+      description: A visually appealing, interactive Contact Us form prototype with
+        responsive client-side validation and instant feedback. No backend or data
+        persistence.
+      generated_at: '2024-06-10T16:40:00Z'
+      name: Contact Us Form UI Prototype
+      version: 1.0.0
+    product:
+      features:
+      - description: Responsive, accessible Contact Us form with client-side validation,
+          instant feedback, and a modern UI. No backend submission.
+        domains:
+        - contactForm
+        id: contact_us_form
+        priority: high
+        title: Contact Us Form
+      goals:
+      - Provide a responsive, modern Contact Us form UI for prototyping and feedback
+      - Ensure accessibility and keyboard usability for all users
+      - Deliver instant, client-side validation and feedback
+      - Demonstrate modern design best practices
+      - Require no backend or authentication
+      personas:
+      - description: Any visitor to the demo site who wants to try out or provide
+          feedback on the Contact Us form UI prototype.
+        goals:
+        - Quickly try out the Contact Us form
+        - Check the usability and accessibility of the prototype
+        - Provide feedback on the UI
+        name: Public User
+      - description: Product designer or developer evaluating form layout, validation,
+          and user experience for feedback or further development.
+        goals:
+        - Evaluate the visual design and interactivity of the form
+        - Validate accessibility and keyboard navigation
+        - Gather ideas for further iterations
+        name: UI Designer
+      - description: PM, executive, or client reviewing the UI prototype for approval
+          and suggestions.
+        goals:
+        - Review the prototype for approval
+        - Suggest UI or UX improvements
+        - Validate the form's accessibility and responsiveness
+        name: Stakeholder
+      summary: The product is a UI-only Contact Us form prototype for rapid validation
+        of user experience, accessibility, and design. It delivers a modern, responsive,
+        interactive experience with validation and instant feedback, but no backend
+        integration or data storage.
+    use_cases:
+    - actors:
+      - Public User
+      apis: []
+      description: User fills in required fields (name, email, message), optionally
+        adds a subject, and submits the form. Client-side validation occurs on input
+        blur and submit. On success, a confirmation message is shown and the form
+        is cleared.
+      domains:
+      - contactForm
+      happy_path:
+      - User fills in Name (required), Email (required, valid format), Subject (optional),
+        Message (required)
+      - Inline errors guide correction as needed
+      - Once all required fields are valid, the Send button enables
+      - User clicks Send
+      - Form validates again, clears on success, and a green success message appears
+        for 5 seconds
+      - After 5 seconds, the success message disappears
+      id: submit_contact_form
+      pages:
+      - /contact
+      postconditions:
+      - Form fields are cleared
+      - Success message appears for 5 seconds
+      preconditions:
+      - User navigates to the Contact Us page
+      title: Submit Contact Us Form (Prototype)
+    user_journeys:
+    - id: visitor_submits_form
+      persona: Public User
+      related_use_cases:
+      - submit_contact_form
+      steps:
+      - action: Visitor opens the Contact Us page on desktop or mobile
+        page: /contact
+      - action: Sees a centered, card-style Contact Us form
+        page: /contact
+      - action: Enters their Name, Email, Subject (optional), Message
+        page: /contact
+      - action: As user blurs each field, receives real-time inline validation feedback
+        page: /contact
+      - action: User corrects any errors until all required fields are valid
+        page: /contact
+      - action: The Send button becomes enabled
+        page: /contact
+      - action: User clicks Send; form instantly clears and a green success message
+          appears, confirming submission
+        page: /contact
+      - action: After 5 seconds, the success message auto-dismisses
+        page: /contact
+      - action: User can repeat the process as desired
+        page: /contact
+      success_criteria: The form provides instant feedback, clears on successful submission,
+        and the process is accessible and visually pleasing.
+      title: Visitor Submits Contact Us Form Prototype
+summary:
+  plan_names:
+  - item_0
+  total_plans: 1
