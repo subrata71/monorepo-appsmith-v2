@@ -1,0 +1,25 @@
+id: '1'
+name: Contact Us Form UI Prototype
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Create Form Structure
+  summary: Build the HTML structure for the form, including fields for name, email,
+    subject, and message.
+- effort: 2
+  id: '1.2'
+  name: Add Basic Client-side Validation
+  summary: Implement simple validation to ensure required fields are filled and email
+    is in correct format.
+- effort: 2
+  id: '1.3'
+  name: Design Attractive UI
+  summary: Apply modern, visually appealing styles using CSS or a UI framework (e.g.,
+    Bootstrap, Tailwind).
+- effort: 1
+  id: '1.4'
+  name: Implement Submission Feedback
+  summary: Show a success message or visual confirmation when the form is submitted
+    (no backend call).
+summary: A visually appealing, interactive Contact Us form with no backend, suitable
+  for quick prototyping.

@@ -1,0 +1,53 @@
+access: Form is publicly accessible to all users without authentication.
+behaviour: Form and page are fully responsive. All required fields (name, email, message)
+  must be filled before enabling submit. Email field must be valid format. On submission,
+  show a success message and clear the form; no data is sent. Form validations occur
+  on blur and submit. Success message auto-dismisses after 5 seconds. All interactions
+  are accessible via keyboard and usable on mobile devices.
+name: Contact Us Form UI Prototype
+page:
+  behaviour: Validation on field blur and submit; submit button is disabled until
+    all required fields are valid. On submit, form clears and success message is shown
+    for 5 seconds. Fully keyboard accessible. Responsive for all screen sizes.
+  id: contact_us_form_page
+  purpose: Allow users to submit contact messages or inquiries within a visually attractive,
+    interactive prototype. Intended for demo, feedback, or UI validation only (no
+    backend).
+  sections:
+  - behaviour: All fields except subject are required. Inline errors display below
+      fields. Email requires valid format. Success message appears below form after
+      successful submit, then disappears.
+    blocks:
+    - behaviour: Text input. Required. Inline error if blank.
+      id: field_name
+    - behaviour: Email input. Required. Validates for non-empty and proper email format.
+        Inline error if invalid.
+      id: field_email
+    - behaviour: Text input. Optional. No validation.
+      id: field_subject
+    - behaviour: Multiline textarea. Required. Inline error if blank.
+      id: field_message
+    - behaviour: Primary action button labeled 'Send'. Disabled until all validations
+        pass. On click, validates and, if valid, resets form and shows success message.
+      id: button_submit
+    - behaviour: Hidden by default. After successful submit, shows a green alert 'Your
+        message has been submitted!' for 5 seconds, then disappears.
+      id: block_success_message
+    id: contact_form_section
+    title: Contact Form
+    visual: Vertical layout of labeled input fields with spacing and consistent alignment.
+      Submit button below fields. Success message area below the button.
+  title: Contact Us
+  visual: Card-style centered form, max-width 420px, white background, rounded corners,
+    shadow, and padding. All form controls are stacked vertically with labels. Submit
+    button stretches full width. Success message appears below the form in a green
+    alert box. Subtle hover and focus effects.
+summary: A visually appealing, interactive Contact Us form for rapid prototyping.
+  The form includes fields for name, email, subject, and message, provides client-side
+  validation, delivers instant submission feedback, and features a modern UI. No backend
+  is involved.
+visual: 'Modern, clean, and inviting layout. Use white or light backgrounds, rounded
+  corners, generous padding, and a primary accent color (e.g., blue #2563EB for buttons/highlights).
+  Use a sans-serif font. Form is centered on the page, responsive for mobile and desktop.
+  Success messages use a green alert style. Optionally use a framework like Tailwind
+  or Bootstrap.'
