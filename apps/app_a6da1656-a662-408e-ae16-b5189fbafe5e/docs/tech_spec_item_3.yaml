@@ -1,0 +1,254 @@
+client:
+  components:
+    entities:
+    - description: Displays a single habit with its name (left), streak badge (right),
+        and 'Mark as Done' button. Handles per-habit streak logic and disables the
+        button if already completed today.
+      entity: habit
+      name: HabitStreakRow
+      props:
+      - habit
+      - onMarkDone
+    features:
+    - description: Renders a list of HabitStreakRow components from session state,
+        managing streak logic and per-day completion. Handles UI-only streak animation
+        and disables completed rows.
+      entities:
+      - HabitStreakRow
+      feature: habit-streak-ui
+      name: HabitStreakList
+      props:
+      - habits
+      - onMarkDone
+      shared:
+      - Card
+      - StreakBadge
+      - Button
+    shared:
+    - category: ui
+      description: Accessible, primary or accent action button (used for 'Mark as
+        Done'), with loading, success, and disabled states.
+      name: Button
+      props:
+      - children
+      - onClick
+      - disabled
+      - type
+    - category: ui
+      description: Generic card container with shadow, padding, and light background
+        for each habit row or card.
+      name: Card
+      props:
+      - children
+    - category: ui
+      description: Accessible heading component for page titles and sections.
+      name: Heading
+      props:
+      - children
+      - level
+    - category: ui
+      description: Displays the current streak number with a flame or lightning icon,
+        with animated highlight on increment.
+      name: StreakBadge
+      props:
+      - streak
+      - animate
+    widgets:
+    - description: Combines heading and HabitStreakList in a styled card/stack layout.
+        Shows all habits with streaks and mark-as-done buttons.
+      entities:
+      - HabitStreakRow
+      features:
+      - HabitStreakList
+      name: HabitStreakListCard
+      props:
+      - habits
+      - onMarkDone
+      shared:
+      - Card
+      - Heading
+    - description: Shows a centered friendly message when there are no habits in the
+        list.
+      entities: []
+      features: []
+      name: EmptyStateWidget
+      props: []
+      shared: []
+  pages:
+  - description: Users see all habits as cards/rows with their names and current streak
+      badges, and can mark each as done for today (incrementing streaks). No persistence;
+      resets on reload.
+    queries: []
+    route: /habits
+    title: Habit List & Streaks
+    widgets:
+    - HabitStreakListCard
+    - EmptyStateWidget
+  stores:
+  - actions:
+    - addHabit
+    - removeHabit
+    - toggleHabitCompletion
+    - incrementHabitStreak
+    - resetHabits
+    - canIncrementStreak
+    description: Manages array of Habit objects with id, name, completed, streak,
+      and lastCompletedDate. Supports add, remove, toggle completion, increment streak,
+      and reset. All state is in memory and resets on reload.
+    layer: entities
+    name: habitSessionStore
+    state_shape:
+    - name: habits
+      type: Habit[]
+components:
+  parameters: []
+  responses: []
+  schemas:
+  - name: Habit
+    type: object
+domains:
+- apis: []
+  description: Represents a user habit and its session-based completion and streak
+    state, with all logic and storage in client memory. Now supports displaying and
+    incrementing per-habit streaks for the current session, reset on reload.
+  models:
+  - description: Represents a user habit with its current session streak, completion
+      state for the current day, and metadata. All fields are local-only and reset
+      on reload.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: name
+      nullable: false
+      pk: false
+      type: string
+    - name: completed
+      nullable: false
+      pk: false
+      type: boolean
+    - name: streak
+      nullable: false
+      pk: false
+      type: integer
+    - name: lastCompletedDate
+      nullable: false
+      pk: false
+      type: string
+    name: Habit
+  name: habit
+  services:
+  - description: Manages local session state for all habits, including adding/removing
+      habits, marking completion, tracking per-habit streaks for the session, and
+      enforcing one increment per day. All state in memory, reset on reload.
+    methods:
+    - getDefaultHabits
+    - addHabit
+    - removeHabit
+    - toggleHabitCompletion
+    - incrementHabitStreak
+    - resetHabits
+    - getCurrentDay
+    - canIncrementStreak
+    name: HabitSessionService
+metadata:
+  description: Adds in-memory streak tracking and streak increment UI for each habit.
+    Users see and increment a streak count per habit (with animation and day logic),
+    with no persistence or authentication.
+  generated_at: '2024-06-12T20:00:00Z'
+  name: Basic Habit Streak Display
+  version: 1.3.0
+product:
+  features:
+  - description: Users see a streak count and animated streak badge for each habit,
+      with per-session, per-day increment and UI-only state.
+    domains:
+    - habit
+    id: habit-streak-ui
+    priority: high
+    title: Habit Streak UI
+  goals:
+  - Show a streak count for each habit in the local UI
+  - Let users increment a habit's streak once per day per session
+  - Provide responsive, visual feedback for streak changes
+  - Ensure all streak and completion state is local and reset on reload
+  - Maintain minimalist, accessible, and modern card-based UI
+  personas:
+  - description: Any person who wants to visually track their habit streaks in a simple,
+      ephemeral way, without login or persistence.
+    goals:
+    - View their list of habits
+    - See ongoing streak counts for each habit
+    - Increment daily streak for a habit, visually reinforced
+    - Use on mobile or desktop, with keyboard, mouse, or touch
+    name: General User
+  summary: Enables users to see and increment a session-based streak count for each
+    habit, with all state in client memory and visually animated feedback. No backend
+    or persistence.
+use_cases:
+- actors:
+  - General User
+  apis: []
+  description: The user sees their list of habits, each with a streak count badge
+    and the ability to mark a habit as done for the day, increasing the streak.
+  domains:
+  - habit
+  happy_path:
+  - User sees each habit in a card with its name and current streak.
+  - User sees a 'Mark as Done' button for each habit.
+  - If not already done today, user clicks 'Mark as Done'.
+  - Streak increments by 1 for that habit, and badge animates.
+  - Button disables for the rest of the day or until page reload.
+  id: display-habit-streaks
+  pages:
+  - /habits
+  postconditions:
+  - UI displays updated streak count for the session.
+  - On reload, all counts reset to zero.
+  preconditions:
+  - User navigates to the habit list page.
+  - Habits exist in the session habit list.
+  title: Display Habit Streaks
+- actors:
+  - General User
+  apis: []
+  description: The user marks a habit as complete for the day, which increments that
+    habit's streak and disables further increments until the next day or reload.
+  domains:
+  - habit
+  happy_path:
+  - User clicks 'Mark as Done' for a habit not done today.
+  - Streak count for that habit is incremented.
+  - Button disables and visually animates.
+  id: increment-habit-streak
+  pages:
+  - /habits
+  postconditions:
+  - Streak is updated and visually emphasized.
+  - UI prevents further increments for that habit today.
+  preconditions:
+  - User sees the list of habits with streak badges and 'Mark as Done' buttons.
+  title: Increment Habit Streak for Today
+user_journeys:
+- id: streak-tracking-session
+  persona: General User
+  related_use_cases:
+  - display-habit-streaks
+  - increment-habit-streak
+  steps:
+  - action: Open the Habit List & Streaks page
+    page: /habits
+  - action: See all habits displayed as cards or rows with streak badges
+    page: /habits
+  - action: Click or tap 'Mark as Done' for a habit not yet marked today
+    page: /habits
+  - action: See the streak badge animate and increment, button disables for today
+    page: /habits
+  - action: Repeat for other habits as desired
+    page: /habits
+  - action: Reload or close page; streaks reset to zero
+    page: /habits
+  success_criteria: User can see and increment habit streaks per session, with visual
+    confirmation and no persistence or login required.
+  title: Track Habit Streaks in Session

@@ -4,16 +4,19 @@ import { useHabitSessionStore } from '../model/store';
 
 export const HabitList = React.memo(() => {
   const habits = useHabitSessionStore(state => state.habits);
-  const toggleHabitCompletion = useHabitSessionStore(
-    state => state.toggleHabitCompletion
+  const incrementHabitStreak = useHabitSessionStore(
+    state => state.incrementHabitStreak
+  );
+  const canIncrementStreak = useHabitSessionStore(
+    state => state.canIncrementStreak
   );
   const removeHabit = useHabitSessionStore(state => state.removeHabit);
 
-  const handleToggleHabit = React.useCallback(
+  const handleMarkHabitDone = React.useCallback(
     (habitId: string) => {
-      toggleHabitCompletion(habitId);
+      incrementHabitStreak(habitId);
     },
-    [toggleHabitCompletion]
+    [incrementHabitStreak]
   );
 
   const handleRemoveHabit = React.useCallback(
@@ -37,8 +40,9 @@ export const HabitList = React.memo(() => {
         <HabitRow
           key={habit.id}
           habit={habit}
-          onToggle={handleToggleHabit}
+          onMarkDone={handleMarkHabitDone}
           onRemove={handleRemoveHabit}
+          canMarkDone={canIncrementStreak(habit.id)}
         />
       ))}
     </div>
