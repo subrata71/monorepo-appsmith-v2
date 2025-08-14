@@ -1,6 +1,6 @@
 {
-  "name": "__APP_TITLE__",
-  "short_name": "__APP_TITLE__",
+  "name": "Contact Us App",
+  "short_name": "Contact Us App",
   "icons": [
     {
       "src": "/assets/icons/web-app-manifest-192x192.png",

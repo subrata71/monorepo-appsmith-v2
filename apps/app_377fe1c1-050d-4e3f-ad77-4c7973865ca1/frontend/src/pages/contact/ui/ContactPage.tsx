@@ -6,7 +6,7 @@ export const ContactPage = React.memo(() => {
   return (
     <>
       <Helmet>
-        <title>Contact Us | App</title>
+        <title>Contact Us | Contact Us App</title>
       </Helmet>
       
       <div className="container mx-auto px-4 py-8">
