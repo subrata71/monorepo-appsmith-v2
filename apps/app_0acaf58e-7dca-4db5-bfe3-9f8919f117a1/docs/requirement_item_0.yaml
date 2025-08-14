@@ -1,0 +1,58 @@
+access: Authenticated users only. Each user accesses and edits only their own entries.
+  No public or cross-user access.
+behaviour: On visiting the page, users see either an input for today's entry (if not
+  saved) or their current sentence for today. Only one entry per user per day. Entry
+  can be edited until midnight local time. Input is limited to one sentence. Save
+  action gives instant feedback. Edits and saves persist only for today's entry.
+name: Daily One-Sentence Entry
+page:
+  behaviour: Load today's entry or present input field. Input limited to one sentence.
+    Save button enabled only if input is valid. Entry is editable until day ends;
+    after, input/edits are disabled. Success/error messages show after saving or failed
+    validation.
+  id: daily_entry
+  purpose: Enable a user to write and save a single one-sentence entry for the current
+    day, with the ability to edit until the day ends.
+  sections:
+  - behaviour: Input limited to one sentence (via validation). Save button enabled
+      only if input is not empty and passes sentence check. Shows error if more than
+      one sentence is detected. Upon save, disables input and displays saved entry
+      until edit is chosen or day ends.
+    blocks:
+    - behaviour: Single-line text input. Live validation to detect more than one sentence
+        (period, exclamation, question mark, or multiple sentences). Max ~200 characters.
+        Disabled if already saved for today unless editing.
+      id: sentence_input
+    - behaviour: When input is valid and unsaved, clicking saves to persistent storage
+        (API or local DB). Shows loading, then success or error. Disabled if input
+        is invalid.
+      id: save_button
+    id: today_entry_input
+    title: Input Today's Sentence
+    visual: 'Centered input box with placeholder text: ''Write one sentence about
+      today...'' Save button below input. Minimalist design with clear focus on input.'
+  - behaviour: Edit button only shown if current time is before midnight. Clicking
+      allows editing/resaving today's entry. After midnight, disable editing and hide
+      edit option. Save updates the stored value.
+    blocks:
+    - behaviour: Appears only if entry exists and is editable. Clicking enables input
+        mode with existing value pre-filled.
+      id: edit_button
+    - behaviour: Shows current day's saved entry in non-editable format unless editing
+        is active.
+      id: readonly_sentence_display
+    id: today_entry_edit
+    title: Edit Today's Entry
+    visual: If a sentence is already saved for today, show the sentence in a card
+      with an 'Edit' button (pencil icon). When editing, swap card for input field
+      with current value.
+  title: Today's One-Sentence Journal
+  visual: 'Single-column, centered panel. Top: Heading. Middle: Input or today''s
+    entry. Bottom: Action buttons and feedback. Distinct separation between input
+    and display modes.'
+summary: Allow users to write, save, and edit a single sentence as their daily journal
+  entry. Each entry is limited to one sentence per day and is editable until the end
+  of the day.
+visual: Simple, uncluttered layout. Centered card or panel for daily entry. Clear
+  call-to-action and feedback. Light background, readable font, and subtle dividers.
+  Responsive for mobile and desktop.

@@ -1,0 +1,55 @@
+plan_items:
+- id: core-entry
+  name: Daily One-Sentence Entry
+  sub_items:
+  - effort: 2
+    id: input-today
+    name: Input Today's Sentence
+    summary: Provide a text input limited to one sentence for today's entry.
+  - effort: 1
+    id: save-today
+    name: Save Entry
+    summary: Persist the user's sentence for the current day in storage.
+  - effort: 1
+    id: edit-today
+    name: Edit Today's Entry
+    summary: Allow editing of today's entry until the day ends.
+  summary: Allow users to write and save a single sentence per day as their journal
+    entry.
+- id: history-view
+  name: View Past Entries
+  sub_items:
+  - effort: 2
+    id: list-entries
+    name: List Entries
+    summary: Display a chronological list of all past entries.
+  - effort: 2
+    id: calendar-view
+    name: Calendar View
+    summary: Show entries on a calendar for easy navigation.
+  summary: Enable users to view their previous one-sentence entries in a list or calendar
+    format.
+- id: reminders
+  name: Daily Reminders
+  sub_items:
+  - effort: 1
+    id: set-reminder
+    name: Set Reminder Time
+    summary: Allow users to set a daily notification time.
+  - effort: 2
+    id: send-notification
+    name: Send Notification
+    summary: Trigger a notification at the set time if no entry has been made.
+  summary: Remind users to write their daily sentence.
+- id: settings
+  name: Settings & Personalization
+  sub_items:
+  - effort: 1
+    id: theme-toggle
+    name: Theme Toggle
+    summary: Allow switching between light and dark mode.
+  - effort: 2
+    id: export-data
+    name: Export Data
+    summary: Enable users to export their journal entries as a file.
+  summary: Let users adjust preferences such as theme and data export.

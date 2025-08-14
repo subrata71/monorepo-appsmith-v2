@@ -1,0 +1,17 @@
+id: core-entry
+name: Daily One-Sentence Entry
+sub_items:
+- effort: 2
+  id: input-today
+  name: Input Today's Sentence
+  summary: Provide a text input limited to one sentence for today's entry.
+- effort: 1
+  id: save-today
+  name: Save Entry
+  summary: Persist the user's sentence for the current day in storage.
+- effort: 1
+  id: edit-today
+  name: Edit Today's Entry
+  summary: Allow editing of today's entry until the day ends.
+summary: Allow users to write and save a single sentence per day as their journal
+  entry.

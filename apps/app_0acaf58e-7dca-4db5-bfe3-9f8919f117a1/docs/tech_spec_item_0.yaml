@@ -1,0 +1,376 @@
+client:
+  components:
+    entities:
+    - description: Displays the saved entry for today in a card
+      entity: DailyEntry
+      name: DailyEntryCard
+      props:
+      - sentence
+      - onEdit
+      - canEdit
+    - description: Input field for today's entry with validation
+      entity: DailyEntry
+      name: DailyEntryInput
+      props:
+      - value
+      - onChange
+      - onSave
+      - validationError
+      - disabled
+    - description: Edit button for today's entry
+      entity: DailyEntry
+      name: DailyEntryEditButton
+      props:
+      - onClick
+      - disabled
+    features:
+    - description: Feature for creating today's entry
+      entities:
+      - DailyEntryInput
+      feature: daily_entry
+      name: CreateDailyEntry
+      props: []
+      shared:
+      - apiClient
+      - validationUtils
+    - description: Feature for editing today's entry
+      entities:
+      - DailyEntryCard
+      - DailyEntryInput
+      - DailyEntryEditButton
+      feature: daily_entry
+      name: EditDailyEntry
+      props: []
+      shared:
+      - apiClient
+      - validationUtils
+    - description: Feature for fetching and displaying today's entry
+      entities:
+      - DailyEntryCard
+      feature: daily_entry
+      name: ViewDailyEntry
+      props: []
+      shared:
+      - apiClient
+    shared:
+    - category: api
+      description: OpenAPI-generated API client
+      name: apiClient
+      props: []
+    - category: lib
+      description: Utility for UTC/local time helpers
+      name: dateUtils
+      props: []
+    - category: lib
+      description: Sentence validation, max 200 chars, regex
+      name: validationUtils
+      props: []
+    - category: ui
+      description: Shared Button UI
+      name: Button
+      props:
+      - onClick
+      - disabled
+      - children
+    - category: ui
+      description: Shared Input UI
+      name: Input
+      props:
+      - value
+      - onChange
+      - disabled
+      - maxLength
+    - category: ui
+      description: Card UI component
+      name: Card
+      props:
+      - children
+    - category: ui
+      description: Feedback message area for errors and success
+      name: FeedbackMessage
+      props:
+      - type
+      - message
+    widgets:
+    - description: Widget for inputting today's sentence
+      entities:
+      - DailyEntryInput
+      features:
+      - CreateDailyEntry
+      name: today_entry_input
+      props: []
+      shared:
+      - Button
+      - Input
+      - FeedbackMessage
+    - description: Widget for editing today's sentence
+      entities:
+      - DailyEntryCard
+      - DailyEntryEditButton
+      features:
+      - EditDailyEntry
+      name: today_entry_edit
+      props: []
+      shared:
+      - Button
+      - Card
+  pages:
+  - description: Enable a user to write and save a single one-sentence entry for the
+      current day, with the ability to edit until the day ends.
+    queries:
+    - getDailyEntryByDate
+    route: /daily-entry
+    title: Today's One-Sentence Journal
+    widgets:
+    - today_entry_input
+    - today_entry_edit
+  stores:
+  - actions:
+    - loadEntry(entryDate?)
+    - setInput(value)
+    - validateInput()
+    - saveEntry()
+    - startEdit()
+    - cancelEdit()
+    - updateEntry()
+    description: State for current user's daily entry for today
+    layer: entities
+    name: dailyEntryStore
+    state_shape:
+    - name: loading
+      type: boolean
+    - name: saving
+      type: boolean
+    - name: error
+      type: string
+    - name: entry
+      type: DailyEntry | null
+    - name: input
+      type: string
+    - name: editing
+      type: boolean
+    - name: validationError
+      type: string
+    - name: canEdit
+      type: boolean
+components:
+  parameters:
+  - in_: query
+    name: entryDate
+    required: false
+  - in_: query
+    name: limit
+    required: false
+  - in_: query
+    name: offset
+    required: false
+  responses:
+  - code: '401'
+    description: Authentication required
+  - code: '404'
+    description: Entry not found
+  - code: '403'
+    description: Action not allowed (too late or not owner)
+  - code: '400'
+    description: Input failed validation
+  - code: '409'
+    description: Entry already exists for user and date
+  schemas:
+  - name: DailyEntry
+    type: object
+  - name: DailyEntryCreateRequest
+    type: object
+  - name: DailyEntryUpdateRequest
+    type: object
+  - name: DailyEntryResponse
+    type: object
+  - name: DailyEntryListResponse
+    type: object
+  - name: ErrorResponse
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns the user's entry for a specific date (defaults to today
+        if not provided)
+      operation_id: getDailyEntryByDate
+      summary: Get today's daily entry for the authenticated user
+      tags:
+      - DailyEntry
+    path: /daily-entry
+  - method: POST
+    operation:
+      description: 'Create a new one-sentence entry for the authenticated user for
+        the given date (default: today). Only one per user per day.'
+      operation_id: createDailyEntry
+      summary: Create a daily entry for today
+      tags:
+      - DailyEntry
+    path: /daily-entry
+  - method: PUT
+    operation:
+      description: Update the one-sentence entry for the authenticated user for today.
+        Only allowed before midnight.
+      operation_id: updateDailyEntry
+      summary: Update today's daily entry
+      tags:
+      - DailyEntry
+    path: /daily-entry
+  description: Journal entries limited to one sentence per user per day, editable
+    until midnight local time. Each entry is private to its owner.
+  models:
+  - description: User's one-sentence journal entry for a given date.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: userId
+      nullable: false
+      pk: false
+      type: string
+    - name: entryDate
+      nullable: false
+      pk: false
+      type: string
+    - name: sentence
+      nullable: false
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: DailyEntry
+  name: dailyEntry
+  services:
+  - description: Implements business logic for daily entry creation, validation, update,
+      and date-based access control.
+    methods:
+    - createEntry({ userId, sentence, entryDate })
+    - getEntry({ userId, entryDate })
+    - updateEntry({ userId, entryDate, sentence })
+    name: DailyEntryService
+metadata:
+  description: Technical specification for a Daily One-Sentence Entry app that allows
+    authenticated users to write, save, and edit a single sentence per day as their
+    private journal entry, editable until the end of the day.
+  generated_at: '2024-06-10T18:22:00Z'
+  name: daily-one-sentence-entry
+  version: 1.0.0
+product:
+  features:
+  - description: Authenticated users can write and edit a single daily sentence, editable
+      until midnight, with live validation for sentence structure.
+    domains:
+    - dailyEntry
+    id: daily_entry
+    priority: high
+    title: Daily One-Sentence Entry
+  goals:
+  - Enable users to record a concise daily reflection with a single sentence per day.
+  - Ensure entries are editable only for the current day and only by the entry's owner.
+  - Provide instant feedback and clear UI for entry creation, editing, and validation.
+  - 'Guarantee privacy and security: entries are private, authenticated, and non-shareable.'
+  personas:
+  - description: Any registered, logged-in person using the app to maintain a personal
+      daily journal.
+    goals:
+    - Write a concise reflection for today
+    - Edit or correct today's entry before midnight
+    - Feel confident entries are private and secure
+    name: Authenticated User
+  summary: Allow authenticated users to write, save, and edit a single one-sentence
+    entry per day, editable until midnight local time. Only one entry per day per
+    user. No cross-user access.
+use_cases:
+- actors:
+  - Authenticated User
+  apis:
+  - POST /daily-entry
+  description: User creates a new one-sentence entry for today.
+  domains:
+  - dailyEntry
+  happy_path:
+  - User visits daily entry page
+  - Sees input for today's entry
+  - Enters one sentence (validated live)
+  - Hits Save; entry is persisted and displayed
+  id: create_daily_entry
+  pages:
+  - /daily-entry
+  postconditions:
+  - Entry is stored as today's entry
+  - Entry is shown in read-only state unless user edits before midnight
+  preconditions:
+  - User is logged in
+  - No entry exists for today
+  title: Create Today's Entry
+- actors:
+  - Authenticated User
+  apis:
+  - PUT /daily-entry
+  description: User edits the existing one-sentence entry for today (before midnight).
+  domains:
+  - dailyEntry
+  happy_path:
+  - User sees today's entry in card
+  - Clicks Edit; input appears with current value
+  - User makes changes (validated live)
+  - Hits Save; entry updated and displayed in card
+  id: edit_today_entry
+  pages:
+  - /daily-entry
+  postconditions:
+  - Entry is updated in storage
+  preconditions:
+  - User is logged in
+  - Entry for today exists
+  - Current time is before midnight
+  title: Edit Today's Entry
+- actors:
+  - Authenticated User
+  apis:
+  - GET /daily-entry
+  description: User views their current one-sentence entry for today.
+  domains:
+  - dailyEntry
+  happy_path:
+  - User visits daily entry page
+  - Sees today's entry (input or read-only card depending on save/edit state)
+  id: view_today_entry
+  pages:
+  - /daily-entry
+  postconditions:
+  - Entry is displayed or input is ready for new entry
+  preconditions:
+  - User is logged in
+  title: View Today's Entry
+user_journeys:
+- id: normal_day_entry
+  persona: Authenticated User
+  related_use_cases:
+  - create_daily_entry
+  - edit_today_entry
+  - view_today_entry
+  steps:
+  - action: User logs in and navigates to "Today's One-Sentence Journal"
+    page: /daily-entry
+  - action: Sees input for today's sentence
+    page: /daily-entry
+  - action: Types a single sentence, passes validation, and saves
+    page: /daily-entry
+  - action: Sees entry in read-only card
+    page: /daily-entry
+  - action: Clicks Edit before midnight, modifies sentence, and re-saves
+    page: /daily-entry
+  - action: After midnight, editing is disabled; entry remains visible as read-only
+    page: /daily-entry
+  success_criteria: User can always save and edit a single sentence for today until
+    midnight. After midnight, entry is locked for that day.
+  title: User creates and edits today's entry
