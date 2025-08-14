@@ -1,0 +1,46 @@
+access: All signed-in users can remove habits from their list. No special permissions
+  or confirmation dialogs are required.
+behaviour: Removing a habit only updates the UI (in-memory list), no backend/API calls.
+  The removal is immediate and visually animated. Users cannot undo removals, and
+  they can remove as many habits as they wish. The UI updates automatically to reflect
+  the in-memory state.
+name: Remove Habit UI
+page:
+  behaviour: Habits can be removed from the UI immediately; the change is not persisted.
+    The habit disappears with a fade-out animation. If no habits remain, display the
+    empty state.
+  id: habit-list
+  purpose: Show all habits and allow users to remove them from their UI list.
+  sections:
+  - behaviour: Each card displays the habit name and remove button. Clicking the remove
+      button deletes the habit from the in-memory array and triggers a fade-out before
+      removing from the DOM.
+    blocks:
+    - behaviour: Represents a habit. Shows name and remove button. Reacts to remove
+        by visually fading out and then being removed from the displayed list.
+      id: habit-card
+    - behaviour: On click, removes only this habit from the in-memory list. Card uses
+        fade-out transition before disappearing.
+      id: remove-habit-button
+    id: habit-cards
+    title: Habits
+    visual: Each habit is a rounded card with a soft shadow and spacing. Remove button
+      is a red-outlined circle with an 'X', always visible on hover or focus.
+  - behaviour: Appears only if all habits have been removed. Hides automatically if
+      a habit is added back.
+    blocks:
+    - behaviour: Appears only when no habits remain in the in-memory list.
+      id: empty-state-message
+    id: empty-state
+    title: Empty State
+    visual: Centered text and optional icon in muted tone, friendly message like 'No
+      habits to display. Add a new habit to get started!'
+  title: My Habits
+  visual: Single column, habits displayed in stacked cards. Each card contains the
+    habit name and a remove button on the right. Empty state message in center if
+    list is empty.
+summary: Allow users to remove a habit from the list (UI only, no persistence).
+visual: Minimalist, card-like layout for each habit with a visible remove button (red
+  outlined 'X') on the right side of each card. Use a light color palette. When a
+  habit is removed, the card disappears with a smooth transition. If no habits remain,
+  show a friendly empty state message centered on the page.

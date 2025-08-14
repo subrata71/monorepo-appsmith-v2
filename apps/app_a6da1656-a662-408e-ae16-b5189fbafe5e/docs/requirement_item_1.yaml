@@ -1,0 +1,47 @@
+access: Open to all users; no authentication. Anyone who can access the page can add
+  habits (in-memory only).
+behaviour: User can type a habit name and press 'Add' to see the habit appear in the
+  list below in real time (UI only, no persistence). Form is cleared after submission.
+  Basic validation for non-empty input.
+name: Add Habit UI
+page:
+  behaviour: Page loads with empty input. As habits are added, the list updates below
+    without page reload. Input is cleared after a habit is added. Responsive and accessible
+    controls.
+  id: add_habit
+  purpose: Let users add a new habit to their personal list (in-memory UI only).
+  sections:
+  - behaviour: User types habit name (max 50 chars). The add button is disabled if
+      input is empty or exceeds limit. Pressing 'Add' or Enter triggers validation
+      and, on success, adds habit to the list and clears input.
+    blocks:
+    - behaviour: Single-line text input for the new habit name. Inline error if blank
+        or too long. Auto-focus on load.
+      id: habit_name_input
+    - behaviour: Primary button to add the habit. Disabled if input invalid. On click
+        or Enter, validates and adds habit, then clears input.
+      id: add_button
+    id: add_habit_form
+    title: Add Habit Form
+    visual: Card with light background, single text field and button aligned horizontally
+      on large screens and vertically stacked on small screens.
+  - behaviour: Shows all habits added in current session. List updates instantly when
+      a new habit is added. No editing or deleting habits at this stage.
+    blocks:
+    - behaviour: Displays the current in-memory list of habits, updating in real time
+        as new habits are added.
+      id: habit_list_display
+    id: habit_list
+    title: Current Habits
+    visual: Under the form, each habit displayed as a list item or pill with consistent
+      spacing. Soft border or subtle background for each item.
+  title: Add Habit
+  visual: Single card or centered container with a heading, add habit form, and a
+    vertical list of current habits. Responsive layout for mobile and desktop. Spacing
+    between form and list. Soft shadows and rounded corners for card and buttons.
+summary: Allow users to add a new habit to the list (UI only, no persistence). This
+  feature provides a simple user interface for entering the name of a new habit and
+  adding it to an on-screen (in-memory) list.
+visual: Clean, minimal interface with a card layout for the habit form and a simple
+  vertical list. Use modern sans-serif fonts, light background, and a primary accent
+  color (e.g., teal or green). Form elements should be clearly spaced for accessibility.
