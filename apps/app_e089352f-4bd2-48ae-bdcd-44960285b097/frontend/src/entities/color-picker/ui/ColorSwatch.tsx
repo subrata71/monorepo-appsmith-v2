@@ -32,25 +32,46 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(({ className = '' }) => 
           shadow-inner
           relative
           overflow-hidden
+          transition-colors duration-300 ease-in-out
+          cursor-default
         "
         style={{ backgroundColor: swatchConfig.color }}
       >
-        {/* Color display area */}
-        <div className="absolute inset-0 bg-current"></div>
+        {/* Color display area with subtle pattern for better visibility */}
+        <div className="absolute inset-0" style={{ backgroundColor: swatchConfig.color }}>
+          {/* Checkerboard pattern for transparency indicator */}
+          <div className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `
+                linear-gradient(45deg, #000 25%, transparent 25%), 
+                linear-gradient(-45deg, #000 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #000 75%), 
+                linear-gradient(-45deg, transparent 75%, #000 75%)
+              `,
+              backgroundSize: '8px 8px',
+              backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px'
+            }}
+          />
+        </div>
         
-        {/* Color value display */}
+        {/* Color value display with improved contrast */}
         <div className="absolute bottom-1 left-1 right-1">
           <div className="
-            bg-black bg-opacity-75 
+            bg-black bg-opacity-80 
             text-white text-xs 
             px-2 py-1 
             rounded 
             font-mono
             text-center
+            backdrop-blur-sm
+            border border-white border-opacity-20
           ">
             {swatchConfig.color.toUpperCase()}
           </div>
         </div>
+        
+        {/* Subtle inner border for definition */}
+        <div className="absolute inset-0 border border-black border-opacity-10 rounded-lg"></div>
       </div>
     </div>
   );
