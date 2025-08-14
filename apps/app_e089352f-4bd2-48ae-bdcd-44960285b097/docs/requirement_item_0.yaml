@@ -1,0 +1,40 @@
+access: No authentication required; accessible for all users. Proper use of roles/labels
+  for accessibility.
+behaviour: Static HTML only; no JavaScript functionality yet. Elements must be accessible
+  with semantic HTML and ARIA labels where appropriate. Structure should be responsive
+  for desktop and mobile.
+name: Create HTML structure for color picker
+page:
+  behaviour: No dynamic behaviour at this stage. HTML structure is ready for future
+    scripting. All containers must have unique IDs for easy selection.
+  id: color_picker_html_structure
+  purpose: Provides the foundation for the color picker by establishing main containers
+    for the UI.
+  sections:
+  - behaviour: Purely structural. Must have unique ID (e.g., 'color-picker-container').
+    blocks:
+    - behaviour: Displays a div or canvas serving as the area for color picking (static
+        for now).
+      id: color_picker_block
+    id: color_picker_area
+    title: Color Picker Container
+    visual: A square div or canvas (e.g. 300x300px max, responsive down on mobile),
+      with a border and slight shadow. Centered horizontally.
+  - behaviour: Has unique ID (e.g., 'color-swatch'). Only displays a placeholder color
+      at this stage.
+    blocks:
+    - behaviour: Displays a div representing the color swatch (non-interactive, static
+        color).
+      id: color_swatch_block
+    id: swatch_area
+    title: Color Swatch Display
+    visual: A small, bordered square or circle (e.g., 40x40px), centered under the
+      color picker container. Visualizes the currently selected color (static placeholder
+      color for now).
+  title: Color Picker HTML Structure
+  visual: Central column layout with generous spacing. The color picker area is prominent,
+    with a smaller swatch below. Use subtle shadows and border to separate sections.
+summary: Set up the basic HTML file with containers for the color picker and color
+  swatch display.
+visual: Clean, minimal layout. Center the color picker and swatch on the page. Use
+  clear borders and simple backgrounds to distinguish interactive areas.

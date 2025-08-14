@@ -1,0 +1,1 @@
+export { ColorPickerPage } from './ui/ColorPickerPage';

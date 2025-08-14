@@ -1,0 +1,207 @@
+client:
+  components:
+    entities:
+    - description: Static representation of the color picker area.
+      entity: colorPickerUI
+      name: ColorPickerContainer
+      props:
+      - id
+      - role
+      - aria-label
+    - description: Static representation of the color swatch.
+      entity: colorPickerUI
+      name: ColorSwatch
+      props:
+      - id
+      - role
+      - aria-label
+      - color
+    features: []
+    shared:
+    - category: ui
+      description: Generic container with ARIA roles and labels for accessibility.
+      name: AccessibleContainer
+      props:
+      - id
+      - role
+      - aria-label
+    - category: ui
+      description: Utility component for centering content responsively.
+      name: ResponsiveCenterColumn
+      props: []
+    - category: ui
+      description: Box with border and subtle shadow for UI separation.
+      name: ShadowedBox
+      props: []
+    widgets:
+    - description: Combines ColorPickerContainer and ColorSwatch in a central layout.
+      entities:
+      - ColorPickerContainer
+      - ColorSwatch
+      features: []
+      name: ColorPickerWidget
+      props:
+      - colorPickerId
+      - swatchId
+      shared:
+      - AccessibleContainer
+      - ResponsiveCenterColumn
+      - ShadowedBox
+  pages:
+  - description: Displays the static, responsive layout for the color picker interface.
+    queries: []
+    route: /color-picker-html
+    title: Color Picker HTML Structure
+    widgets:
+    - ColorPickerWidget
+  stores:
+  - actions: []
+    description: Provides initial static structure for color picker UI components.
+      No state management needed at this stage.
+    layer: entities
+    name: colorPickerUIStore
+    state_shape:
+    - name: colorPickerId
+      type: string
+    - name: swatchId
+      type: string
+components:
+  parameters: []
+  responses: []
+  schemas:
+  - name: ColorPickerContainer
+    type: object
+  - name: ColorSwatch
+    type: object
+domains:
+- apis: []
+  description: Structures the static UI containers for the color picker and swatch
+    display.
+  models:
+  - description: Represents the main color picker area container.
+    fields:
+    - name: id
+      nullable: false
+      pk: false
+      type: string
+    - name: role
+      nullable: false
+      pk: false
+      type: string
+    - name: ariaLabel
+      nullable: false
+      pk: false
+      type: string
+    - name: type
+      nullable: false
+      pk: false
+      type: string
+    name: ColorPickerContainer
+  - description: Represents the static color swatch display container.
+    fields:
+    - name: id
+      nullable: false
+      pk: false
+      type: string
+    - name: role
+      nullable: false
+      pk: false
+      type: string
+    - name: ariaLabel
+      nullable: false
+      pk: false
+      type: string
+    - name: type
+      nullable: false
+      pk: false
+      type: string
+    - name: color
+      nullable: false
+      pk: false
+      type: string
+    name: ColorSwatch
+  name: colorPickerUI
+  services:
+  - description: Handles retrieval and templating of HTML structure for the color
+      picker UI.
+    methods:
+    - getStaticColorPickerStructure
+    name: ColorPickerUIStructureService
+metadata:
+  description: Technical specification for the static HTML structure of a color picker
+    UI, including containers for the color picker and swatch display, following accessibility
+    and responsive design principles.
+  generated_at: '2024-06-14T12:00:00Z'
+  name: color-picker-html-structure
+  version: 1.0.0
+product:
+  features:
+  - description: Provides semantic, accessible containers for the color picker and
+      color swatch, ready for future enhancements.
+    domains:
+    - colorPickerUI
+    id: static-html-structure
+    priority: high
+    title: Static HTML Structure
+  goals:
+  - Establish a clear, responsive, and accessible HTML skeleton for a color picker.
+  - Ensure containers are uniquely identifiable and semantically structured.
+  - Lay groundwork for future dynamic color picking functionality.
+  personas:
+  - description: Designs accessible and visually clean interfaces; needs reusable,
+      well-labeled containers for prototyping.
+    goals:
+    - Quickly prototype interface layouts
+    - Ensure accessibility and responsiveness
+    name: UI Designer
+  - description: Implements interactive color picker logic; requires unique IDs and
+      a semantic structure for scripting.
+    goals:
+    - Easily select containers for scripting
+    - Build on a semantic and accessible foundation
+    name: Frontend Developer
+  - description: Uses the color picker tool on various devices; benefits from accessible,
+      responsive design.
+    goals:
+    - Access the tool on desktop and mobile
+    - Navigate easily and understand the UI
+    name: End User
+  summary: A minimal, accessible static HTML layout for a color picker tool, providing
+    the foundational UI structure for future interactive features.
+use_cases:
+- actors:
+  - End User
+  apis: []
+  description: User accesses the color picker page and sees a central color picker
+    area and a color swatch placeholder, with no dynamic functionality.
+  domains:
+  - colorPickerUI
+  happy_path:
+  - User navigates to the color picker page
+  - User sees a centered color picker container with a bordered area
+  - User sees a color swatch display below the picker container
+  - All elements are accessible and responsive
+  id: view-color-picker-structure
+  pages:
+  - /color-picker-html
+  postconditions:
+  - User sees a clean, accessible, and responsive UI skeleton.
+  preconditions: []
+  title: View Color Picker HTML Structure
+user_journeys:
+- id: basic-access-journey
+  persona: End User
+  related_use_cases:
+  - view-color-picker-structure
+  steps:
+  - action: Navigate to the color picker page
+    page: /color-picker-html
+  - action: See the centered color picker container
+    page: /color-picker-html
+  - action: See the color swatch display below
+    page: /color-picker-html
+  - action: Note that all elements are accessible and responsive
+    page: /color-picker-html
+  success_criteria: All users, on any device, can see and identify the color picker
+    area and swatch, with containers labeled for accessibility and ready for scripting.
+  title: Access Color Picker Page (Static)
