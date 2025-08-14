@@ -1,0 +1,49 @@
+access: No authentication required. Open to all users as data is static and non-sensitive.
+behaviour: Loads static data on page initialization. Pie chart is interactive, showing
+  provider name and market share percentage on hover. No data editing capabilities;
+  this is purely read-only static data visualization.
+name: Static Data Setup for LLM Provider Market Share Pie Chart
+page:
+  behaviour: Renders static data in a pie chart. Interactive hover over pie slices
+    for details. Page is responsive and adapts to different screen sizes.
+  id: llm-provider-market-share
+  purpose: Visualize static market share data for LLM providers to provide a snapshot
+    overview for users.
+  sections:
+  - behaviour: No interactivity. Simply display the section title and a short explanation
+      about the pie chart and its data source.
+    blocks:
+    - behaviour: Displays 'LLM Provider Market Share' as main header.
+      id: section-title
+    - behaviour: 'Displays static text: ''The following chart shows a static breakdown
+        of market share among major LLM providers.'''
+      id: section-summary
+    id: intro
+    title: Introduction
+    visual: Section title and description text, left-aligned above the chart.
+  - behaviour: Uses static data defined in a data block. On hover, highlights segment
+      and shows provider/percentage. Legend updates highlight on hover. No click actions
+      required.
+    blocks:
+    - behaviour: Defines a static array/object with 'provider_name' and 'market_share_percentage'.
+      id: data-block
+    - behaviour: Renders a pie chart using values from the data block. Each provider
+        is a distinct color segment. Shows tooltip with provider and percentage on
+        hover.
+      id: pie-chart-block
+    - behaviour: Displays legend mapping colors to provider names. Highlights legend
+        entry that matches the hovered chart segment.
+      id: legend-block
+    id: pie-chart-section
+    title: Pie Chart Visualization
+    visual: Pie chart occupies main focus; legend below chart with color boxes and
+      provider names. Tooltips and highlights on hover.
+  title: LLM Provider Market Share
+  visual: Top-centered page title and description, below which is a large, visually
+    attractive pie chart. Legend appears below the chart, mapping colors to provider
+    names.
+summary: Set up and display static data of LLM providers and their market share as
+  a pie chart.
+visual: Clean, modern dashboard with a central pie chart and accompanying legend.
+  Consistent color palette with clear data labeling. Ample whitespace and readable
+  sans-serif font.

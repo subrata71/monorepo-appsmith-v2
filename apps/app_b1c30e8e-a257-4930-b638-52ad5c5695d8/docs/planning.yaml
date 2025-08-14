@@ -1,0 +1,29 @@
+plan_items:
+- id: '1'
+  name: Static Data Setup
+  sub_items:
+  - effort: 1
+    id: '1.1'
+    name: Define LLM Provider Data
+    summary: Create a static array/object with LLM provider names and their market
+      share percentages.
+  summary: Set up static data for LLM providers and their market share to be used
+    in the pie chart.
+- id: '2'
+  name: Pie Chart Component
+  sub_items:
+  - effort: 1
+    id: '2.1'
+    name: Choose Chart Library
+    summary: Select a fast and simple chart library (e.g., Chart.js, Recharts, or
+      Google Charts).
+  - effort: 2
+    id: '2.2'
+    name: Implement Pie Chart
+    summary: Render the pie chart using the chosen library and the static data.
+  - effort: 1
+    id: '2.3'
+    name: Add Chart Legend
+    summary: Display a legend mapping colors to LLM providers.
+  summary: Implement a frontend component to render the pie chart using the static
+    data.
