@@ -7,7 +7,11 @@
 import React, { useCallback, useEffect } from 'react';
 import { Container } from '@/shared/ui/container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/card';
-import { DailyEntryInput, useDailyEntryStore } from '@/entities/daily-entry';
+import { 
+  DailyEntryInput, 
+  DailyEntryCard, 
+  useDailyEntryStore 
+} from '@/entities/daily-entry';
 
 export const DailyEntryPage = React.memo(() => {
   // Store state
@@ -17,12 +21,12 @@ export const DailyEntryPage = React.memo(() => {
   const canEdit = useDailyEntryStore(state => state.canEdit);
   
   // Store actions
-  const setError = useDailyEntryStore(state => state.setError);
-  const setSaving = useDailyEntryStore(state => state.setSaving);
   const reset = useDailyEntryStore(state => state.reset);
   const loadEntry = useDailyEntryStore(state => state.loadEntry);
   const saveEntry = useDailyEntryStore(state => state.saveEntry);
   const updateEntry = useDailyEntryStore(state => state.updateEntry);
+  const startEditing = useDailyEntryStore(state => state.startEditing);
+  const cancelEditing = useDailyEntryStore(state => state.cancelEditing);
   
   // Get today's date for display
   const today = new Date().toLocaleDateString('en-US', {
@@ -43,11 +47,15 @@ export const DailyEntryPage = React.memo(() => {
     }
   }, [entry, saveEntry, updateEntry]);
   
-  // Handle canceling edit (placeholder for now - will be implemented in edit sub-item)
+  // Handle canceling edit
   const handleCancel = useCallback(() => {
-    // TODO: This will be implemented in the "Edit Today's Entry" sub-item
-    console.log('Cancel editing');
-  }, []);
+    cancelEditing();
+  }, [cancelEditing]);
+  
+  // Handle starting edit mode
+  const handleStartEdit = useCallback(() => {
+    startEditing();
+  }, [startEditing]);
   
   // Load today's entry on mount
   useEffect(() => {
@@ -97,22 +105,12 @@ export const DailyEntryPage = React.memo(() => {
           
           <CardContent>
             {entry && !isEditing ? (
-              // Show saved entry (will be implemented in edit sub-item)
-              <div className="space-y-4">
-                <blockquote className="border-l-4 border-primary pl-4 italic text-lg">
-                  "{entry.sentence}"
-                </blockquote>
-                {canEdit && (
-                  <div className="flex justify-end">
-                    <button 
-                      className="text-sm text-primary hover:underline"
-                      onClick={() => console.log('Edit entry - will be implemented in edit sub-item')}
-                    >
-                      Edit Entry
-                    </button>
-                  </div>
-                )}
-              </div>
+              // Show saved entry with edit capability
+              <DailyEntryCard
+                sentence={entry.sentence}
+                onEdit={handleStartEdit}
+                canEdit={canEdit}
+              />
             ) : (
               // Show input form
               <DailyEntryInput

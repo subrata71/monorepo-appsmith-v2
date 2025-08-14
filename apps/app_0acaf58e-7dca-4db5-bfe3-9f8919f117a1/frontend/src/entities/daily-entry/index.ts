@@ -5,4 +5,6 @@
  */
 
 export { DailyEntryInput } from './ui/DailyEntryInput';
+export { DailyEntryCard } from './ui/DailyEntryCard';
+export { DailyEntryEditButton } from './ui/DailyEntryEditButton';
 export { useDailyEntryStore } from './model/store';

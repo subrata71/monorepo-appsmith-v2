@@ -6,6 +6,7 @@
 
 import { create } from 'zustand';
 import { validateSentence, type SentenceValidationResult } from '@/shared/lib/validation';
+import { canEditEntry } from '@/shared/lib/utils';
 import { 
   getDailyEntry, 
   createTodaysDailyEntry, 
@@ -151,7 +152,7 @@ export const useDailyEntryStore = create<DailyEntryStore>((set, get) => ({
         entry,
         input: entry ? entry.sentence : '',
         isLoading: false,
-        canEdit: !entryDate || entryDate === new Date().toISOString().split('T')[0],
+        canEdit: entry ? canEditEntry(entry.entryDate) : true, // New entries can be created today
       });
     } catch (error) {
       console.error('Failed to load entry:', error);
