@@ -1,0 +1,41 @@
+plan_items:
+- id: '1'
+  name: Habit List UI
+  sub_items:
+  - effort: 1
+    id: '1.1'
+    name: Static Habit List Component
+    summary: Build a static component that lists several example habits.
+  - effort: 1
+    id: '1.2'
+    name: Completion Checkbox UI
+    summary: Add checkboxes or toggles to mark habits as complete for the day (UI
+      only, no persistence).
+  summary: Create a user interface to display a list of habits and their daily completion
+    status.
+- id: '2'
+  name: Add Habit UI
+  sub_items:
+  - effort: 2
+    id: '2.1'
+    name: Add Habit Form
+    summary: Create a simple form to input a new habit name and add it to the list
+      (in-memory only).
+  summary: Allow users to add a new habit to the list (UI only, no persistence).
+- id: '3'
+  name: Remove Habit UI
+  sub_items:
+  - effort: 1
+    id: '3.1'
+    name: Remove Habit Button
+    summary: Add a button to each habit to remove it from the list (in-memory only).
+  summary: Allow users to remove a habit from the list (UI only, no persistence).
+- id: '4'
+  name: Basic Habit Streak Display
+  sub_items:
+  - effort: 2
+    id: '4.1'
+    name: Streak Counter UI
+    summary: Display a counter next to each habit showing the current streak (in-memory
+      only).
+  summary: Show a simple streak count for each habit (UI only, no persistence).

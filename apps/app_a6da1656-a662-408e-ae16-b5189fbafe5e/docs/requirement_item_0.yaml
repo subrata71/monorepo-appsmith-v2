@@ -1,0 +1,44 @@
+access: Public component; no authentication or role-specific restrictions.
+behaviour: UI-only. Checking/unchecking is immediate and local (no persistence). All
+  controls are keyboard accessible. No side effects beyond visual state change.
+name: Habit List UI
+page:
+  behaviour: User checks/unchecks boxes to mark completion. All state is local to
+    the UI and resets on reload. Supports mouse, touch, and keyboard navigation.
+  id: habit-list-ui-page
+  purpose: Allow users to view a list of habits and mark daily completion via an interactive
+    interface.
+  sections:
+  - behaviour: Holds the header and habit list blocks. Focuses user attention visually.
+    blocks:
+    - behaviour: Displays the static heading 'Your Habits' in bold, larger text at
+        the top of the card.
+      id: card-header
+    - behaviour: Shows at least 3 example habits (e.g. 'Drink Water', 'Exercise',
+        'Read a Book') in a fixed order with no edit controls.
+      id: habit-list-static
+    id: habit-list-card
+    title: Habit List Card
+    visual: Card container with inner padding and vertical spacing between header
+      and list items.
+  - behaviour: Each row's control can be toggled on/off. Checked state changes visual
+      style (e.g. checkmark, color fill). No persistence; resets on reload. Fully
+      accessible.
+    blocks:
+    - behaviour: Checkbox/toggle for each habit. Immediate local state change; supports
+        mouse click and keyboard (space/enter). Visual state reflects checked/unchecked.
+      id: completion-checkbox
+    id: habit-list-controls
+    title: Habit Completion Controls
+    visual: 'Each habit row is split: habit name left, checkbox/toggle right. Checkbox
+      is standard Material or system component.'
+  title: Your Habits
+  visual: Centered card with subtle shadow, white background, rounded corners, and
+    vertical stacking. Habits listed with checkboxes/toggles aligned right. Title/header
+    above the list.
+summary: Create a user interface to display a list of habits and their daily completion
+  status. Users can visually mark each habit as complete for the day. No data storage
+  or backend required.
+visual: Minimal, clean layout with a card containing a vertically stacked list. Each
+  habit is a row with its name and a checkbox/toggle. Responsive and accessible (high
+  contrast, visible focus indicators).
