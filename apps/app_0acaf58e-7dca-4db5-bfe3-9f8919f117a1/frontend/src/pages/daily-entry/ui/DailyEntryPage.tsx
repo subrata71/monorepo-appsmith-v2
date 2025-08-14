@@ -20,6 +20,9 @@ export const DailyEntryPage = React.memo(() => {
   const setError = useDailyEntryStore(state => state.setError);
   const setSaving = useDailyEntryStore(state => state.setSaving);
   const reset = useDailyEntryStore(state => state.reset);
+  const loadEntry = useDailyEntryStore(state => state.loadEntry);
+  const saveEntry = useDailyEntryStore(state => state.saveEntry);
+  const updateEntry = useDailyEntryStore(state => state.updateEntry);
   
   // Get today's date for display
   const today = new Date().toLocaleDateString('en-US', {
@@ -29,27 +32,16 @@ export const DailyEntryPage = React.memo(() => {
     day: 'numeric',
   });
   
-  // Handle saving entry (placeholder for now - will be implemented in save sub-item)
+  // Handle saving entry
   const handleSave = useCallback(async (sentence: string) => {
-    try {
-      setSaving(true);
-      setError(null);
-      
-      // TODO: This will be implemented in the "Save Entry" sub-item
-      console.log('Saving entry:', sentence);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For now, just show success
-      alert(`Entry saved: "${sentence}"`);
-      
-    } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to save entry');
-    } finally {
-      setSaving(false);
+    if (entry) {
+      // If entry exists, update it
+      await updateEntry();
+    } else {
+      // If no entry exists, create a new one
+      await saveEntry();
     }
-  }, [setSaving, setError]);
+  }, [entry, saveEntry, updateEntry]);
   
   // Handle canceling edit (placeholder for now - will be implemented in edit sub-item)
   const handleCancel = useCallback(() => {
@@ -57,10 +49,11 @@ export const DailyEntryPage = React.memo(() => {
     console.log('Cancel editing');
   }, []);
   
-  // Reset state on mount
+  // Load today's entry on mount
   useEffect(() => {
     reset();
-  }, [reset]);
+    loadEntry(); // Load today's entry
+  }, [reset, loadEntry]);
   
   if (isLoading) {
     return (

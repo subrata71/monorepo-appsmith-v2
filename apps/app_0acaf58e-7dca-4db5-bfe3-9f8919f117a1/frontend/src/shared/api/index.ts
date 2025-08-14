@@ -154,3 +154,6 @@ export const handleError = (error: unknown): never => {
   // up in the UI.
   throw new ResponseError(undefined);
 };
+
+// Re-export daily entry API
+export * from './daily-entry';

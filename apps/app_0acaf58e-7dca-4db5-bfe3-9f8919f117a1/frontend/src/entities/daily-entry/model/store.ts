@@ -6,6 +6,12 @@
 
 import { create } from 'zustand';
 import { validateSentence, type SentenceValidationResult } from '@/shared/lib/validation';
+import { 
+  getDailyEntry, 
+  createTodaysDailyEntry, 
+  updateDailyEntry, 
+  ResponseError 
+} from '@/shared/api';
 import type { components } from '@app/shared/api-types/generated-types';
 
 type DailyEntry = components['schemas']['DailyEntry'];
@@ -50,6 +56,9 @@ interface DailyEntryActions {
   
   // Entry management
   setEntry: (entry: DailyEntry | null) => void;
+  loadEntry: (entryDate?: string) => Promise<void>;
+  saveEntry: () => Promise<void>;
+  updateEntry: () => Promise<void>;
   
   // Edit state
   startEditing: () => void;
@@ -132,6 +141,81 @@ export const useDailyEntryStore = create<DailyEntryStore>((set, get) => ({
     });
   },
   
+  loadEntry: async (entryDate?: string) => {
+    try {
+      set({ isLoading: true, error: null });
+      
+      const entry = await getDailyEntry(entryDate);
+      
+      set({ 
+        entry,
+        input: entry ? entry.sentence : '',
+        isLoading: false,
+        canEdit: !entryDate || entryDate === new Date().toISOString().split('T')[0],
+      });
+    } catch (error) {
+      console.error('Failed to load entry:', error);
+      set({ 
+        isLoading: false,
+        error: error instanceof ResponseError ? error.message : 'Failed to load entry',
+      });
+    }
+  },
+
+  saveEntry: async () => {
+    const { input, validationResult } = get();
+    
+    if (!validationResult?.isValid || !input.trim()) {
+      return;
+    }
+
+    try {
+      set({ isSaving: true, error: null });
+      
+      const entry = await createTodaysDailyEntry(input.trim());
+      
+      set({ 
+        entry,
+        isSaving: false,
+        isEditing: false,
+        input: entry.sentence,
+      });
+    } catch (error) {
+      console.error('Failed to save entry:', error);
+      set({ 
+        isSaving: false,
+        error: error instanceof ResponseError ? error.message : 'Failed to save entry',
+      });
+    }
+  },
+
+  updateEntry: async () => {
+    const { input, validationResult } = get();
+    
+    if (!validationResult?.isValid || !input.trim()) {
+      return;
+    }
+
+    try {
+      set({ isSaving: true, error: null });
+      
+      const entry = await updateDailyEntry(input.trim());
+      
+      set({ 
+        entry,
+        isSaving: false,
+        isEditing: false,
+        input: entry.sentence,
+      });
+    } catch (error) {
+      console.error('Failed to update entry:', error);
+      set({ 
+        isSaving: false,
+        error: error instanceof ResponseError ? error.message : 'Failed to update entry',
+      });
+    }
+  },
+
   reset: () => {
     set(initialState);
   },

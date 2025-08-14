@@ -16,12 +16,14 @@ import type * as schema from '../db/schema';
 // 1️⃣  Import repository factories here.
 // The .template.ts suffix keeps this compiling until you rename the file.
 import { __entity__Repo } from './__entity__.repo.template'; // 🡄 token import
+import { DailyEntryRepository } from './daily-entry.repo';
 // import { userRepo }    from './user.repo.ts'                 // 🡄 real import later
 // import { orderRepo }   from './order.repo.ts'
 
 // 2️⃣  Build and return an object where every repo already has app.db injected.
 export const buildRepositories = (app: FastifyInstance) => ({
   __entity__: __entity__Repo(app.db as NodePgDatabase<typeof schema>), // 🡄 token entry
+  dailyEntry: new DailyEntryRepository(app.db as NodePgDatabase<typeof schema>),
   // user:  userRepo(app.db),                  // 🡄 real entry later
   // order: orderRepo(app.db)
 });
