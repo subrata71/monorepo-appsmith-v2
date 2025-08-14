@@ -30,7 +30,9 @@ export default fp(async (app: FastifyInstance) => {
       const errorToLog =
         seedError instanceof Error ? seedError : new Error(String(seedError));
       log.error({ err: errorToLog }, 'Failed to run database seeds');
-      log.warn('⚠️  Seed migration failed, but application will continue running');
+      log.warn(
+        '⚠️  Seed migration failed, but application will continue running'
+      );
       log.warn('You may need to run seeds manually or fix the seed scripts');
     }
 

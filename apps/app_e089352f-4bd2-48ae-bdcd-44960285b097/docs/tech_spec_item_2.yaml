@@ -1,0 +1,338 @@
+client:
+  components:
+    entities:
+    - description: Color picker area container with ARIA labeling and focus handling.
+      entity: colorPickerUI
+      name: ColorPickerContainer
+      props:
+      - id
+      - role
+      - aria-label
+    - description: Displays current color with border, ARIA label, tooltip, and animated
+        updates.
+      entity: colorPickerUI
+      name: ColorSwatch
+      props:
+      - id
+      - role
+      - aria-label
+      - color
+      - showCheckerboard
+      - tabIndex
+      - tooltip
+    - description: Color input with pointer, keyboard, and screen reader accessibility;
+        emits color changes.
+      entity: colorPickerUI
+      name: ColorPickerInput
+      props:
+      - id
+      - value
+      - onChange
+      - aria-label
+      - tabIndex
+      - onFocus
+      - onBlur
+    features:
+    - description: Manages color state, pointer/keyboard events, color calculation,
+        and swatch animation.
+      entities:
+      - ColorPickerInput
+      - ColorSwatch
+      feature: accessible-color-picker
+      name: ColorPickerForm
+      props:
+      - initialColor
+      shared:
+      - FocusRing
+    - description: Handles pointer/touch/keyboard listeners, real-time color calculation,
+        ARIA focus, and animated swatch updates.
+      entities:
+      - ColorPickerContainer
+      - ColorSwatch
+      feature: color-picker-interaction-logic
+      name: ColorPickerInteractionLogic
+      props:
+      - onPointerDown
+      - onPointerMove
+      - onPointerUp
+      - onKeyDown
+      - onFocus
+      - onBlur
+      shared:
+      - FocusRing
+    shared:
+    - category: ui
+      description: Container with ARIA roles and labels for accessibility.
+      name: AccessibleContainer
+      props:
+      - id
+      - role
+      - aria-label
+    - category: ui
+      description: Centers content responsively.
+      name: ResponsiveCenterColumn
+      props: []
+    - category: ui
+      description: Box with border and subtle shadow for visual separation.
+      name: ShadowedBox
+      props: []
+    - category: ui
+      description: Applies visible focus indicators for accessibility.
+      name: FocusRing
+      props:
+      - as
+      - style
+    - category: ui
+      description: Renders checkerboard background for swatch contrast.
+      name: CheckerboardBackground
+      props:
+      - visible
+    widgets:
+    - description: Arranges picker area and swatch in an accessible, live-feedback
+        layout.
+      entities:
+      - ColorPickerContainer
+      - ColorSwatch
+      - ColorPickerInput
+      features:
+      - ColorPickerForm
+      - ColorPickerInteractionLogic
+      name: ColorPickerWidget
+      props:
+      - colorPickerId
+      - swatchId
+      shared:
+      - AccessibleContainer
+      - ResponsiveCenterColumn
+      - ShadowedBox
+      - FocusRing
+      - CheckerboardBackground
+  pages:
+  - description: Interactive color picker with real-time updates, accessible controls,
+      and animated swatch.
+    queries: []
+    route: /color-picker
+    title: Color Picker
+    widgets:
+    - ColorPickerWidget
+  stores:
+  - actions:
+    - setColor
+    - resetColor
+    - focusPicker
+    - blurPicker
+    - showTooltip
+    - hideTooltip
+    - startPointerTracking
+    - updatePointerPosition
+    - stopPointerTracking
+    - calculateColorFromPosition
+    - animateSwatchTransition
+    description: 'Manages color picker state: selected color, pointer/keyboard tracking,
+      picker position, and swatch updates. Provides actions for color selection, tracking,
+      and accessibility.'
+    layer: features
+    name: colorPickerStateStore
+    state_shape:
+    - name: selectedColor
+      type: string
+    - name: isTrackingPointer
+      type: boolean
+    - name: pickerPosition
+      type: object
+    - name: colorPickerId
+      type: string
+    - name: swatchId
+      type: string
+components:
+  parameters:
+  - in_: path
+    name: ColorPickerStateId
+    required: true
+  responses:
+  - code: '404'
+    description: Not found
+  - code: '400'
+    description: Invalid request
+  - code: '500'
+    description: Internal server error
+  schemas:
+  - name: ColorPickerState
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns all color picker state objects.
+      operation_id: getColorPickerStates
+      summary: Get all color picker states
+      tags:
+      - ColorPickerUI
+    path: /api/color-picker-states
+  - method: GET
+    operation:
+      description: Returns a color picker state by ID.
+      operation_id: getColorPickerStateById
+      summary: Get color picker state by ID
+      tags:
+      - ColorPickerUI
+    path: /api/color-picker-states/{id}
+  - method: POST
+    operation:
+      description: Creates a new color picker state.
+      operation_id: createColorPickerState
+      summary: Create a new color picker state
+      tags:
+      - ColorPickerUI
+    path: /api/color-picker-states
+  - method: PUT
+    operation:
+      description: Updates an existing color picker state.
+      operation_id: updateColorPickerState
+      summary: Update color picker state
+      tags:
+      - ColorPickerUI
+    path: /api/color-picker-states/{id}
+  - method: DELETE
+    operation:
+      description: Deletes a color picker state by ID.
+      operation_id: deleteColorPickerState
+      summary: Delete color picker state
+      tags:
+      - ColorPickerUI
+    path: /api/color-picker-states/{id}
+  description: Manages interactive color picking logic, color computation, accessibility,
+    and animated swatch updates.
+  models:
+  - description: Represents color picker state, including selected color, pointer/keyboard
+      tracking, and picker position.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: selectedColor
+      nullable: false
+      pk: false
+      type: string
+    - name: isTrackingPointer
+      nullable: false
+      pk: false
+      type: boolean
+    - name: pickerPosition
+      nullable: false
+      pk: false
+      type: object
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: ColorPickerState
+  name: colorPickerUI
+  services:
+  - description: Handles color selection, event tracking for pointer/touch/keyboard,
+      ARIA feedback, color computation, and swatch animation.
+    methods:
+    - selectColor
+    - updateSwatch
+    - provideAriaFeedback
+    - manageFocusIndicators
+    - startPointerTracking
+    - updatePointerPosition
+    - stopPointerTracking
+    - calculateColorFromPosition
+    - animateSwatchTransition
+    name: ColorPickerInteractionService
+metadata:
+  description: 'Implements interactive color picker logic: pointer/touch/keyboard
+    event handling, real-time color computation, animated swatch updates, and comprehensive
+    accessibility.'
+  generated_at: '2024-06-14T14:00:00Z'
+  name: color-picker-interaction-logic
+  version: 1.2.0
+product:
+  features:
+  - description: Enables real-time color picking via pointer/touch/keyboard, smooth
+      swatch transitions, robust ARIA labeling, and proper edge case handling.
+    domains:
+    - colorPickerUI
+    id: color-picker-interaction-logic
+    priority: high
+    title: Interactive Color Picker Logic & Accessibility
+  goals:
+  - Enable real-time color selection via pointer, touch, and keyboard input.
+  - Provide instant, animated visual feedback in the color swatch.
+  - Ensure accessibility for all users, including keyboard and screen reader navigation.
+  - Handle edge cases and ensure robust interaction.
+  personas:
+  - description: Designs clean, accessible color pickers; wants to validate visual
+      and interactive feedback.
+    goals:
+    - Ensure appealing and accessible color picking.
+    - Verify real-time feedback.
+    name: UI Designer
+  - description: Implements interaction logic, color calculations, and accessibility.
+    goals:
+    - Implement robust event handlers.
+    - Ensure smooth updates and accessibility.
+    name: Frontend Developer
+  - description: Selects colors via pointer, touch, or keyboard, expecting immediate
+      feedback.
+    goals:
+    - Pick colors easily and accessibly.
+    - Receive instant feedback.
+    name: End User
+  summary: Adds advanced interaction logic to the color picker, including pointer/touch/keyboard
+    support, real-time color calculations, smooth swatch transitions, and ARIA accessibility.
+use_cases:
+- actors:
+  - End User
+  apis:
+  - /api/color-picker-states/{id}
+  description: User interacts with the custom color picker area using pointer, touch,
+    or keyboard and sees the swatch update in real time. Picker is accessible and
+    provides instant feedback.
+  domains:
+  - colorPickerUI
+  happy_path:
+  - User sees visually distinct picker and swatch.
+  - User clicks/touches picker, begins tracking.
+  - Pointer/touch moves, swatch updates instantly.
+  - User uses Tab/Arrow keys to adjust color.
+  - Swatch animates transitions.
+  - Out-of-bounds input is ignored.
+  id: interact-with-advanced-color-picker
+  pages:
+  - /color-picker
+  postconditions:
+  - User-selected color is reflected in the swatch, with all edge cases handled.
+  preconditions:
+  - User accesses the color picker page.
+  title: Interact with Advanced Color Picker
+user_journeys:
+- id: interactive-color-picking-journey
+  persona: End User
+  related_use_cases:
+  - interact-with-advanced-color-picker
+  steps:
+  - action: Navigate to color picker page.
+    page: /color-picker
+  - action: See visually distinct picker and swatch.
+    page: /color-picker
+  - action: Click/tap picker, move input, swatch updates real time.
+    page: /color-picker
+  - action: Use Tab/Arrow keys to adjust color; swatch updates.
+    page: /color-picker
+  - action: Swatch animates color transitions.
+    page: /color-picker
+  - action: Interact outside picker; color does not update.
+    page: /color-picker
+  - action: Screen reader announces ARIA roles and labels.
+    page: /color-picker
+  success_criteria: User can select and preview colors in real time, with accessible
+    feedback and smooth swatch updates, via pointer, touch, or keyboard.
+  title: Interactive Color Picking End-to-End

@@ -1,0 +1,57 @@
+access: Accessible to all users of the application. Add ARIA roles and keyboard navigation
+  to the color picker for screen readers and improved accessibility.
+behaviour: Real-time updates of the color swatch as the user interacts. Immediate
+  feedback to user inputs via mouse or touch, and graceful handling of edge cases
+  (e.g., clicking/draging outside the picker does not update the color). Smooth transition
+  effects for swatch updates. Keyboard accessibility for changing color (using arrow
+  keys or tab navigation).
+name: Implement color picker interaction logic
+page:
+  behaviour: On pointer down/touch start in the picker area, begin tracking input.
+    On pointer move/touch move, update the selected color and swatch in real time.
+    On pointer up/touch end, stop tracking. Prevent interaction outside picker area.
+    Arrow keys or tab can move focus and adjust color selection.
+  id: color_picker_page
+  purpose: Allows users to interactively select a color. Immediate visual feedback
+    is provided as the user makes their selection.
+  sections:
+  - behaviour: Handles pointer and touch events for color selection. Shows a marker
+      or handle at the current pick location. Ignores out-of-bounds events.
+    blocks:
+    - behaviour: Add event listeners for mouse/touch start, move, and end. Initiate
+        tracking when clicked/touched, update position on move, and stop tracking
+        on release.
+      id: event_listeners
+    id: picker_area
+    title: Color Picker Area
+    visual: Square or circular interactive area for selecting a color (can be a grid
+      or a radial design). Distinct border and hover/focus highlights.
+  - behaviour: Translates the position within the picker area (e.g., angle for radial,
+      x/y for grid) to a color value (RGB/HEX/HSV as needed).
+    blocks:
+    - behaviour: Given the pointer position or angle, compute the corresponding color
+        value. Update this value in real time as input changes.
+      id: calculate_color
+    id: color_calculation
+    title: Color Calculation
+    visual: Not visible—logic only.
+  - behaviour: Updates instantly as the selected color changes. Animates color transition
+      for smoother visual feedback.
+    blocks:
+    - behaviour: Change the swatch background color immediately to the newly calculated
+        color as user interacts.
+      id: swatch_update
+    id: swatch_display
+    title: Color Swatch
+    visual: Large colored rectangle or circle below the picker, showing the current
+      selection. Clear border for visibility.
+  title: Color Picker
+  visual: Single-column layout, with the color picker at the center, instructions
+    above, and the color swatch displayed below. Responsive design for both desktop
+    and mobile.
+summary: Write JavaScript to handle user interaction with the color picker and update
+  the swatch in real time.
+visual: Adopt a clean, modern UI. Color picker area should be visually distinct, with
+  a clear border and perhaps a subtle gradient or checkerboard background. The current
+  color swatch is displayed prominently below the picker. Responsive and touch-friendly,
+  with accessible contrast and focus styles.

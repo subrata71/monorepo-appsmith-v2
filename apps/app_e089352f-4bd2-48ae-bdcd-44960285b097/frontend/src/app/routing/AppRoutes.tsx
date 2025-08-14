@@ -7,13 +7,19 @@ export const AppRoutes = () => {
     <Routes>
       <Route element={<AppLayout />}>
         {/* Redirect root to color picker page */}
-        <Route path="/" element={<Navigate to="/color-picker-html" replace />} />
-        
+        <Route
+          path="/"
+          element={<Navigate to="/color-picker-html" replace />}
+        />
+
         {/* Color picker page */}
         <Route path="/color-picker-html" element={<ColorPickerPage />} />
-        
+
         {/* Catch undefined routes */}
-        <Route path="*" element={<Navigate to="/color-picker-html" replace />} />
+        <Route
+          path="*"
+          element={<Navigate to="/color-picker-html" replace />}
+        />
       </Route>
     </Routes>
   );

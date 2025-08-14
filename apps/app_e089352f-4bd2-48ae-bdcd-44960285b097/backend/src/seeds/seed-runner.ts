@@ -108,9 +108,13 @@ export class SeedRunner {
     }
 
     if (failedSeeds.length > 0) {
-      console.log(`⚠️  Seed summary: ${successCount} successful, ${failedSeeds.length} failed`);
+      console.log(
+        `⚠️  Seed summary: ${successCount} successful, ${failedSeeds.length} failed`
+      );
       console.log(`❌ Failed seeds: ${failedSeeds.join(', ')}`);
-      throw new Error(`${failedSeeds.length} seed(s) failed to apply. See logs above for details.`);
+      throw new Error(
+        `${failedSeeds.length} seed(s) failed to apply. See logs above for details.`
+      );
     } else {
       console.log('✅ All seeds completed successfully!');
     }

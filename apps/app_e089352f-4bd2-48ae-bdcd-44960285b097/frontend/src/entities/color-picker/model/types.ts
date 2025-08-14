@@ -13,8 +13,15 @@ export interface ColorSwatch {
   color: string;
 }
 
+export interface PickerPosition {
+  x: number;
+  y: number;
+}
+
 export interface ColorPickerState {
   colorPickerId: string;
   swatchId: string;
   selectedColor: string;
+  isTrackingPointer: boolean;
+  pickerPosition: PickerPosition;
 }
