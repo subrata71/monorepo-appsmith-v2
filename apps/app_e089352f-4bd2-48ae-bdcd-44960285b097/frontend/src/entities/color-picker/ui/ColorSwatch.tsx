@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useColorPickerStore } from '../model/store';
 import type { ColorSwatch as ColorSwatchType } from '../model/types';
 
@@ -10,13 +10,33 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
   ({ className = '' }) => {
     const swatchId = useColorPickerStore(state => state.swatchId);
     const selectedColor = useColorPickerStore(state => state.selectedColor);
+    const isTrackingPointer = useColorPickerStore(state => state.isTrackingPointer);
+    
+    // State for smooth color transitions
+    const [displayedColor, setDisplayedColor] = useState(selectedColor);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    // Update displayed color with smooth animation
+    useEffect(() => {
+      if (selectedColor !== displayedColor) {
+        setIsAnimating(true);
+        
+        // Use a short timeout to create a smooth transition effect
+        const timeout = setTimeout(() => {
+          setDisplayedColor(selectedColor);
+          setIsAnimating(false);
+        }, isTrackingPointer ? 50 : 150); // Faster updates while actively selecting
+        
+        return () => clearTimeout(timeout);
+      }
+    }, [selectedColor, displayedColor, isTrackingPointer]);
 
     const swatchConfig: ColorSwatchType = {
       id: swatchId,
       role: 'img',
-      ariaLabel: `Current selected color: ${selectedColor}`,
+      ariaLabel: `Current selected color: ${displayedColor}`,
       type: 'div',
-      color: selectedColor,
+      color: displayedColor,
     };
 
     // Helper function to determine if color is light or dark for better contrast
@@ -40,14 +60,14 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
           role={swatchConfig.role}
           aria-label={swatchConfig.ariaLabel}
           tabIndex={0}
-          className="
+          className={`
           w-full h-24 
           border-4 border-gray-200 dark:border-gray-700
           rounded-2xl 
           shadow-2xl
           relative
           overflow-hidden
-          transition-all duration-500 ease-out
+          transition-all duration-300 ease-out
           cursor-default
           hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)]
           hover:scale-[1.03]
@@ -55,13 +75,21 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
           focus:ring-4 focus:ring-blue-500/50
           focus:border-blue-400
           group
-        "
-          style={{ backgroundColor: swatchConfig.color }}
+          ${isAnimating ? 'animate-pulse' : ''}
+          ${isTrackingPointer ? 'duration-75' : 'duration-300'}
+        `}
+          style={{ 
+            backgroundColor: swatchConfig.color,
+            transition: `background-color ${isTrackingPointer ? '75ms' : '300ms'} ease-out, transform 300ms ease-out, box-shadow 300ms ease-out`
+          }}
         >
           {/* Main color display area */}
           <div
-            className="absolute inset-0 transition-colors duration-500 ease-out"
-            style={{ backgroundColor: swatchConfig.color }}
+            className={`absolute inset-0 transition-colors ease-out ${isTrackingPointer ? 'duration-75' : 'duration-300'}`}
+            style={{ 
+              backgroundColor: swatchConfig.color,
+              transition: `background-color ${isTrackingPointer ? '75ms' : '300ms'} ease-out`
+            }}
           >
             {/* Enhanced checkerboard pattern for better transparency visibility */}
             <div
@@ -140,13 +168,41 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
           transition-opacity duration-300
         "
           />
+
+          {/* Active tracking indicator */}
+          {isTrackingPointer && (
+            <div className="
+              absolute top-2 right-2 
+              w-3 h-3 
+              bg-white 
+              rounded-full 
+              shadow-lg 
+              animate-pulse
+              border-2 border-blue-500
+            " />
+          )}
         </div>
 
-        {/* Additional accessibility info */}
+        {/* Additional accessibility info with live status */}
         <div className="text-center">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Click or focus to view color details
+            {isTrackingPointer 
+              ? 'Selecting color...' 
+              : 'Click or focus to view color details'
+            }
           </p>
+          
+          {/* Live status indicator for screen readers */}
+          <div 
+            className="sr-only" 
+            aria-live="polite" 
+            aria-atomic="true"
+          >
+            {isTrackingPointer 
+              ? `Actively selecting color: ${swatchConfig.color}` 
+              : `Selected color: ${swatchConfig.color}`
+            }
+          </div>
         </div>
       </div>
     );
