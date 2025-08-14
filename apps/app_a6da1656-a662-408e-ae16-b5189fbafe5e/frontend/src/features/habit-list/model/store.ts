@@ -4,6 +4,7 @@ import type { Habit } from '@/entities/habit';
 interface HabitSessionState {
   habits: Habit[];
   toggleHabitCompletion: (habitId: string) => void;
+  addHabit: (name: string) => void;
   resetHabits: () => void;
 }
 
@@ -17,13 +18,24 @@ const getDefaultHabits = (): Habit[] => [
   { id: '6', name: 'Get 7-8 hours of sleep', completed: false },
 ];
 
-export const useHabitSessionStore = create<HabitSessionState>((set) => ({
+export const useHabitSessionStore = create<HabitSessionState>(set => ({
   habits: getDefaultHabits(),
   toggleHabitCompletion: (habitId: string) =>
-    set((state) => ({
-      habits: state.habits.map((habit) =>
+    set(state => ({
+      habits: state.habits.map(habit =>
         habit.id === habitId ? { ...habit, completed: !habit.completed } : habit
       ),
+    })),
+  addHabit: (name: string) =>
+    set(state => ({
+      habits: [
+        ...state.habits,
+        {
+          id: `habit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          name: name.trim(),
+          completed: false,
+        },
+      ],
     })),
   resetHabits: () =>
     set({

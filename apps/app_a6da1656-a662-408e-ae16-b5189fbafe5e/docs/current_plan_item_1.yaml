@@ -1,0 +1,9 @@
+id: '2'
+name: Add Habit UI
+sub_items:
+- effort: 2
+  id: '2.1'
+  name: Add Habit Form
+  summary: Create a simple form to input a new habit name and add it to the list (in-memory
+    only).
+summary: Allow users to add a new habit to the list (UI only, no persistence).

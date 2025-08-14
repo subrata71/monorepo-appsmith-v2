@@ -3,8 +3,10 @@ import { HabitRow } from '@/entities/habit';
 import { useHabitSessionStore } from '../model/store';
 
 export const HabitList = React.memo(() => {
-  const habits = useHabitSessionStore((state) => state.habits);
-  const toggleHabitCompletion = useHabitSessionStore((state) => state.toggleHabitCompletion);
+  const habits = useHabitSessionStore(state => state.habits);
+  const toggleHabitCompletion = useHabitSessionStore(
+    state => state.toggleHabitCompletion
+  );
 
   const handleToggleHabit = React.useCallback(
     (habitId: string) => {
@@ -23,12 +25,8 @@ export const HabitList = React.memo(() => {
 
   return (
     <div className="space-y-2">
-      {habits.map((habit) => (
-        <HabitRow 
-          key={habit.id} 
-          habit={habit} 
-          onToggle={handleToggleHabit} 
-        />
+      {habits.map(habit => (
+        <HabitRow key={habit.id} habit={habit} onToggle={handleToggleHabit} />
       ))}
     </div>
   );
