@@ -1,0 +1,43 @@
+access: Feature is accessible to all users, no restrictions. Designed for universal
+  usability.
+behaviour: Elements are keyboard-accessible with visible focus indicators. Swatch
+  updates immediately as the color changes. Responsive to different viewport sizes.
+  No animations or visual distractions.
+name: Style the color picker and swatch
+page:
+  behaviour: Page loads with a default color selected. Users can interact with the
+    color picker or input a color value, and the swatch reflects the current selection
+    instantly.
+  id: color_picker_page
+  purpose: Allows users to select a color using a clear, usable picker and see the
+    selected color in an easy-to-view swatch.
+  sections:
+  - behaviour: User can focus the picker with tab, select color with mouse/keyboard/touch.
+      Focus state uses a visible shadow or border color change.
+    blocks:
+    - behaviour: Displays an HTML color input. On change, emits the new color value
+        to update the swatch.
+      id: color_picker_input
+    id: color_picker_area
+    title: Color Picker Area
+    visual: 'Color picker input inside a box with a 2px solid, high-contrast border
+      (#333). Padding: 12px. White background. Rounded corners (6px radius).'
+  - behaviour: Updates in real time as color is picked. Shows hex code as tooltip
+      on hover/focus. Focusable for accessibility.
+    blocks:
+    - behaviour: Shows current color. Provides ARIA label with color value. Tooltip
+        on hover/focus with color hex value.
+      id: color_swatch_display
+    id: color_swatch_section
+    title: Color Swatch
+    visual: 'Swatch is a 48x48px square with a 2px #444 border, margin-top: 24px.
+      Swatch background matches the selected color. If the color is very light, a
+      checkerboard pattern is shown behind (for contrast).'
+  title: Color Picker
+  visual: Single-column layout, center-aligned. Elements spaced for clarity. Color
+    picker and swatch presented in vertical sequence with clear separation.
+summary: Write CSS to make the color picker visually clear and the swatch easy to
+  see, focusing on usability rather than aesthetics.
+visual: Use clear separation between the color picker and the rest of the UI. High-contrast
+  borders and backgrounds. Large, clearly visible swatch. Minimal decorative elements;
+  prioritize clarity and accessibility.

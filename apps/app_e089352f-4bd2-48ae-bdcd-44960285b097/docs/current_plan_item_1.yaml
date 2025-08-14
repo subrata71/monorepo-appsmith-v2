@@ -1,0 +1,14 @@
+id: '2'
+name: Style the color picker and swatch
+sub_items:
+- effort: 1
+  id: '2.1'
+  name: Style color picker area
+  summary: Apply basic styles to the color picker area to make it visually distinct
+    and easy to interact with.
+- effort: 1
+  id: '2.2'
+  name: Style color swatch
+  summary: Style the color swatch so it clearly displays the currently selected color.
+summary: Write CSS to make the color picker visually clear and the swatch easy to
+  see, focusing on usability rather than aesthetics.

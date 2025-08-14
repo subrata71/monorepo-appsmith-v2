@@ -19,21 +19,22 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(({ className = '' }) => 
   };
 
   return (
-    <div className={`space-y-3 ${className}`}>
-      <h3 className="text-sm font-medium text-gray-700">Selected Color</h3>
+    <div className={`space-y-4 ${className}`}>
       <div
         id={swatchConfig.id}
         role={swatchConfig.role}
         aria-label={swatchConfig.ariaLabel}
         className="
-          w-full h-16 
-          border-2 border-gray-300 
-          rounded-lg 
-          shadow-inner
+          w-full h-20 
+          border-2 border-slate-300 
+          rounded-xl 
+          shadow-lg
           relative
           overflow-hidden
-          transition-colors duration-300 ease-in-out
+          transition-all duration-300 ease-in-out
           cursor-default
+          hover:shadow-xl hover:scale-[1.02]
+          group
         "
         style={{ backgroundColor: swatchConfig.color }}
       >
@@ -55,23 +56,29 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(({ className = '' }) => 
         </div>
         
         {/* Color value display with improved contrast */}
-        <div className="absolute bottom-1 left-1 right-1">
+        <div className="absolute bottom-2 left-2 right-2">
           <div className="
-            bg-black bg-opacity-80 
-            text-white text-xs 
-            px-2 py-1 
-            rounded 
+            bg-black/90 
+            text-white text-sm 
+            px-3 py-2 
+            rounded-lg 
             font-mono
             text-center
             backdrop-blur-sm
-            border border-white border-opacity-20
+            border border-white/20
+            shadow-lg
+            transition-all duration-300
+            group-hover:bg-black/95
           ">
             {swatchConfig.color.toUpperCase()}
           </div>
         </div>
         
         {/* Subtle inner border for definition */}
-        <div className="absolute inset-0 border border-black border-opacity-10 rounded-lg"></div>
+        <div className="absolute inset-0 border border-white/30 rounded-xl"></div>
+        
+        {/* Glow effect overlay */}
+        <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-black/5 to-transparent"></div>
       </div>
     </div>
   );
