@@ -3,27 +3,14 @@ import { HabitRow } from '@/entities/habit';
 import { useHabitSessionStore } from '../model/store';
 
 export const HabitList = React.memo(() => {
-  const habits = useHabitSessionStore(state => state.habits);
-  const incrementHabitStreak = useHabitSessionStore(
-    state => state.incrementHabitStreak
-  );
-  const canIncrementStreak = useHabitSessionStore(
-    state => state.canIncrementStreak
-  );
-  const removeHabit = useHabitSessionStore(state => state.removeHabit);
+  const habits = useHabitSessionStore((state) => state.habits);
+  const toggleHabitCompletion = useHabitSessionStore((state) => state.toggleHabitCompletion);
 
-  const handleMarkHabitDone = React.useCallback(
+  const handleToggleHabit = React.useCallback(
     (habitId: string) => {
-      incrementHabitStreak(habitId);
+      toggleHabitCompletion(habitId);
     },
-    [incrementHabitStreak]
-  );
-
-  const handleRemoveHabit = React.useCallback(
-    (habitId: string) => {
-      removeHabit(habitId);
-    },
-    [removeHabit]
+    [toggleHabitCompletion]
   );
 
   if (habits.length === 0) {
@@ -36,13 +23,11 @@ export const HabitList = React.memo(() => {
 
   return (
     <div className="space-y-2">
-      {habits.map(habit => (
-        <HabitRow
-          key={habit.id}
-          habit={habit}
-          onMarkDone={handleMarkHabitDone}
-          onRemove={handleRemoveHabit}
-          canMarkDone={canIncrementStreak(habit.id)}
+      {habits.map((habit) => (
+        <HabitRow 
+          key={habit.id} 
+          habit={habit} 
+          onToggle={handleToggleHabit} 
         />
       ))}
     </div>

@@ -1,9 +1,0 @@
-id: '4'
-name: Basic Habit Streak Display
-sub_items:
-- effort: 2
-  id: '4.1'
-  name: Streak Counter UI
-  summary: Display a counter next to each habit showing the current streak (in-memory
-    only).
-summary: Show a simple streak count for each habit (UI only, no persistence).

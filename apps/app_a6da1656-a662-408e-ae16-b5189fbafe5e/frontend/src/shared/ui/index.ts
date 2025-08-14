@@ -248,7 +248,6 @@ export {
 export { Skeleton } from './skeleton';
 export { Slider } from './slider';
 export { Toaster } from './sonner';
-export { StreakBadge } from './streak-badge';
 export { Switch } from './switch';
 export {
   Table,

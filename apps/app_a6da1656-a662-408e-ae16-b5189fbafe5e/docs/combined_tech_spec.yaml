@@ -1,0 +1,905 @@
+metadata:
+  description: Comprehensive technical specification combining all individual plan
+    specifications
+  generated_from_files:
+  - tech_spec_item_0.yaml
+  - tech_spec_item_1.yaml
+  - tech_spec_item_2.yaml
+  - tech_spec_item_3.yaml
+  title: Combined Technical Specification
+  total_plans: 4
+plans:
+- plan_name: item_0
+  source_file: tech_spec_item_0.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Displays a single habit with its name and completion checkbox
+          entity: habit
+          name: HabitRow
+          props:
+          - habit
+          - onToggle
+        features:
+        - description: Renders a list of HabitRow components with local state per
+            session
+          entities:
+          - HabitRow
+          feature: habit-list-ui
+          name: HabitList
+          props:
+          - habits
+          - onToggleHabit
+          shared:
+          - Card
+        shared:
+        - category: ui
+          description: Accessible, styled checkbox component with visible focus and
+            keyboard support
+          name: Checkbox
+          props:
+          - checked
+          - onChange
+          - aria-label
+        - category: ui
+          description: Generic card container with shadow and padding
+          name: Card
+          props:
+          - children
+        - category: ui
+          description: Accessible heading component for page titles and sections
+          name: Heading
+          props:
+          - children
+          - level
+        widgets:
+        - description: Combines header and habit list in a styled card layout
+          entities:
+          - HabitRow
+          features:
+          - HabitList
+          name: HabitListCard
+          props:
+          - habits
+          - onToggleHabit
+          shared:
+          - Card
+          - Heading
+      pages:
+      - description: Allow users to view a list of habits and mark daily completion
+          via an interactive interface.
+        queries: []
+        route: /habits
+        title: Your Habits
+        widgets:
+        - HabitListCard
+      - description: (Optional) Redirects to /habits as a single-page UI.
+        queries: []
+        route: /
+        title: Redirect to Your Habits
+        widgets: []
+      stores:
+      - actions:
+        - toggleHabitCompletion
+        - resetHabits
+        description: Holds list of habits and their completion state for the current
+          session (local only, resets on reload)
+        layer: entities
+        name: habitSessionStore
+        state_shape:
+        - name: habits
+          type: Habit[]
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: Habit
+        type: object
+    domains:
+    - apis: []
+      description: Represents a habit and its local completion status for the current
+        session.
+      models:
+      - description: Represents a user habit in the UI.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: name
+          nullable: false
+          pk: false
+          type: string
+        - name: completed
+          nullable: false
+          pk: false
+          type: boolean
+        name: Habit
+      name: habit
+      services:
+      - description: Handles local state management of habits and their completion
+          for the session. No persistence, no backend calls.
+        methods:
+        - getDefaultHabits
+        - toggleHabitCompletion
+        name: HabitSessionService
+    metadata:
+      description: A frontend-only user interface for displaying a list of habits
+        and marking daily completion, with no data persistence or backend.
+      generated_at: '2024-06-12T12:00:00Z'
+      name: Habit List UI
+      version: 1.0.0
+    product:
+      features:
+      - description: Minimal, accessible habit tracker UI with local state only.
+        domains:
+        - habit
+        id: habit-list-ui
+        priority: high
+        title: Habit List UI
+      goals:
+      - Provide an easy-to-use interface for viewing and checking off daily habits
+      - Ensure accessibility for all users (keyboard, high contrast, visible focus)
+      - No backend or persistent data storage; all state is ephemeral and local
+      personas:
+      - description: Any person who wants to quickly track daily habits in a simple,
+          non-persistent way.
+        goals:
+        - View their daily habits
+        - Mark habits as complete for today
+        - Use the interface with keyboard, mouse, or touch
+        name: General User
+      summary: Minimal, accessible UI for users to view habits and mark completion
+        for the day, with all state managed locally in the client.
+    use_cases:
+    - actors:
+      - General User
+      apis: []
+      description: The user sees a card with a list of example habits and their completion
+        state.
+      domains:
+      - habit
+      happy_path:
+      - User opens the Your Habits page.
+      - A list of example habits is displayed with checkboxes/toggles.
+      - No backend or data entry is required.
+      id: view-habit-list
+      pages:
+      - /habits
+      postconditions:
+      - The user sees the list of habits and each habit's completion state for the
+        session.
+      preconditions:
+      - User navigates to the Your Habits page.
+      title: View Habit List
+    - actors:
+      - General User
+      apis: []
+      description: The user marks a habit as complete or incomplete for the day.
+      domains:
+      - habit
+      happy_path:
+      - User clicks or uses keyboard on a checkbox/toggle.
+      - UI updates local state and reflects checked/unchecked visually.
+      id: mark-habit-complete
+      pages:
+      - /habits
+      postconditions:
+      - The visual state of the habit row updates as checked or unchecked.
+      - No data is persisted; state resets on reload.
+      preconditions:
+      - Habit list is displayed.
+      title: Mark Habit as Complete
+    user_journeys:
+    - id: basic-tracking-session
+      persona: General User
+      related_use_cases:
+      - view-habit-list
+      - mark-habit-complete
+      steps:
+      - action: Open the Your Habits page
+        page: /habits
+      - action: See the list of default habits
+        page: /habits
+      - action: Use mouse, touch, or keyboard to check one or more habits as complete
+        page: /habits
+      - action: See visual feedback for completion (checkbox checked, color change)
+        page: /habits
+      - action: Close or reload page; completion state resets
+        page: /habits
+      success_criteria: User can quickly check off habits for the day; completion
+        state is obvious visually; no login or persistence required.
+      title: Track Daily Habits (Session)
+- plan_name: item_1
+  source_file: tech_spec_item_1.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Displays a single habit name in the list (no completion, just
+            name)
+          entity: habit
+          name: HabitItem
+          props:
+          - habit
+        features:
+        - description: Handles controlled input, validation, and on-submit for adding
+            habits
+          entities: []
+          feature: add-habit-ui
+          name: AddHabitForm
+          props:
+          - onAddHabit
+          shared:
+          - Input
+          - Button
+        - description: Renders a vertical list of HabitItem components from session
+            state
+          entities:
+          - HabitItem
+          feature: add-habit-ui
+          name: HabitList
+          props: []
+          shared: []
+        shared:
+        - category: ui
+          description: Accessible, primary action button with focus styles and disabled
+            state
+          name: Button
+          props:
+          - children
+          - onClick
+          - disabled
+          - type
+        - category: ui
+          description: Accessible, styled text input with maxLength, autoFocus, and
+            error display
+          name: Input
+          props:
+          - value
+          - onChange
+          - maxLength
+          - autoFocus
+          - placeholder
+          - error
+        - category: ui
+          description: Generic card container with shadow and padding
+          name: Card
+          props:
+          - children
+        - category: ui
+          description: Accessible heading component for page titles and sections
+          name: Heading
+          props:
+          - children
+          - level
+        widgets:
+        - description: Combines heading, AddHabitForm, and HabitList in a vertical
+            card layout
+          entities: []
+          features:
+          - AddHabitForm
+          - HabitList
+          name: AddHabitCard
+          props: []
+          shared:
+          - Card
+          - Heading
+      pages:
+      - description: Let users add a new habit to their personal (in-memory) habit
+          list. Accessible, responsive UI.
+        queries: []
+        route: /add-habit
+        title: Add Habit
+        widgets:
+        - AddHabitCard
+      stores:
+      - actions:
+        - addHabit
+        - toggleHabitCompletion
+        - resetHabits
+        description: Holds in-memory list of habits for the current session, supports
+          adding, toggling, and resetting habits.
+        layer: entities
+        name: habitSessionStore
+        state_shape:
+        - name: habits
+          type: Habit[]
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: Habit
+        type: object
+    domains:
+    - apis: []
+      description: Represents a habit and its local completion status for the current
+        session. Now supports adding habits in-memory.
+      models:
+      - description: Represents a user habit in the UI.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: name
+          nullable: false
+          pk: false
+          type: string
+        - name: completed
+          nullable: false
+          pk: false
+          type: boolean
+        name: Habit
+      name: habit
+      services:
+      - description: Handles local state management of habits, completion, and now
+          adding new habits to the session (no persistence).
+        methods:
+        - getDefaultHabits
+        - toggleHabitCompletion
+        - addHabit
+        name: HabitSessionService
+    metadata:
+      description: Adds an in-memory UI for users to add new habits to the session
+        habit list. No persistence, no backend.
+      generated_at: '2024-06-12T15:00:00Z'
+      name: Add Habit UI
+      version: 1.1.0
+    product:
+      features:
+      - description: Lets users enter a new habit name and add it to their personal
+          session list in the UI. No persistence.
+        domains:
+        - habit
+        id: add-habit-ui
+        priority: high
+        title: Add Habit UI
+      goals:
+      - Allow users to add new habits for the current session with no backend or persistence
+      - Maintain accessible, visually clear UI for entering and viewing habits
+      - Extend the habit tracking UI to support entry of arbitrary habits
+      personas:
+      - description: Any person who wants to quickly track daily habits in a simple,
+          non-persistent way.
+        goals:
+        - View their daily habits
+        - Mark habits as complete for today
+        - Add new habits to their personal list
+        - Use the interface with keyboard, mouse, or touch
+        name: General User
+      summary: Enables users to add custom habits to their in-memory habit list via
+        a minimal, accessible UI.
+    use_cases:
+    - actors:
+      - General User
+      apis: []
+      description: The user enters a habit name and adds it to the current in-memory
+        list. No persistence.
+      domains:
+      - habit
+      happy_path:
+      - User enters a valid habit name (<=50 chars) in the input field.
+      - User presses 'Add' button or Enter.
+      - The new habit appears immediately in the list below.
+      - Input is cleared and ready for the next entry.
+      id: add-habit
+      pages:
+      - /add-habit
+      postconditions:
+      - The session habit list is updated on screen.
+      - No backend calls or persistence.
+      - Validation prevents empty or too-long names.
+      preconditions:
+      - User navigates to the Add Habit page.
+      - Habit list is empty or has habits from this session.
+      title: Add New Habit to List
+    user_journeys:
+    - id: add-habit-session
+      persona: General User
+      related_use_cases:
+      - add-habit
+      steps:
+      - action: Open the Add Habit page
+        page: /add-habit
+      - action: Enter a valid habit name in the input
+        page: /add-habit
+      - action: Press 'Add' or hit Enter to submit
+        page: /add-habit
+      - action: See the new habit appear in the list below
+        page: /add-habit
+      - action: Repeat to add more habits as desired
+        page: /add-habit
+      - action: Reloading the page clears the list (no persistence)
+        page: /add-habit
+      success_criteria: User can add one or more habits and see them in the list without
+        page reload; input is validated and accessible.
+      title: Add Habit in Session
+- plan_name: item_2
+  source_file: tech_spec_item_2.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Displays a habit in a card layout with its name and a remove
+            button. Handles fade-out animation and invokes onRemove.
+          entity: habit
+          name: HabitCard
+          props:
+          - habit
+          - onRemove
+        - description: Displays a single habit name in the list (no completion, just
+            name). Used in non-completion contexts.
+          entity: habit
+          name: HabitItem
+          props:
+          - habit
+        features:
+        - description: Renders a list of HabitCard components with in-memory state
+            per session. Supports removing habits from the list with animation.
+          entities:
+          - HabitCard
+          feature: remove-habit-ui
+          name: HabitList
+          props:
+          - habits
+          - onRemoveHabit
+          shared:
+          - Card
+        - description: Red-outlined circular button with 'X' icon. On click, triggers
+            removal of the associated habit from the in-memory list.
+          entities: []
+          feature: remove-habit-ui
+          name: RemoveHabitButton
+          props:
+          - onClick
+          shared:
+          - Button
+        - description: Centered, friendly message shown when there are no habits left
+            to display.
+          entities: []
+          feature: remove-habit-ui
+          name: EmptyStateMessage
+          props: []
+          shared: []
+        shared:
+        - category: ui
+          description: Accessible, primary or danger action button with focus styles
+            and disabled state. Used for remove action.
+          name: Button
+          props:
+          - children
+          - onClick
+          - disabled
+          - type
+        - category: ui
+          description: Generic card container with shadow and padding.
+          name: Card
+          props:
+          - children
+        - category: ui
+          description: Accessible heading component for page titles and sections.
+          name: Heading
+          props:
+          - children
+          - level
+        widgets:
+        - description: Combines heading and HabitList in a styled card layout. Now
+            supports removal of habits from the list.
+          entities:
+          - HabitCard
+          features:
+          - HabitList
+          name: HabitListCard
+          props:
+          - habits
+          - onRemoveHabit
+          shared:
+          - Card
+          - Heading
+        - description: Shows the EmptyStateMessage centered on the page when there
+            are no habits left in the session list.
+          entities: []
+          features:
+          - EmptyStateMessage
+          name: EmptyStateWidget
+          props: []
+          shared: []
+      pages:
+      - description: Show all habits and allow users to remove them from the UI list
+          with immediate feedback and animation.
+        queries: []
+        route: /habits
+        title: My Habits
+        widgets:
+        - HabitListCard
+        - EmptyStateWidget
+      stores:
+      - actions:
+        - addHabit
+        - toggleHabitCompletion
+        - resetHabits
+        - removeHabit
+        description: Holds list of habits and their completion state for the current
+          session, now supporting addition, toggling, resetting, and removal.
+        layer: entities
+        name: habitSessionStore
+        state_shape:
+        - name: habits
+          type: Habit[]
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: Habit
+        type: object
+    domains:
+    - apis: []
+      description: Represents a habit and its local session state, now supporting
+        UI-only removal of habits from the session list.
+      models:
+      - description: Represents a user habit in the UI.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: name
+          nullable: false
+          pk: false
+          type: string
+        - name: completed
+          nullable: false
+          pk: false
+          type: boolean
+        name: Habit
+      name: habit
+      services:
+      - description: Handles local state management of habits, completion, adding,
+          and now removal from the session (no persistence).
+        methods:
+        - getDefaultHabits
+        - toggleHabitCompletion
+        - addHabit
+        - removeHabit
+        name: HabitSessionService
+    metadata:
+      description: Allows users to remove habits from their in-memory session habit
+        list in the UI, with immediate feedback and animation. No backend or persistence.
+      generated_at: '2024-06-12T18:00:00Z'
+      name: Remove Habit UI
+      version: 1.2.0
+    product:
+      features:
+      - description: Lets users remove habits from their local session habit list,
+          with card removal animation and empty state display. No persistence.
+        domains:
+        - habit
+        id: remove-habit-ui
+        priority: high
+        title: Remove Habit UI
+      goals:
+      - Let users remove habits from their visible list in the current session.
+      - Provide smooth, immediate UI feedback with animation.
+      - Show a friendly empty state when no habits remain.
+      - Maintain accessibility and a minimalist, card-like visual style.
+      personas:
+      - description: Any person who wants to track and manage their habits in a simple,
+          local-only UI.
+        goals:
+        - View, add, and remove habits for the current session.
+        - Experience immediate, animated updates when removing habits.
+        - Use the interface with keyboard, mouse, or touch.
+        name: General User
+      summary: UI feature enabling users to remove habits from their session list
+        with visual feedback and empty state display, managed entirely in local memory.
+    use_cases:
+    - actors:
+      - General User
+      apis: []
+      description: The user removes a habit from their in-memory habit list. Change
+        is local and immediate, with animation.
+      domains:
+      - habit
+      happy_path:
+      - User opens the "My Habits" page.
+      - User clicks the remove button ("X") on a habit card.
+      - The habit card fades out and disappears from the list.
+      - If all habits are removed, a friendly empty state message is shown.
+      id: remove-habit-ui
+      pages:
+      - /habits
+      postconditions:
+      - The removed habit is no longer displayed in the UI for this session.
+      - The UI reflects the updated in-memory state with animation.
+      preconditions:
+      - User is on the "My Habits" page with one or more habits in the list.
+      title: Remove Habit from List (UI Only)
+    user_journeys:
+    - id: remove-habit-user-journey
+      persona: General User
+      related_use_cases:
+      - remove-habit-ui
+      steps:
+      - action: Open the My Habits page
+        page: /habits
+      - action: See a card list of habits, each with a visible remove button
+        page: /habits
+      - action: Click the remove button on a habit card
+        page: /habits
+      - action: Watch the card fade out and disappear from the list
+        page: /habits
+      - action: Repeat removal for any other habits as desired
+        page: /habits
+      - action: If all habits are removed, see a centered empty state message
+        page: /habits
+      success_criteria: User can remove any or all habits from the visible list; removed
+        cards animate out; empty state is friendly and accessible; no persistence
+        or undo.
+      title: Remove Habit from Session List
+- plan_name: item_3
+  source_file: tech_spec_item_3.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Displays a single habit with its name (left), streak badge
+            (right), and 'Mark as Done' button. Handles per-habit streak logic and
+            disables the button if already completed today.
+          entity: habit
+          name: HabitStreakRow
+          props:
+          - habit
+          - onMarkDone
+        features:
+        - description: Renders a list of HabitStreakRow components from session state,
+            managing streak logic and per-day completion. Handles UI-only streak animation
+            and disables completed rows.
+          entities:
+          - HabitStreakRow
+          feature: habit-streak-ui
+          name: HabitStreakList
+          props:
+          - habits
+          - onMarkDone
+          shared:
+          - Card
+          - StreakBadge
+          - Button
+        shared:
+        - category: ui
+          description: Accessible, primary or accent action button (used for 'Mark
+            as Done'), with loading, success, and disabled states.
+          name: Button
+          props:
+          - children
+          - onClick
+          - disabled
+          - type
+        - category: ui
+          description: Generic card container with shadow, padding, and light background
+            for each habit row or card.
+          name: Card
+          props:
+          - children
+        - category: ui
+          description: Accessible heading component for page titles and sections.
+          name: Heading
+          props:
+          - children
+          - level
+        - category: ui
+          description: Displays the current streak number with a flame or lightning
+            icon, with animated highlight on increment.
+          name: StreakBadge
+          props:
+          - streak
+          - animate
+        widgets:
+        - description: Combines heading and HabitStreakList in a styled card/stack
+            layout. Shows all habits with streaks and mark-as-done buttons.
+          entities:
+          - HabitStreakRow
+          features:
+          - HabitStreakList
+          name: HabitStreakListCard
+          props:
+          - habits
+          - onMarkDone
+          shared:
+          - Card
+          - Heading
+        - description: Shows a centered friendly message when there are no habits
+            in the list.
+          entities: []
+          features: []
+          name: EmptyStateWidget
+          props: []
+          shared: []
+      pages:
+      - description: Users see all habits as cards/rows with their names and current
+          streak badges, and can mark each as done for today (incrementing streaks).
+          No persistence; resets on reload.
+        queries: []
+        route: /habits
+        title: Habit List & Streaks
+        widgets:
+        - HabitStreakListCard
+        - EmptyStateWidget
+      stores:
+      - actions:
+        - addHabit
+        - removeHabit
+        - toggleHabitCompletion
+        - incrementHabitStreak
+        - resetHabits
+        - canIncrementStreak
+        description: Manages array of Habit objects with id, name, completed, streak,
+          and lastCompletedDate. Supports add, remove, toggle completion, increment
+          streak, and reset. All state is in memory and resets on reload.
+        layer: entities
+        name: habitSessionStore
+        state_shape:
+        - name: habits
+          type: Habit[]
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: Habit
+        type: object
+    domains:
+    - apis: []
+      description: Represents a user habit and its session-based completion and streak
+        state, with all logic and storage in client memory. Now supports displaying
+        and incrementing per-habit streaks for the current session, reset on reload.
+      models:
+      - description: Represents a user habit with its current session streak, completion
+          state for the current day, and metadata. All fields are local-only and reset
+          on reload.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: name
+          nullable: false
+          pk: false
+          type: string
+        - name: completed
+          nullable: false
+          pk: false
+          type: boolean
+        - name: streak
+          nullable: false
+          pk: false
+          type: integer
+        - name: lastCompletedDate
+          nullable: false
+          pk: false
+          type: string
+        name: Habit
+      name: habit
+      services:
+      - description: Manages local session state for all habits, including adding/removing
+          habits, marking completion, tracking per-habit streaks for the session,
+          and enforcing one increment per day. All state in memory, reset on reload.
+        methods:
+        - getDefaultHabits
+        - addHabit
+        - removeHabit
+        - toggleHabitCompletion
+        - incrementHabitStreak
+        - resetHabits
+        - getCurrentDay
+        - canIncrementStreak
+        name: HabitSessionService
+    metadata:
+      description: Adds in-memory streak tracking and streak increment UI for each
+        habit. Users see and increment a streak count per habit (with animation and
+        day logic), with no persistence or authentication.
+      generated_at: '2024-06-12T20:00:00Z'
+      name: Basic Habit Streak Display
+      version: 1.3.0
+    product:
+      features:
+      - description: Users see a streak count and animated streak badge for each habit,
+          with per-session, per-day increment and UI-only state.
+        domains:
+        - habit
+        id: habit-streak-ui
+        priority: high
+        title: Habit Streak UI
+      goals:
+      - Show a streak count for each habit in the local UI
+      - Let users increment a habit's streak once per day per session
+      - Provide responsive, visual feedback for streak changes
+      - Ensure all streak and completion state is local and reset on reload
+      - Maintain minimalist, accessible, and modern card-based UI
+      personas:
+      - description: Any person who wants to visually track their habit streaks in
+          a simple, ephemeral way, without login or persistence.
+        goals:
+        - View their list of habits
+        - See ongoing streak counts for each habit
+        - Increment daily streak for a habit, visually reinforced
+        - Use on mobile or desktop, with keyboard, mouse, or touch
+        name: General User
+      summary: Enables users to see and increment a session-based streak count for
+        each habit, with all state in client memory and visually animated feedback.
+        No backend or persistence.
+    use_cases:
+    - actors:
+      - General User
+      apis: []
+      description: The user sees their list of habits, each with a streak count badge
+        and the ability to mark a habit as done for the day, increasing the streak.
+      domains:
+      - habit
+      happy_path:
+      - User sees each habit in a card with its name and current streak.
+      - User sees a 'Mark as Done' button for each habit.
+      - If not already done today, user clicks 'Mark as Done'.
+      - Streak increments by 1 for that habit, and badge animates.
+      - Button disables for the rest of the day or until page reload.
+      id: display-habit-streaks
+      pages:
+      - /habits
+      postconditions:
+      - UI displays updated streak count for the session.
+      - On reload, all counts reset to zero.
+      preconditions:
+      - User navigates to the habit list page.
+      - Habits exist in the session habit list.
+      title: Display Habit Streaks
+    - actors:
+      - General User
+      apis: []
+      description: The user marks a habit as complete for the day, which increments
+        that habit's streak and disables further increments until the next day or
+        reload.
+      domains:
+      - habit
+      happy_path:
+      - User clicks 'Mark as Done' for a habit not done today.
+      - Streak count for that habit is incremented.
+      - Button disables and visually animates.
+      id: increment-habit-streak
+      pages:
+      - /habits
+      postconditions:
+      - Streak is updated and visually emphasized.
+      - UI prevents further increments for that habit today.
+      preconditions:
+      - User sees the list of habits with streak badges and 'Mark as Done' buttons.
+      title: Increment Habit Streak for Today
+    user_journeys:
+    - id: streak-tracking-session
+      persona: General User
+      related_use_cases:
+      - display-habit-streaks
+      - increment-habit-streak
+      steps:
+      - action: Open the Habit List & Streaks page
+        page: /habits
+      - action: See all habits displayed as cards or rows with streak badges
+        page: /habits
+      - action: Click or tap 'Mark as Done' for a habit not yet marked today
+        page: /habits
+      - action: See the streak badge animate and increment, button disables for today
+        page: /habits
+      - action: Repeat for other habits as desired
+        page: /habits
+      - action: Reload or close page; streaks reset to zero
+        page: /habits
+      success_criteria: User can see and increment habit streaks per session, with
+        visual confirmation and no persistence or login required.
+      title: Track Habit Streaks in Session
+summary:
+  plan_names:
+  - item_0
+  - item_1
+  - item_2
+  - item_3
+  total_plans: 4
