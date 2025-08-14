@@ -1,0 +1,218 @@
+client:
+  components:
+    entities:
+    - description: Displays a habit in a card layout with its name and a remove button.
+        Handles fade-out animation and invokes onRemove.
+      entity: habit
+      name: HabitCard
+      props:
+      - habit
+      - onRemove
+    - description: Displays a single habit name in the list (no completion, just name).
+        Used in non-completion contexts.
+      entity: habit
+      name: HabitItem
+      props:
+      - habit
+    features:
+    - description: Renders a list of HabitCard components with in-memory state per
+        session. Supports removing habits from the list with animation.
+      entities:
+      - HabitCard
+      feature: remove-habit-ui
+      name: HabitList
+      props:
+      - habits
+      - onRemoveHabit
+      shared:
+      - Card
+    - description: Red-outlined circular button with 'X' icon. On click, triggers
+        removal of the associated habit from the in-memory list.
+      entities: []
+      feature: remove-habit-ui
+      name: RemoveHabitButton
+      props:
+      - onClick
+      shared:
+      - Button
+    - description: Centered, friendly message shown when there are no habits left
+        to display.
+      entities: []
+      feature: remove-habit-ui
+      name: EmptyStateMessage
+      props: []
+      shared: []
+    shared:
+    - category: ui
+      description: Accessible, primary or danger action button with focus styles and
+        disabled state. Used for remove action.
+      name: Button
+      props:
+      - children
+      - onClick
+      - disabled
+      - type
+    - category: ui
+      description: Generic card container with shadow and padding.
+      name: Card
+      props:
+      - children
+    - category: ui
+      description: Accessible heading component for page titles and sections.
+      name: Heading
+      props:
+      - children
+      - level
+    widgets:
+    - description: Combines heading and HabitList in a styled card layout. Now supports
+        removal of habits from the list.
+      entities:
+      - HabitCard
+      features:
+      - HabitList
+      name: HabitListCard
+      props:
+      - habits
+      - onRemoveHabit
+      shared:
+      - Card
+      - Heading
+    - description: Shows the EmptyStateMessage centered on the page when there are
+        no habits left in the session list.
+      entities: []
+      features:
+      - EmptyStateMessage
+      name: EmptyStateWidget
+      props: []
+      shared: []
+  pages:
+  - description: Show all habits and allow users to remove them from the UI list with
+      immediate feedback and animation.
+    queries: []
+    route: /habits
+    title: My Habits
+    widgets:
+    - HabitListCard
+    - EmptyStateWidget
+  stores:
+  - actions:
+    - addHabit
+    - toggleHabitCompletion
+    - resetHabits
+    - removeHabit
+    description: Holds list of habits and their completion state for the current session,
+      now supporting addition, toggling, resetting, and removal.
+    layer: entities
+    name: habitSessionStore
+    state_shape:
+    - name: habits
+      type: Habit[]
+components:
+  parameters: []
+  responses: []
+  schemas:
+  - name: Habit
+    type: object
+domains:
+- apis: []
+  description: Represents a habit and its local session state, now supporting UI-only
+    removal of habits from the session list.
+  models:
+  - description: Represents a user habit in the UI.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: name
+      nullable: false
+      pk: false
+      type: string
+    - name: completed
+      nullable: false
+      pk: false
+      type: boolean
+    name: Habit
+  name: habit
+  services:
+  - description: Handles local state management of habits, completion, adding, and
+      now removal from the session (no persistence).
+    methods:
+    - getDefaultHabits
+    - toggleHabitCompletion
+    - addHabit
+    - removeHabit
+    name: HabitSessionService
+metadata:
+  description: Allows users to remove habits from their in-memory session habit list
+    in the UI, with immediate feedback and animation. No backend or persistence.
+  generated_at: '2024-06-12T18:00:00Z'
+  name: Remove Habit UI
+  version: 1.2.0
+product:
+  features:
+  - description: Lets users remove habits from their local session habit list, with
+      card removal animation and empty state display. No persistence.
+    domains:
+    - habit
+    id: remove-habit-ui
+    priority: high
+    title: Remove Habit UI
+  goals:
+  - Let users remove habits from their visible list in the current session.
+  - Provide smooth, immediate UI feedback with animation.
+  - Show a friendly empty state when no habits remain.
+  - Maintain accessibility and a minimalist, card-like visual style.
+  personas:
+  - description: Any person who wants to track and manage their habits in a simple,
+      local-only UI.
+    goals:
+    - View, add, and remove habits for the current session.
+    - Experience immediate, animated updates when removing habits.
+    - Use the interface with keyboard, mouse, or touch.
+    name: General User
+  summary: UI feature enabling users to remove habits from their session list with
+    visual feedback and empty state display, managed entirely in local memory.
+use_cases:
+- actors:
+  - General User
+  apis: []
+  description: The user removes a habit from their in-memory habit list. Change is
+    local and immediate, with animation.
+  domains:
+  - habit
+  happy_path:
+  - User opens the "My Habits" page.
+  - User clicks the remove button ("X") on a habit card.
+  - The habit card fades out and disappears from the list.
+  - If all habits are removed, a friendly empty state message is shown.
+  id: remove-habit-ui
+  pages:
+  - /habits
+  postconditions:
+  - The removed habit is no longer displayed in the UI for this session.
+  - The UI reflects the updated in-memory state with animation.
+  preconditions:
+  - User is on the "My Habits" page with one or more habits in the list.
+  title: Remove Habit from List (UI Only)
+user_journeys:
+- id: remove-habit-user-journey
+  persona: General User
+  related_use_cases:
+  - remove-habit-ui
+  steps:
+  - action: Open the My Habits page
+    page: /habits
+  - action: See a card list of habits, each with a visible remove button
+    page: /habits
+  - action: Click the remove button on a habit card
+    page: /habits
+  - action: Watch the card fade out and disappear from the list
+    page: /habits
+  - action: Repeat removal for any other habits as desired
+    page: /habits
+  - action: If all habits are removed, see a centered empty state message
+    page: /habits
+  success_criteria: User can remove any or all habits from the visible list; removed
+    cards animate out; empty state is friendly and accessible; no persistence or undo.
+  title: Remove Habit from Session List

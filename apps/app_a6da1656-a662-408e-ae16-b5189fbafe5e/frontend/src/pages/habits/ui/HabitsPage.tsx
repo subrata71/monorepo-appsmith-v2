@@ -19,8 +19,8 @@ export const HabitsPage = React.memo(() => {
               <div>
                 <h1 className="text-3xl font-bold">Your Habits</h1>
                 <p className="text-muted-foreground mt-2">
-                  Track your daily habits and build consistency. Check off habits as
-                  you complete them today.
+                  Track your daily habits and build consistency. Check off
+                  habits as you complete them today.
                 </p>
               </div>
               <Button asChild>

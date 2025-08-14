@@ -19,8 +19,9 @@ export const AddHabitPage = React.memo(() => {
               <div>
                 <h1 className="text-3xl font-bold">Add Habit</h1>
                 <p className="text-muted-foreground mt-2">
-                  Create custom habits to track during your session. These habits
-                  will be stored locally and reset when you refresh the page.
+                  Create custom habits to track during your session. These
+                  habits will be stored locally and reset when you refresh the
+                  page.
                 </p>
               </div>
               <Button variant="outline" asChild>

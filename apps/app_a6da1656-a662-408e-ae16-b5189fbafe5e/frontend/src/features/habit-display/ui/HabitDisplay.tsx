@@ -6,8 +6,7 @@ export const HabitDisplay = React.memo(() => {
   const habits = useHabitSessionStore(state => state.habits);
 
   const habitItems = useMemo(
-    () =>
-      habits.map(habit => <HabitItem key={habit.id} habit={habit} />),
+    () => habits.map(habit => <HabitItem key={habit.id} habit={habit} />),
     [habits]
   );
 
@@ -27,9 +26,7 @@ export const HabitDisplay = React.memo(() => {
       <h3 className="font-medium text-sm text-muted-foreground mb-2">
         Your Habits ({habits.length})
       </h3>
-      <div className="space-y-1 border rounded-md divide-y">
-        {habitItems}
-      </div>
+      <div className="space-y-1 border rounded-md divide-y">{habitItems}</div>
     </div>
   );
 });

@@ -7,12 +7,20 @@ export const HabitList = React.memo(() => {
   const toggleHabitCompletion = useHabitSessionStore(
     state => state.toggleHabitCompletion
   );
+  const removeHabit = useHabitSessionStore(state => state.removeHabit);
 
   const handleToggleHabit = React.useCallback(
     (habitId: string) => {
       toggleHabitCompletion(habitId);
     },
     [toggleHabitCompletion]
+  );
+
+  const handleRemoveHabit = React.useCallback(
+    (habitId: string) => {
+      removeHabit(habitId);
+    },
+    [removeHabit]
   );
 
   if (habits.length === 0) {
@@ -26,7 +34,12 @@ export const HabitList = React.memo(() => {
   return (
     <div className="space-y-2">
       {habits.map(habit => (
-        <HabitRow key={habit.id} habit={habit} onToggle={handleToggleHabit} />
+        <HabitRow
+          key={habit.id}
+          habit={habit}
+          onToggle={handleToggleHabit}
+          onRemove={handleRemoveHabit}
+        />
       ))}
     </div>
   );

@@ -5,6 +5,7 @@ interface HabitSessionState {
   habits: Habit[];
   toggleHabitCompletion: (habitId: string) => void;
   addHabit: (name: string) => void;
+  removeHabit: (habitId: string) => void;
   resetHabits: () => void;
 }
 
@@ -36,6 +37,10 @@ export const useHabitSessionStore = create<HabitSessionState>(set => ({
           completed: false,
         },
       ],
+    })),
+  removeHabit: (habitId: string) =>
+    set(state => ({
+      habits: state.habits.filter(habit => habit.id !== habitId),
     })),
   resetHabits: () =>
     set({
