@@ -102,4 +102,18 @@ export const useReminderStore = create<ReminderStore>((set) => ({
       ),
     }));
   },
+
+  toggleCompletion: (id: string) => {
+    set((state) => ({
+      reminders: state.reminders.map((reminder) =>
+        reminder.id === id
+          ? {
+              ...reminder,
+              isCompleted: !reminder.isCompleted,
+              updatedAt: new Date().toISOString(),
+            }
+          : reminder
+      ),
+    }));
+  },
 }));

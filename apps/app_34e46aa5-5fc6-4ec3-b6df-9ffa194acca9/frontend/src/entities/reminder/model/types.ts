@@ -33,6 +33,7 @@ export interface ReminderActions {
   updateReminder: (id: string, data: ReminderUpdateInput) => void;
   removeReminder: (id: string) => void;
   markAsDone: (id: string) => void;
+  toggleCompletion: (id: string) => void;
 }
 
 export type ReminderStore = ReminderState & ReminderActions;

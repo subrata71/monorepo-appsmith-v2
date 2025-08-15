@@ -270,3 +270,4 @@ export {
   TooltipProvider,
   TooltipTrigger,
 } from './tooltip';
+export { FadeTransition } from './fade-transition';
