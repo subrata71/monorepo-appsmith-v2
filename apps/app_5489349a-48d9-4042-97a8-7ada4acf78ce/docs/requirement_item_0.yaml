@@ -1,0 +1,71 @@
+access: The page is open to all users, no authentication required. No personal data
+  is stored.
+behaviour: The UI should be responsive and provide instant feedback for user actions.
+  Controls should only be active when applicable (e.g., disabling 'Start' during playback).
+  All user input should be validated. Animations should pause, step, and reset according
+  to controls. Array input is disabled during visualization unless paused or reset.
+name: Heap Sort Visualizer UI
+page:
+  behaviour: When users input or generate an array, the visualization updates instantly.
+    Sorting controls update the array display with animations. Speed adjustments take
+    effect immediately. Controls are enabled/disabled based on the visualization state.
+  id: heap-sort-visualizer
+  purpose: Provides an interactive interface for users to learn and experiment with
+    the heap sort algorithm through array input, visualization, and control tools.
+  sections:
+  - behaviour: Accepts comma-separated integers for manual input or generates a random
+      array of a chosen length (between 2 and 20). Blocks further input during sorting
+      unless paused.
+    blocks:
+    - behaviour: Text field validates and parses comma-separated numbers. On valid
+        input, updates the visualization.
+      id: manual-array-input
+    - behaviour: Button generates a new random array of the selected length and resets
+        any ongoing visualization.
+      id: random-array-gen
+    - behaviour: Spinner/slider sets the random array length (2-20). Updates input
+        and random generation accordingly.
+      id: array-size-spinner
+    id: array-input-section
+    title: Array Input
+    visual: Horizontal layout with a text box, number spinner, and a prominent button
+      for random generation. Clear error highlighting for invalid input.
+  - behaviour: Displays the current array as animated bars. Animations show comparisons
+      and swaps during heap sort. Highlights change according to algorithm state.
+    blocks:
+    - behaviour: Renders animated bars reflecting array state. Animates transitions,
+        swaps, and highlights algorithm steps.
+      id: array-bar-chart
+    id: visualization-section
+    title: Visualization
+    visual: Large horizontal bar chart with animated colored bars. Active comparisons
+      and swaps are highlighted with distinct colors.
+  - behaviour: Controls the flow of the heap sort visualization. Buttons are enabled/disabled
+      based on the current state. Speed slider modifies animation speed live.
+    blocks:
+    - behaviour: Starts the heap sort visualization. Input is locked during playback.
+      id: start-btn
+    - behaviour: Pauses the visualization. Array input becomes temporarily available
+        for editing.
+      id: pause-btn
+    - behaviour: Executes a single algorithm step and then pauses.
+      id: step-btn
+    - behaviour: Stops and resets the visualization and controls.
+      id: reset-btn
+    - behaviour: Slider adjusts animation speed in real time from slow (0.2x) to fast
+        (3x).
+      id: speed-slider
+    id: control-panel-section
+    title: Control Panel
+    visual: Row of large, well-spaced buttons (Start, Pause, Step, Reset) and a slider
+      for speed adjustment. Uses icons and descriptive text.
+  title: Heap Sort Visualizer
+  visual: Centralized visualization area. Top section for array input, middle for
+    visualization, and bottom for controls. Modern, approachable styling.
+summary: Create the main user interface for the heap sort visualizer, allowing users
+  to input data, control the visualization, and adjust visualization speed.
+visual: Use a clean, minimalist layout with clear separation between input, controls,
+  and visualization. Employ a light background with vibrant accent colors for active
+  elements and controls. Animation effects should be smooth and visually informative.
+  Array elements should be represented as vertical bars with dynamic color transitions
+  during sorting.

@@ -1,0 +1,19 @@
+id: '1'
+name: Heap Sort Visualizer UI
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Array Input Component
+  summary: Implement a component for users to input or generate a random array to
+    be sorted.
+- effort: 2
+  id: '1.2'
+  name: Control Panel
+  summary: Add controls for starting, pausing, stepping through, and resetting the
+    visualization.
+- effort: 1
+  id: '1.3'
+  name: Speed Adjustment
+  summary: Allow users to adjust the speed of the visualization.
+summary: Create the main user interface for the heap sort visualizer, allowing users
+  to input data and control the visualization.
