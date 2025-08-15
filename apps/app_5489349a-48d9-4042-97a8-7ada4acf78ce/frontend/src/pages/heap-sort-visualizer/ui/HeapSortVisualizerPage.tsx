@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { ArrayInputSection } from '@/widgets/array-input-section';
+import { ControlPanelSection } from '@/widgets/control-panel-section';
 import { ArrayDisplay } from '@/entities/visualization';
 
 export const HeapSortVisualizerPage = React.memo(() => {
@@ -24,6 +25,11 @@ export const HeapSortVisualizerPage = React.memo(() => {
               <div>
                 <h2 className="text-xl font-semibold mb-4">Array Input</h2>
                 <ArrayInputSection />
+              </div>
+              
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Controls</h2>
+                <ControlPanelSection />
               </div>
             </div>
 
