@@ -1,0 +1,41 @@
+access: No authentication or role-based restrictions. All users who load the UI have
+  full access to reminder actions.
+behaviour: All actions (display, mark as done, delete) are instant and update local
+  state with immediate UI feedback. UI is responsive for desktop and mobile. Animations
+  for marking as done and deleting (e.g., fade out on delete). No server communication.
+name: Reminder List UI
+page:
+  behaviour: Loads the reminder list from local state store on mount. User can mark
+    reminders as done, which updates UI instantly. User can delete reminders with
+    instant removal and animation.
+  id: reminder-list
+  purpose: Provides a central interface for users to view and manage all their reminders,
+    improving task tracking and productivity.
+  sections:
+  - behaviour: Renders all reminders from current local state. Items update in place
+      on user actions. Smooth list transitions.
+    blocks:
+    - behaviour: Displays the reminder's text and status. Shows as normal if active,
+        faded/struck-through if done.
+      id: reminder-item
+    - behaviour: Appears next to each active reminder. On click, marks as done in
+        local state and updates UI. Disabled or hidden for completed reminders.
+      id: mark-as-done-button
+    - behaviour: Appears for each reminder. On click, removes from local state and
+        animates removal from UI.
+      id: delete-reminder-button
+    id: reminders-main-list
+    title: Reminders
+    visual: Vertical list of cards or items. Each item displays reminder text, completion
+      status, and action buttons. Completed items are visually faded and/or struck-through.
+      Buttons for actions are icon-based with tooltips.
+  title: Reminder List
+  visual: Centered, scrollable list. Each reminder is a card or list item with actions
+    to the right. Consistent padding, rounded borders, and subtle shadows. Easy to
+    distinguish between active and completed reminders.
+summary: Create a user interface to display, mark as completed, and delete reminders
+  from a local list.
+visual: Clean, minimalistic layout with clear separation between reminder items. Use
+  a modern sans-serif font, light background, and accent colors for key actions (e.g.,
+  mark as done - green, delete - red). Completed reminders are visually distinct (e.g.,
+  faded text, strikethrough).

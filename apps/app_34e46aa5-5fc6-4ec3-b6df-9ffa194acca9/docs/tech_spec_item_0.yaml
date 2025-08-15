@@ -1,0 +1,329 @@
+client:
+  components:
+    entities:
+    - description: Entity logic for Reminder domain.
+      entity: reminder
+      name: ReminderEntity
+      props:
+      - reminder
+    features:
+    - description: Feature to mark a reminder as completed.
+      entities:
+      - ReminderEntity
+      feature: mark-as-done
+      name: MarkAsDoneFeature
+      props:
+      - reminderId
+      shared:
+      - useLocalReminders
+    - description: Feature to delete a reminder.
+      entities:
+      - ReminderEntity
+      feature: delete-reminder
+      name: DeleteReminderFeature
+      props:
+      - reminderId
+      shared:
+      - useLocalReminders
+    shared:
+    - category: ui
+      description: UI component to display a single reminder, with text and status
+        style.
+      name: ReminderCard
+      props:
+      - reminder
+    - category: ui
+      description: Reusable icon button for actions.
+      name: IconButton
+      props:
+      - icon
+      - onClick
+      - tooltip
+    - category: ui
+      description: Tooltip for icon buttons and actions.
+      name: Tooltip
+      props:
+      - content
+    - category: ui
+      description: Fade animation for entering and leaving reminder items.
+      name: FadeTransition
+      props:
+      - in
+      - children
+    - category: lib
+      description: Custom React hook for interacting with local reminders.
+      name: useLocalReminders
+      props: []
+    - category: lib
+      description: Local state/store for reminders.
+      name: localReminderStore
+      props: []
+    - category: lib
+      description: Utility for generating unique reminder ids.
+      name: uuid
+      props: []
+    - category: lib
+      description: Utility for formatting dates.
+      name: dateFormat
+      props:
+      - date
+    - category: config
+      description: Theme variables for consistent UI colors, spacing, etc.
+      name: themeConfig
+      props: []
+    widgets:
+    - description: Widget displaying list of reminders, manages list state and actions.
+      entities:
+      - ReminderEntity
+      features:
+      - MarkAsDoneFeature
+      - DeleteReminderFeature
+      name: RemindersListWidget
+      props: []
+      shared:
+      - FadeTransition
+    - description: Widget displaying a single reminder item with action buttons.
+      entities:
+      - ReminderEntity
+      features:
+      - MarkAsDoneFeature
+      - DeleteReminderFeature
+      name: ReminderItemWidget
+      props:
+      - reminder
+      shared:
+      - ReminderCard
+      - IconButton
+      - Tooltip
+      - FadeTransition
+  pages:
+  - description: Main page showing all reminders, allowing mark as done and delete
+      actions.
+    queries:
+    - reminderStore
+    route: /
+    title: Reminder List
+    widgets:
+    - RemindersListWidget
+  stores:
+  - actions:
+    - loadReminders()
+    - 'addReminder(reminder: Reminder)'
+    - 'updateReminder(id: string, data: Partial<Reminder>)'
+    - 'removeReminder(id: string)'
+    - 'markAsDone(id: string)'
+    description: Local store for all reminders and UI state.
+    layer: entities
+    name: reminderStore
+    state_shape:
+    - name: reminders
+      type: Reminder[]
+    - name: loading
+      type: boolean
+    - name: error
+      type: string | null
+components:
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  responses:
+  - code: '404'
+    description: Reminder not found
+  - code: '400'
+    description: Invalid input or state
+  schemas:
+  - name: Reminder
+    type: object
+  - name: ReminderCreateInput
+    type: object
+  - name: ReminderUpdateInput
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns all reminders currently stored locally, sorted by createdAt
+        desc.
+      operation_id: getReminders
+      summary: Get all reminders from local state
+      tags:
+      - reminder
+    path: /reminders
+  - method: GET
+    operation:
+      description: Returns the reminder with the given id from local state.
+      operation_id: getReminderById
+      summary: Get a specific reminder by id from local state
+      tags:
+      - reminder
+    path: /reminders/{id}
+  - method: POST
+    operation:
+      description: Create a reminder in local state.
+      operation_id: createReminder
+      summary: Create a new reminder in local state
+      tags:
+      - reminder
+    path: /reminders
+  - method: PUT
+    operation:
+      description: Update a reminder in local state.
+      operation_id: updateReminder
+      summary: Update a reminder in local state
+      tags:
+      - reminder
+    path: /reminders/{id}
+  - method: DELETE
+    operation:
+      description: Delete a reminder from local state.
+      operation_id: deleteReminder
+      summary: Delete a reminder from local state
+      tags:
+      - reminder
+    path: /reminders/{id}
+  description: Reminder management domain for local-only CRUD operations and UI state.
+  models:
+  - description: A single reminder item stored and managed locally.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: text
+      nullable: false
+      pk: false
+      type: string
+    - name: isCompleted
+      nullable: false
+      pk: false
+      type: boolean
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Reminder
+  name: reminder
+  services:
+  - description: Encapsulates all business logic for local reminder CRUD, including
+      field validation, local storage persistence, and instant state updates.
+    methods:
+    - 'createReminder(text: string): Reminder'
+    - 'getReminders(): Reminder[]'
+    - 'getReminderById(id: string): Reminder | null'
+    - 'updateReminder(id: string, data: { text?: string; isCompleted?: boolean }):
+      Reminder | null'
+    - 'deleteReminder(id: string): boolean'
+    name: ReminderService
+metadata:
+  description: Differential technical specification for a local-only reminder management
+    UI, with no backend or server communication.
+  generated_at: '2024-06-11T17:43:00Z'
+  name: Reminder List UI
+  version: 1.0.0
+product:
+  features:
+  - description: A list interface to view, complete, and delete reminders, managed
+      entirely in local state.
+    domains:
+    - reminder
+    id: local-reminder-list
+    priority: high
+    title: Local Reminder List
+  goals:
+  - Enable users to manage a list of reminders locally
+  - Provide instant UI feedback for reminder completion and deletion
+  - Ensure mobile and desktop responsiveness and accessibility
+  personas:
+  - description: Wants a simple way to track and complete personal tasks without account
+      setup or syncing.
+    goals:
+    - Quickly view, complete, and remove reminders
+    - Use the interface on both desktop and mobile
+    - Experience zero-latency feedback for actions
+    name: Productivity-Oriented User
+  summary: A responsive, minimal UI to display, mark as completed, and delete reminders
+    in a local list, with instant feedback and local state management only.
+use_cases:
+- actors:
+  - User
+  apis: []
+  description: User views all reminders stored locally in a list.
+  domains:
+  - reminder
+  happy_path:
+  - On page load, retrieve all reminders from local state
+  - Render each reminder as a card/list item, showing text and status
+  - Visually distinguish completed reminders
+  id: display-reminders
+  pages:
+  - /
+  postconditions:
+  - Reminders are displayed, with completed reminders visually distinct
+  preconditions:
+  - Reminders exist in local state
+  title: Display reminders in a list
+- actors:
+  - User
+  apis: []
+  description: User marks a reminder as completed, which updates its status and UI
+    immediately.
+  domains:
+  - reminder
+  happy_path:
+  - User clicks 'mark as done' button next to active reminder
+  - Update reminder status to completed in local state
+  - UI updates instantly to show completed style and hide/disable action
+  - Animate completion if possible
+  id: mark-reminder-done
+  pages:
+  - /
+  postconditions:
+  - Reminder is marked as done in state and UI
+  preconditions:
+  - Reminder is not already completed
+  title: Mark a reminder as completed
+- actors:
+  - User
+  apis: []
+  description: User deletes a reminder, which is removed from the list and local state
+    instantly.
+  domains:
+  - reminder
+  happy_path:
+  - User clicks 'delete' button on a reminder
+  - Remove reminder from local state
+  - Animate removal from UI list
+  id: delete-reminder
+  pages:
+  - /
+  postconditions:
+  - Reminder is removed from local state and UI
+  preconditions:
+  - Reminder exists in local state
+  title: Delete a reminder
+user_journeys:
+- id: basic-reminder-management
+  persona: Productivity-Oriented User
+  related_use_cases:
+  - display-reminders
+  - mark-reminder-done
+  - delete-reminder
+  steps:
+  - action: Reminders load from local state on opening the Reminder List page
+    page: /
+  - action: User reviews list; identifies a completed task
+    page: /
+  - action: User clicks 'mark as done'; item style updates to faded/strikethrough
+    page: /
+  - action: User deletes a no-longer-needed reminder; item animates out and disappears
+    page: /
+  - action: User continues managing reminders; all changes are instant and local
+    page: /
+  success_criteria: All actions provide instant feedback and correct state updates;
+    UI is always in sync with local state.
+  title: Managing reminders locally

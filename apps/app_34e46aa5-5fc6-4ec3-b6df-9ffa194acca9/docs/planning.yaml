@@ -1,0 +1,29 @@
+plan_items:
+- id: '1'
+  name: Reminder List UI
+  sub_items:
+  - effort: 1
+    id: '1.1'
+    name: Display Reminders
+    summary: Render a list of reminders from local state.
+  - effort: 1
+    id: '1.2'
+    name: Mark as Done
+    summary: Allow users to mark reminders as completed.
+  - effort: 1
+    id: '1.3'
+    name: Delete Reminder
+    summary: Allow users to remove reminders from the list.
+  summary: Create a user interface to display the list of reminders and their statuses.
+- id: '2'
+  name: Add Reminder Functionality
+  sub_items:
+  - effort: 1
+    id: '2.1'
+    name: Reminder Input Form
+    summary: Create a form to input reminder text and optional due time.
+  - effort: 1
+    id: '2.2'
+    name: Save Reminder to State
+    summary: Save new reminders to local state (no backend).
+  summary: Allow users to add new reminders through a simple form.
