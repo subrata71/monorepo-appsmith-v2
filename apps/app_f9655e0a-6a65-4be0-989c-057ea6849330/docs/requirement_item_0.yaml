@@ -1,0 +1,73 @@
+access: All functionality is fully open to the user; no authentication or role restrictions
+  are required.
+behaviour: All editing actions—visual or textual—are reflected instantly in both representations.
+  Undo/redo is supported. Validation runs automatically after every change, and feedback
+  is shown immediately if the graph is not a valid DAG. Visual cues guide actions
+  (e.g., node/edge highlights, error messages).
+name: Graph Input and Editing
+page:
+  behaviour: Both visual and textual inputs update the graph in real-time. Graph validation
+    occurs after each modification, immediately highlighting issues (such as cycles).
+    Undo/redo available for all edits. Errors prevent invalid graph states from persisting.
+  id: graph_editor
+  purpose: Provides a workspace for users to create, edit, and validate directed graphs
+    using either visual or textual (adjacency list) input methods.
+  sections:
+  - behaviour: Users add nodes by clicking 'Add Node' and then clicking the canvas.
+      Edges are drawn by selecting 'Draw Edge', then clicking source and target nodes.
+      Nodes/edges are draggable and deletable. Edits are undoable; all changes are
+      validated.
+    blocks:
+    - behaviour: On 'Add Node', canvas click creates new node with auto-generated
+        label (A, B, ...).
+      id: add_node
+    - behaviour: On 'Draw Edge', selecting two nodes draws a directed edge (no self-loops/duplicates).
+      id: draw_edge
+    - behaviour: Selecting nodes/edges enables deletion. Selected items highlight.
+        Delete removes them and updates both views.
+      id: select_delete
+    - behaviour: Nodes can be repositioned by dragging; edges update dynamically.
+      id: drag_node
+    id: visual_editor
+    title: Visual Node and Edge Creation
+    visual: Large, light canvas area as main focus. Nodes are circles with labels;
+      edges are curved arrows. Toolbar above canvas offers add, connect (draw edge),
+      delete, and selection tools. Selected items are highlighted (blue border). Zoom
+      and pan controls at the corner.
+  - behaviour: 'User enters adjacency list ("A: B, C"). ''Apply'' parses/validates
+      and updates visual editor. Syntax or invalid DAG errors are shown. ''Clear''
+      resets both input and canvas.'
+    blocks:
+    - behaviour: Allows multiline adjacency list entry. On 'Apply', parses lines,
+        updates graph or shows errors; on 'Clear', resets both.
+      id: adjacency_textarea
+    id: text_input
+    title: Textual Graph Input (Adjacency List)
+    visual: Sidebar with monospaced textarea labeled 'Adjacency List'. Contains 'Apply'
+      and 'Clear' buttons below input.
+  - behaviour: Auto-validates after each change. Shows errors for cycles, invalid
+      input, or syntax issues. Prevents non-DAG graphs. Valid state is confirmed with
+      a green check.
+    blocks:
+    - behaviour: Detects cycles after every edit. If found, shows error with involved
+        nodes and optionally highlights them.
+      id: cycle_detection
+    - behaviour: Parses adjacency input, reports syntax/location errors, and prevents
+        invalid updates.
+      id: input_validation
+    - behaviour: Shows 'Valid DAG' status with green check when no errors are present.
+      id: valid_state
+    id: validation_feedback
+    title: Graph Validation
+    visual: Fixed panel below canvas/text input; displays messages with icons (red
+      for errors, green for valid).
+  title: Graph Editor
+  visual: Central interactive canvas with nodes and edges, sidebar for adjacency list
+    input, toolbar above canvas for editing tools, and a persistent validation feedback
+    panel below. Layout is responsive to various screen sizes.
+summary: Allow users to create and edit a directed graph visually or via text input.
+  The system ensures the graph remains a Directed Acyclic Graph (DAG) through validation.
+visual: Modern, clean UI with a neutral palette (light background, blue highlights),
+  rounded edges, and easy-to-read sans-serif typography. Main workspace is a canvas
+  area with an adjacent sidebar for text input. Action toolbars and feedback panels
+  are clearly delineated.

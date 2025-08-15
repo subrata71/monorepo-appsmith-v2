@@ -1,0 +1,453 @@
+client:
+  components:
+    entities:
+    - description: Graph state and logic.
+      entity: graph
+      name: GraphEntity
+      props:
+      - graph
+      - onChange
+    features:
+    - description: Feature for adding a node with auto-label and undo support.
+      entities:
+      - GraphEntity
+      feature: graph
+      name: CreateNode
+      props:
+      - onAdd
+      shared:
+      - Button
+    - description: Feature for drawing an edge between two nodes, with validation.
+      entities:
+      - GraphEntity
+      feature: graph
+      name: DrawEdge
+      props:
+      - onDraw
+      shared:
+      - Button
+    - description: Feature for deleting nodes or edges.
+      entities:
+      - GraphEntity
+      feature: graph
+      name: DeleteNodeOrEdge
+      props:
+      - onDelete
+      shared:
+      - Button
+    - description: Feature for syncing adjacency list input and visual graph.
+      entities:
+      - GraphEntity
+      feature: graph
+      name: TextInputSync
+      props:
+      - onApplyText
+      shared:
+      - Input
+    - description: Feature for undo/redo actions.
+      entities:
+      - GraphEntity
+      feature: graph
+      name: UndoRedo
+      props:
+      - onUndo
+      - onRedo
+      shared:
+      - Button
+    - description: Feature for displaying validation state/errors.
+      entities:
+      - GraphEntity
+      feature: graph
+      name: ValidationFeedback
+      props:
+      - graph
+      shared: []
+    shared:
+    - category: ui
+      description: Base button UI component.
+      name: Button
+      props:
+      - onClick
+      - children
+    - category: ui
+      description: Input field for text.
+      name: Input
+      props:
+      - value
+      - onChange
+    - category: api
+      description: Graph API client functions.
+      name: apiClient
+      props: []
+    - category: lib
+      description: Graph validation utility.
+      name: dagValidator
+      props: []
+    widgets:
+    - description: Canvas-based editor for nodes and edges. Orchestrates visual graph
+        editing features.
+      entities:
+      - GraphEntity
+      features:
+      - CreateNode
+      - DrawEdge
+      - DeleteNodeOrEdge
+      name: VisualEditorWidget
+      props:
+      - graph
+      - onNodeAdd
+      - onEdgeDraw
+      - onDelete
+      - onSelect
+      shared:
+      - Button
+    - description: Sidebar for adjacency list entry and controls. Syncs with graph
+        state.
+      entities:
+      - GraphEntity
+      features:
+      - TextInputSync
+      name: TextInputWidget
+      props:
+      - adjacencyList
+      - onApply
+      - onClear
+      shared:
+      - Input
+      - Button
+    - description: Panel showing current graph validation state and errors with icons/colors.
+      entities:
+      - GraphEntity
+      features:
+      - ValidationFeedback
+      name: ValidationFeedbackWidget
+      props:
+      - graph
+      shared: []
+    - description: Toolbar with action buttons (add, connect, delete, undo, redo,
+        zoom, pan).
+      entities: []
+      features:
+      - UndoRedo
+      name: ToolbarWidget
+      props:
+      - onAddNode
+      - onDrawEdge
+      - onDelete
+      - onUndo
+      - onRedo
+      shared:
+      - Button
+  pages:
+  - description: Main workspace for DAG creation and editing. Responsive layout with
+      central canvas, right sidebar for text input, toolbar above, and validation
+      feedback below.
+    queries:
+    - getGraph
+    route: /graphs/editor
+    title: Graph Editor
+    widgets:
+    - VisualEditorWidget
+    - TextInputWidget
+    - ValidationFeedbackWidget
+    - ToolbarWidget
+  stores:
+  - actions:
+    - setGraph(graph)
+    - pushUndo(graph)
+    - popUndo()
+    - pushRedo(graph)
+    - popRedo()
+    - clearHistory()
+    - selectNode(id)
+    - selectEdge(id)
+    - clearSelection()
+    - setLoading(loading)
+    - setError(error)
+    description: Store for graph state, selection, undo/redo history, and UI flags.
+    layer: entities
+    name: graphStore
+    state_shape:
+    - name: graph
+      type: Graph
+    - name: undoStack
+      type: Graph[]
+    - name: redoStack
+      type: Graph[]
+    - name: selectedNodeIds
+      type: string[]
+    - name: selectedEdgeIds
+      type: string[]
+    - name: ui
+      type: '{loading: boolean, error: string | null}'
+components:
+  parameters:
+  - in_: path
+    name: GraphId
+    required: true
+  responses:
+  - code: '200'
+    description: Successful response
+  - code: '400'
+    description: Invalid input or validation error
+  - code: '404'
+    description: Graph not found
+  schemas:
+  - name: Graph
+    type: object
+  - name: GraphNode
+    type: object
+  - name: GraphEdge
+    type: object
+  - name: GraphValidationError
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns the current graph.
+      operation_id: getGraph
+      summary: Get current graph
+      tags:
+      - graph
+    path: /api/graphs/{id}
+  - method: POST
+    operation:
+      description: Creates a new graph from empty or initial state.
+      operation_id: createGraph
+      summary: Create a new graph
+      tags:
+      - graph
+    path: /api/graphs
+  - method: PUT
+    operation:
+      description: Updates the current graph with new nodes/edges or adjacency list.
+        Validation occurs before update.
+      operation_id: updateGraph
+      summary: Update the graph
+      tags:
+      - graph
+    path: /api/graphs/{id}
+  - method: DELETE
+    operation:
+      description: Deletes a graph by ID.
+      operation_id: deleteGraph
+      summary: Delete a graph
+      tags:
+      - graph
+    path: /api/graphs/{id}
+  description: Domain for managing the current graph, including its structure, validation,
+    and history.
+  models:
+  - description: A single directed graph (DAG).
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: nodes
+      nullable: false
+      pk: false
+      type: GraphNode[]
+    - name: edges
+      nullable: false
+      pk: false
+      type: GraphEdge[]
+    - name: adjacencyList
+      nullable: false
+      pk: false
+      type: string
+    - name: isValid
+      nullable: false
+      pk: false
+      type: boolean
+    - name: validationErrors
+      nullable: false
+      pk: false
+      type: GraphValidationError[]
+    name: Graph
+  name: graph
+  services:
+  - description: Service to manage graph state, perform validation, and handle synchronization
+      between text and visual representations.
+    methods:
+    - createGraph(initState)
+    - getGraph(id)
+    - updateGraph(id, data)
+    - deleteGraph(id)
+    - validateGraph(graph)
+    - syncTextAndVisual(graph)
+    name: GraphService
+metadata:
+  description: A client application for creating and editing directed acyclic graphs
+    (DAGs) via visual and text input, with real-time validation and instant feedback.
+  generated_at: '2024-06-11T15:51:00Z'
+  name: Graph Input and Editing
+  version: 1.0.0
+product:
+  features:
+  - description: Canvas-based interface for adding, connecting, moving, and deleting
+      nodes and edges.
+    domains:
+    - graph
+    id: visual-editor
+    priority: high
+    title: Visual Graph Editor
+  - description: Sidebar for entering/editing graph as adjacency list text, supporting
+      parsing and synchronization with visual editor.
+    domains:
+    - graph
+    id: text-adjacency-input
+    priority: high
+    title: Textual Graph Input (Adjacency List)
+  - description: Auto-validates graph after every change, displaying errors and preventing
+      invalid DAG states.
+    domains:
+    - graph
+    id: auto-validation
+    priority: high
+    title: Real-time Graph Validation
+  - description: Full undo/redo support for all edit actions, visual and textual.
+    domains:
+    - graph
+    id: undo-redo
+    priority: medium
+    title: Undo/Redo
+  goals:
+  - Enable users to create and edit directed graphs visually and via text input (adjacency
+    list).
+  - Ensure that the graph remains a valid DAG at all times; prevent cycles, self-loops,
+    and duplicate edges.
+  - Provide instant visual and textual feedback, including validation errors or a
+    confirmation of validity.
+  - Support undo and redo for all editing actions.
+  - Allow seamless synchronization between visual and textual representations.
+  personas:
+  - description: Any individual (student, teacher, engineer, planner) wishing to create,
+      edit, and validate a directed acyclic graph. No authentication required.
+    goals:
+    - Create or edit DAGs for learning, planning, or analysis.
+    - Switch freely between visual editing and adjacency list input.
+    - Receive instant feedback about graph validity.
+    name: Graph User
+  summary: A modern web app for visual and textual creation/editing of DAGs, ensuring
+    graph validity at all times. All features are accessible without authentication.
+use_cases:
+- actors:
+  - Graph User
+  apis:
+  - POST /api/graphs
+  description: User adds a node via the canvas using the 'Add Node' tool. Node appears
+    with an auto-generated label.
+  domains:
+  - graph
+  happy_path:
+  - User clicks 'Add Node'.
+  - User clicks on the canvas.
+  - A new node appears with auto label (e.g., A, B, C).
+  id: uc1
+  pages:
+  - /graphs/editor
+  postconditions:
+  - Node is visible on canvas and in text input.
+  preconditions:
+  - Graph is loaded.
+  title: Create Node Visually
+- actors:
+  - Graph User
+  apis:
+  - PUT /api/graphs/{id}
+  description: User draws a directed edge between two nodes via the canvas. Edge is
+    added only if it doesn't create a cycle/self-loop/duplicate.
+  domains:
+  - graph
+  happy_path:
+  - User selects 'Draw Edge'.
+  - User clicks source node, then target node.
+  - Edge appears if valid; otherwise, error shown.
+  id: uc2
+  pages:
+  - /graphs/editor
+  postconditions:
+  - Edge appears on canvas and in text input. Graph remains a DAG.
+  preconditions:
+  - At least two nodes exist.
+  title: Draw Edge Visually
+- actors:
+  - Graph User
+  apis:
+  - PUT /api/graphs/{id}
+  description: User edits the adjacency list in the sidebar. On 'Apply', changes are
+    parsed, validated, and reflected visually.
+  domains:
+  - graph
+  happy_path:
+  - 'User enters adjacency list (e.g., "A: B, C").'
+  - User clicks 'Apply'.
+  - Canvas updates if valid; errors shown if not.
+  id: uc3
+  pages:
+  - /graphs/editor
+  postconditions:
+  - Visual editor updates to match text input. Errors are shown if invalid.
+  preconditions:
+  - Graph is loaded.
+  title: Edit Graph by Text
+- actors:
+  - Graph User
+  apis: []
+  description: User undoes or redoes a recent edit, restoring the previous/next graph
+    state.
+  domains:
+  - graph
+  happy_path:
+  - User clicks 'Undo'.
+  - Graph reverts; validation feedback updates.
+  - User clicks 'Redo'.
+  - Graph reapplies change.
+  id: uc4
+  pages:
+  - /graphs/editor
+  postconditions:
+  - Graph state reverts or advances and views sync.
+  preconditions:
+  - At least one edit exists.
+  title: Undo/Redo Edit
+user_journeys:
+- id: uj1
+  persona: Graph User
+  related_use_cases:
+  - uc1
+  - uc2
+  - uc4
+  steps:
+  - action: Open the Graph Editor page.
+    page: /graphs/editor
+  - action: Add nodes A, B, C visually.
+    page: /graphs/editor
+  - action: Draw edges A->B and B->C.
+    page: /graphs/editor
+  - action: See 'Valid DAG' feedback.
+    page: /graphs/editor
+  - action: Attempt to add edge C->A; error shown for cycle.
+    page: /graphs/editor
+  success_criteria: User can create a DAG without cycles; invalid operations are clearly
+    prevented.
+  title: Build a Valid DAG Visually
+- id: uj2
+  persona: Graph User
+  related_use_cases:
+  - uc3
+  - uc4
+  steps:
+  - action: Enter adjacency list in sidebar text area.
+    page: /graphs/editor
+  - action: Click 'Apply'; graph updates visually.
+    page: /graphs/editor
+  - action: Introduce a cycle in text; error shown, graph not updated.
+    page: /graphs/editor
+  - action: Fix input; 'Valid DAG' feedback returns.
+    page: /graphs/editor
+  success_criteria: Text input and visual editor remain in sync; validation prevents
+    invalid updates.
+  title: Edit Graph via Adjacency List

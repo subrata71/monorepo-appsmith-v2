@@ -1,0 +1,17 @@
+id: '1'
+name: Graph Input and Editing
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Visual Node and Edge Creation
+  summary: Implement a canvas where users can add nodes and draw directed edges between
+    them.
+- effort: 1
+  id: '1.2'
+  name: Textual Graph Input (Adjacency List)
+  summary: Allow users to input the graph as an adjacency list for quick setup.
+- effort: 1
+  id: '1.3'
+  name: Graph Validation
+  summary: Check for cycles and invalid input to ensure the graph is a DAG.
+summary: Allow users to create and edit a directed graph visually or via text input.
