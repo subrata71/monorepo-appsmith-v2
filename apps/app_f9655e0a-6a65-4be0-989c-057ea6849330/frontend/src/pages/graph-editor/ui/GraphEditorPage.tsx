@@ -17,6 +17,7 @@ import {
   useUpdateGraph
 } from '@/shared/api/graph';
 import type { CanvasPosition } from '@/entities/graph';
+import { validateGraphStructure } from '@/shared/lib/graph-parser';
 import { toast } from 'sonner';
 
 export const GraphEditorPage = React.memo(() => {
@@ -137,6 +138,25 @@ export const GraphEditorPage = React.memo(() => {
 
   const handleEdgeDraw = React.useCallback(async (sourceId: string, targetId: string) => {
     if (!currentGraph?.id) return;
+
+    // Client-side validation before making server call
+    const proposedEdges = [
+      ...currentGraph.edges,
+      {
+        id: 'temp-edge', // Temporary ID for validation
+        sourceId,
+        targetId,
+      } as any // Type assertion for validation purposes
+    ];
+    
+    const validation = validateGraphStructure(currentGraph.nodes, proposedEdges);
+    
+    if (!validation.isValid) {
+      // Show specific validation error
+      const errorMessage = validation.errors[0] || 'Cannot add edge';
+      toast.error(errorMessage);
+      return;
+    }
 
     // Save current state for undo
     if (currentGraph) {

@@ -2,6 +2,7 @@ import React from 'react';
 import { Alert, AlertDescription } from '@/shared/ui/alert';
 import { CheckCircle, AlertCircle, AlertTriangle } from 'lucide-react';
 import type { Graph, GraphValidationError } from '@/entities/graph';
+import { useGraphValidation } from '@/shared/hooks/use-graph-validation';
 
 interface GraphValidationPanelProps {
   graph: Graph | null;
@@ -47,6 +48,8 @@ const getErrorMessage = (error: GraphValidationError) => {
 };
 
 export const GraphValidationPanel = React.memo<GraphValidationPanelProps>(({ graph }) => {
+  const validation = useGraphValidation(graph);
+  
   if (!graph) {
     return (
       <div className="p-4 border-t border-gray-200 bg-gray-50">
@@ -55,14 +58,15 @@ export const GraphValidationPanel = React.memo<GraphValidationPanelProps>(({ gra
     );
   }
 
-  const hasErrors = !graph.isValid && graph.validationErrors.length > 0;
+  const { isValid, errors, hasServerErrors, hasClientErrors } = validation;
+  const hasErrors = !isValid && errors.length > 0;
 
   return (
     <div className="p-4 border-t border-gray-200 bg-gray-50">
       <div className="space-y-3">
         {/* Overall status */}
         <div className="flex items-center gap-2">
-          {graph.isValid ? (
+          {isValid ? (
             <>
               <CheckCircle className="h-5 w-5 text-green-600" />
               <span className="text-sm font-medium text-green-700">Valid DAG</span>
@@ -90,7 +94,7 @@ export const GraphValidationPanel = React.memo<GraphValidationPanelProps>(({ gra
         {/* Validation errors */}
         {hasErrors && (
           <div className="space-y-2">
-            {graph.validationErrors.map((error, index) => (
+            {errors.map((error, index) => (
               <Alert key={index} variant="destructive" className="py-2">
                 <div className="flex items-start gap-2">
                   {getErrorIcon(error.type)}
@@ -100,6 +104,13 @@ export const GraphValidationPanel = React.memo<GraphValidationPanelProps>(({ gra
                 </div>
               </Alert>
             ))}
+          </div>
+        )}
+        
+        {/* Show validation source info when there are mixed errors */}
+        {hasErrors && hasServerErrors && hasClientErrors && (
+          <div className="text-xs text-gray-500 mt-2">
+            <p>Some errors detected by server validation, others by client validation</p>
           </div>
         )}
 

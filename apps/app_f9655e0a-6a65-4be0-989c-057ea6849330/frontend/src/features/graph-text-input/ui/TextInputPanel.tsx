@@ -1,7 +1,7 @@
 import React from 'react';
 import { AdjacencyListInput } from './AdjacencyListInput';
 import { TextInputActions } from './TextInputActions';
-import { parseAdjacencyList } from '@/shared/lib/graph-parser';
+import { parseAdjacencyList, validateAdjacencyListFormat } from '@/shared/lib/graph-parser';
 import { useGraphStore } from '@/entities/graph';
 import { useUpdateGraph } from '@/shared/api/graph';
 import { toast } from 'sonner';
@@ -43,6 +43,13 @@ export const TextInputPanel = React.memo<TextInputPanelProps>(({ className }) =>
       toast.error('Cannot apply invalid adjacency list');
       return;
     }
+    
+    // Double-check for cycles and other validation issues
+    const validationResult = validateAdjacencyListFormat(pendingAdjacencyList);
+    if (!validationResult.isValid) {
+      toast.error(`Invalid graph: ${validationResult.errors[0] || 'Unknown validation error'}`);
+      return;
+    }
 
     // Save current state for undo
     if (currentGraph) {
@@ -76,12 +83,12 @@ export const TextInputPanel = React.memo<TextInputPanelProps>(({ className }) =>
     toast.success('Text input reset to current graph');
   }, [resetTextInput]);
 
-  // Check if we can apply (valid format)
+  // Check if we can apply (valid format with comprehensive validation including cycles)
   const validation = React.useMemo(() => {
-    return parseAdjacencyList(pendingAdjacencyList);
+    return validateAdjacencyListFormat(pendingAdjacencyList);
   }, [pendingAdjacencyList]);
 
-  const canApply = validation.success && textInputDirty;
+  const canApply = validation.isValid && textInputDirty;
 
   return (
     <div className={`flex flex-col h-full ${className}`}>
