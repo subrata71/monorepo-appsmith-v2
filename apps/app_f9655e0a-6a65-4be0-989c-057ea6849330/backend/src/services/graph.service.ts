@@ -146,6 +146,54 @@ function validateGraph(nodes: GraphNode[], edges: GraphEdge[]): {
   };
 }
 
+// Parse adjacency list text into nodes and edges data
+function parseAdjacencyList(text: string): {
+  nodes: Array<{ label: string; x: number; y: number }>;
+  edges: Array<{ sourceName: string; targetName: string }>;
+} {
+  const nodeMap = new Map<string, boolean>();
+  const edges: Array<{ sourceName: string; targetName: string }> = [];
+
+  if (!text.trim()) {
+    return { nodes: [], edges: [] };
+  }
+
+  const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+
+  for (const line of lines) {
+    if (!line.includes(':')) continue;
+
+    const [sourceNodeRaw, targetsRaw] = line.split(':', 2);
+    const sourceNode = sourceNodeRaw.trim();
+
+    if (!sourceNode || !/^[a-zA-Z0-9_-]+$/.test(sourceNode)) continue;
+
+    nodeMap.set(sourceNode, true);
+
+    const targetsText = targetsRaw.trim();
+    if (targetsText) {
+      const targets = targetsText.split(',').map(t => t.trim()).filter(t => t);
+      
+      for (const target of targets) {
+        if (!/^[a-zA-Z0-9_-]+$/.test(target)) continue;
+        if (target === sourceNode) continue; // Skip self-loops
+
+        nodeMap.set(target, true);
+        edges.push({ sourceName: sourceNode, targetName: target });
+      }
+    }
+  }
+
+  // Create nodes with default positions
+  const nodes = Array.from(nodeMap.keys()).map((label, index) => ({
+    label,
+    x: 100 + (index % 5) * 150,
+    y: 100 + Math.floor(index / 5) * 100,
+  }));
+
+  return { nodes, edges };
+}
+
 // Generate adjacency list string representation
 function generateAdjacencyList(nodes: GraphNode[], edges: GraphEdge[]): string {
   const adjList = new Map<string, string[]>();
@@ -256,21 +304,57 @@ export function makeGraphService(app: FastifyInstance) {
 
       let nodes = updateData.nodes || existingGraph.nodes;
       let edges = updateData.edges || existingGraph.edges;
+      let adjacencyList = updateData.adjacencyList;
 
-      // Validate the updated graph
-      const validation = validateGraph(nodes, edges);
-      const adjacencyList = updateData.adjacencyList || generateAdjacencyList(nodes, edges);
+      // If adjacency list is provided and no explicit nodes/edges, parse it
+      if (adjacencyList && !updateData.nodes && !updateData.edges) {
+        try {
+          const parsed = parseAdjacencyList(adjacencyList);
+          
+          // Clear existing nodes and edges
+          await repo.deleteNodesByGraphId(id);
+          await repo.deleteEdgesByGraphId(id);
 
-      // Update graph metadata
-      const updatedGraph = await repo.updateGraph(id, {
-        adjacencyList,
-        isValid: validation.isValid,
-        validationErrors: validation.errors,
-      });
+          // Create new nodes
+          const newNodes: GraphNode[] = [];
+          for (const nodeData of parsed.nodes) {
+            const newNode = await repo.createNode({
+              graphId: id,
+              label: nodeData.label,
+              x: nodeData.x,
+              y: nodeData.y,
+            });
+            newNodes.push(newNode);
+          }
 
-      // If nodes/edges were provided, update them
-      if (updateData.nodes || updateData.edges) {
-        // Delete existing nodes and edges if we're replacing them
+          // Create label to ID mapping
+          const labelToId = new Map(newNodes.map(n => [n.label, n.id]));
+
+          // Create new edges
+          const newEdges: GraphEdge[] = [];
+          for (const edgeData of parsed.edges) {
+            const sourceId = labelToId.get(edgeData.sourceName);
+            const targetId = labelToId.get(edgeData.targetName);
+
+            if (sourceId && targetId) {
+              const newEdge = await repo.createEdge({
+                graphId: id,
+                sourceId,
+                targetId,
+              });
+              newEdges.push(newEdge);
+            }
+          }
+
+          nodes = newNodes;
+          edges = newEdges;
+          
+        } catch (error) {
+          log.error('Error parsing adjacency list:', error);
+          throw new Error('Invalid adjacency list format');
+        }
+      } else {
+        // Handle explicit nodes/edges updates
         if (updateData.nodes) {
           await repo.deleteNodesByGraphId(id);
           for (const node of nodes) {
@@ -291,6 +375,17 @@ export function makeGraphService(app: FastifyInstance) {
           }
         }
       }
+
+      // Validate the updated graph
+      const validation = validateGraph(nodes, edges);
+      const finalAdjacencyList = adjacencyList || generateAdjacencyList(nodes, edges);
+
+      // Update graph metadata
+      const updatedGraph = await repo.updateGraph(id, {
+        adjacencyList: finalAdjacencyList,
+        isValid: validation.isValid,
+        validationErrors: validation.errors,
+      });
 
       return {
         ...updatedGraph,

@@ -1,10 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/shared/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs';
 import { useGraphStore } from '@/entities/graph';
 import { GraphCanvas } from '@/features/graph-canvas';
 import { GraphToolbar } from '@/features/graph-toolbar';
 import { GraphValidationPanel } from '@/features/graph-validation';
+import { TextInputPanel } from '@/features/graph-text-input';
 import { 
   useGraph, 
   useCreateGraph, 
@@ -333,9 +335,22 @@ export const GraphEditorPage = React.memo(() => {
           />
         </div>
 
-        {/* Validation panel */}
-        <div className="w-80 bg-white border-l border-gray-200">
-          <GraphValidationPanel graph={currentGraph} />
+        {/* Right panel with tabs */}
+        <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
+          <Tabs defaultValue="text-input" className="flex flex-col h-full">
+            <TabsList className="grid w-full grid-cols-2 m-0 rounded-none border-b">
+              <TabsTrigger value="text-input" className="rounded-none">Text Input</TabsTrigger>
+              <TabsTrigger value="validation" className="rounded-none">Validation</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="text-input" className="flex-1 m-0 p-0">
+              <TextInputPanel className="h-full" />
+            </TabsContent>
+            
+            <TabsContent value="validation" className="flex-1 m-0 p-0">
+              <GraphValidationPanel graph={currentGraph} />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

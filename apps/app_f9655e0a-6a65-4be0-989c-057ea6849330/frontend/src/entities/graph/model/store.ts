@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Graph, GraphNode, GraphEdge, GraphEditorMode } from './types';
+import { generateAdjacencyList } from '@/shared/lib/graph-parser';
 
 interface GraphState {
   // Current graph data
@@ -18,6 +19,10 @@ interface GraphState {
   
   // Temporary edge drawing state
   edgeDrawSource: string | null;
+  
+  // Text input state
+  pendingAdjacencyList: string;
+  textInputDirty: boolean;
 }
 
 interface GraphActions {
@@ -45,6 +50,12 @@ interface GraphActions {
   // Edge drawing actions
   setEdgeDrawSource: (nodeId: string | null) => void;
   
+  // Text input actions
+  setPendingAdjacencyList: (text: string) => void;
+  setTextInputDirty: (dirty: boolean) => void;
+  syncTextInputFromGraph: () => void;
+  resetTextInput: () => void;
+  
   // Helper actions
   getNodeById: (nodeId: string) => GraphNode | null;
   getEdgeById: (edgeId: string) => GraphEdge | null;
@@ -63,9 +74,22 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
   undoStack: [],
   redoStack: [],
   edgeDrawSource: null,
+  pendingAdjacencyList: '',
+  textInputDirty: false,
   
   // Graph data actions
-  setGraph: (graph) => set({ currentGraph: graph }),
+  setGraph: (graph) => set((state) => {
+    // Sync text input from the new graph if it's not dirty
+    if (!state.textInputDirty && graph) {
+      const newAdjacencyList = generateAdjacencyList(graph.nodes, graph.edges);
+      return {
+        currentGraph: graph,
+        pendingAdjacencyList: newAdjacencyList,
+        textInputDirty: false,
+      };
+    }
+    return { currentGraph: graph };
+  }),
   
   clearGraph: () => set({
     currentGraph: null,
@@ -75,6 +99,8 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
     redoStack: [],
     edgeDrawSource: null,
     error: null,
+    pendingAdjacencyList: '',
+    textInputDirty: false,
   }),
   
   // UI actions
@@ -156,6 +182,36 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
   
   // Edge drawing actions
   setEdgeDrawSource: (nodeId) => set({ edgeDrawSource: nodeId }),
+  
+  // Text input actions
+  setPendingAdjacencyList: (text) => set((state) => ({
+    pendingAdjacencyList: text,
+    textInputDirty: state.currentGraph ? text !== generateAdjacencyList(state.currentGraph.nodes, state.currentGraph.edges) : text !== '',
+  })),
+  
+  setTextInputDirty: (dirty) => set({ textInputDirty: dirty }),
+  
+  syncTextInputFromGraph: () => set((state) => {
+    if (!state.currentGraph) {
+      return { pendingAdjacencyList: '', textInputDirty: false };
+    }
+    const generatedText = generateAdjacencyList(state.currentGraph.nodes, state.currentGraph.edges);
+    return {
+      pendingAdjacencyList: generatedText,
+      textInputDirty: false,
+    };
+  }),
+  
+  resetTextInput: () => set((state) => {
+    if (!state.currentGraph) {
+      return { pendingAdjacencyList: '', textInputDirty: false };
+    }
+    const generatedText = generateAdjacencyList(state.currentGraph.nodes, state.currentGraph.edges);
+    return {
+      pendingAdjacencyList: generatedText,
+      textInputDirty: false,
+    };
+  }),
   
   // Helper actions
   getNodeById: (nodeId) => {
