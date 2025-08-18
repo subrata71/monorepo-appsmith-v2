@@ -14,7 +14,10 @@
 /* Global minimalist timer styles */
 .minimal-timer-container {
   background: var(--timer-bg);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: var(--timer-primary);
   letter-spacing: -0.025em;
 }
@@ -45,7 +48,7 @@
 
 /* Subtle animation for timer state changes */
 .minimal-timer-transition {
-  transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Typography enhancements for minimalist look */

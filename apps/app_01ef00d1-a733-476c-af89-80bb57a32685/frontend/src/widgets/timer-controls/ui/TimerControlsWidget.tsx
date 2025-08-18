@@ -5,7 +5,7 @@ import { ResetButton } from '@/features/reset-timer';
 
 /**
  * TimerControlsWidget Component
- * 
+ *
  * Widget that houses all timer control buttons.
  * Contains Start/Pause and Reset functionality.
  */
@@ -36,17 +36,17 @@ export const TimerControlsWidget = React.memo(() => {
   };
 
   return (
-    <div 
+    <div
       className="flex justify-center items-center gap-6 mt-12"
       role="group"
       aria-label="Timer controls"
     >
-      <StartPauseButton 
+      <StartPauseButton
         timer={timer}
         onStartPause={handleStartPause}
         className="minimal-button-primary"
       />
-      <ResetButton 
+      <ResetButton
         timer={timer}
         onReset={resetTimer}
         className="minimal-button-secondary"

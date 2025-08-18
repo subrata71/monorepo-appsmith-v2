@@ -3,4 +3,4 @@
  */
 
 export { useInterval } from './use-interval';
-export { useMobile } from './use-mobile';
+export { useIsMobile } from './use-mobile';

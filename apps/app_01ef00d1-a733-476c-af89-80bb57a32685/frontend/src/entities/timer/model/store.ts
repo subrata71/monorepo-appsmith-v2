@@ -39,7 +39,9 @@ const DEFAULT_POMODORO_SECONDS = 25 * 60; // 25 minutes
 /**
  * Create a default timer
  */
-const createDefaultTimer = (initialSeconds = DEFAULT_POMODORO_SECONDS): Timer => ({
+const createDefaultTimer = (
+  initialSeconds = DEFAULT_POMODORO_SECONDS
+): Timer => ({
   id: 'default-timer',
   currentSeconds: initialSeconds,
   status: 'idle',
@@ -95,7 +97,8 @@ export const useTimerStore = create<TimerStore>((set, get) => ({
 
   tick: () => {
     const { timer } = get();
-    if (!timer || timer.status !== 'running' || timer.currentSeconds <= 0) return;
+    if (!timer || timer.status !== 'running' || timer.currentSeconds <= 0)
+      return;
 
     set({
       timer: {

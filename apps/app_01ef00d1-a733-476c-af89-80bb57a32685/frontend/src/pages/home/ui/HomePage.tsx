@@ -4,7 +4,7 @@ import { TimerControlsWidget } from '@/widgets/timer-controls';
 
 /**
  * HomePage Component
- * 
+ *
  * Main page that displays the Pomodoro timer
  */
 export const HomePage = React.memo(() => {

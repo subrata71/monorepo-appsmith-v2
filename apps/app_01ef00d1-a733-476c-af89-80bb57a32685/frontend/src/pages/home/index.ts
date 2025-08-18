@@ -1,6 +1,6 @@
 /**
  * Home Page
- * 
+ *
  * Main page for the Pomodoro Timer application
  */
 

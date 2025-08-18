@@ -1,6 +1,6 @@
 /**
  * Timer Display Widget
- * 
+ *
  * Exports the main timer display widget
  */
 

@@ -4,7 +4,7 @@ import { useInterval } from '@/shared/hooks';
 
 /**
  * TimerDisplayWidget
- * 
+ *
  * Main widget for displaying the Pomodoro timer with countdown functionality.
  * This component handles the timer ticking and integrates with the timer store.
  */
@@ -26,7 +26,7 @@ export const TimerDisplayWidget = React.memo(() => {
   useInterval(
     () => {
       tick();
-      
+
       // Auto-pause when timer reaches 0
       if (timer && timer.currentSeconds === 1) {
         setTimeout(() => {
@@ -39,10 +39,7 @@ export const TimerDisplayWidget = React.memo(() => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] px-4">
-      <TimerDisplay 
-        timer={timer} 
-        className="animate-in fade-in duration-700"
-      />
+      <TimerDisplay timer={timer} className="animate-in fade-in duration-700" />
     </div>
   );
 });

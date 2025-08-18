@@ -1,6 +1,6 @@
 /**
  * Timer Entity
- * 
+ *
  * Exports all timer-related components and stores
  */
 
