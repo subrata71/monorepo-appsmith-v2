@@ -1,0 +1,13 @@
+id: '1'
+name: Chat UI Layout
+sub_items:
+- effort: 1
+  id: '1.1'
+  name: Message List Container
+  summary: Implement a scrollable container to display chat messages.
+- effort: 1
+  id: '1.2'
+  name: Input Area
+  summary: Add a text input and send button for user to type and send messages.
+summary: Create the basic layout for the chat interface, including message display
+  and input area.

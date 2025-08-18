@@ -1,0 +1,272 @@
+client:
+  components:
+    entities:
+    - description: Renders a single message bubble with sender, timestamp, and content.
+      entity: message
+      name: MessageEntity
+      props:
+      - message
+    features:
+    - description: Handles sending chat messages, validation, and optimistic UI updates.
+      entities:
+      - MessageEntity
+      feature: send_message
+      name: SendMessageFeature
+      props:
+      - onSend
+      shared:
+      - ApiClient
+      - Toast
+    - description: Handles loading and paginating chat messages, with SWR cache.
+      entities:
+      - MessageEntity
+      feature: load_messages
+      name: LoadMessagesFeature
+      props:
+      - onLoad
+      shared:
+      - ApiClient
+      - Spinner
+    shared:
+    - category: api
+      description: API client for making requests to the chat backend.
+      name: ApiClient
+      props:
+      - baseUrl
+      - token
+    - category: ui
+      description: Loading spinner for async states.
+      name: Spinner
+      props: []
+    - category: ui
+      description: Inline toast for showing errors or messages.
+      name: Toast
+      props:
+      - message
+      - type
+    widgets:
+    - description: Scrollable list of messages, auto-scrolls to bottom on update.
+      entities:
+      - MessageEntity
+      features:
+      - LoadMessagesFeature
+      name: MessageListWidget
+      props:
+      - messages
+      - loading
+      shared:
+      - Spinner
+    - description: Input field and Send button for composing messages. Validates input
+        and triggers send.
+      entities: []
+      features:
+      - SendMessageFeature
+      name: ChatInputWidget
+      props:
+      - onSend
+      - sending
+      shared:
+      - Toast
+  pages:
+  - description: Main chat UI for reading and sending messages in real time.
+    queries:
+    - getMessages
+    - createMessage
+    route: /chat
+    title: Chat Interface
+    widgets:
+    - MessageListWidget
+    - ChatInputWidget
+  stores:
+  - actions:
+    - loadMessages
+    - sendMessage
+    description: Manages state for chat messages and loading/sending states.
+    layer: features
+    name: chatMessagesStore
+    state_shape:
+    - name: messages
+      type: Message[]
+    - name: loading
+      type: boolean
+    - name: sending
+      type: boolean
+    - name: sendError
+      type: string | null
+components:
+  parameters:
+  - in_: query
+    name: before
+    required: false
+  - in_: query
+    name: limit
+    required: false
+  responses:
+  - code: '200'
+    description: Success
+  - code: '201'
+    description: Created
+  - code: '400'
+    description: Validation Error
+  - code: '401'
+    description: Unauthorized
+  - code: '404'
+    description: Not Found
+  schemas:
+  - name: Message
+    type: object
+  - name: MessageCreate
+    type: object
+  - name: MessagesList
+    type: object
+  - name: Error
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Retrieve a chronological, paginated list of chat messages.
+      operation_id: getMessages
+      summary: List messages
+      tags:
+      - chat
+    path: /messages
+  - method: POST
+    operation:
+      description: Send a chat message as the authenticated user.
+      operation_id: createMessage
+      summary: Send message
+      tags:
+      - chat
+    path: /messages
+  description: Domain for chat message storage, retrieval, and sending.
+  models:
+  - description: A chat message sent by a user.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: senderId
+      nullable: false
+      pk: false
+      type: string
+    - name: content
+      nullable: false
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Message
+  name: chat
+  services:
+  - description: Handles logic for fetching, creating, and listing messages.
+    methods:
+    - 'listMessages(before: string, limit: number): MessagesList'
+    - 'createMessage(content: string): Message'
+    name: MessageService
+metadata:
+  description: Technical specification for a chat interface with scrollable message
+    area and input section for sending messages, using FSD architecture and OpenAPI-like
+    API definitions.
+  generated_at: '2024-06-11T12:00:00Z'
+  name: Chat UI Layout
+  version: 1.0.0
+product:
+  features:
+  - description: Display a chronological, scrollable list of chat messages.
+    domains:
+    - chat
+    id: chat_message_view
+    priority: high
+    title: View Chat Messages
+  - description: Compose and send a message using the input area or keyboard shortcuts.
+      Input is validated for non-empty content.
+    domains:
+    - chat
+    id: chat_message_send
+    priority: high
+    title: Send Chat Message
+  goals:
+  - Enable users to view and send chat messages in real time.
+  - Provide a modern, responsive, and accessible chat user interface.
+  - Support both desktop and mobile usage.
+  personas:
+  - description: A user who has logged into the application and can send and receive
+      chat messages.
+    goals:
+    - Communicate in real time with other users via chat.
+    - Easily view message history.
+    - Send messages efficiently from any device.
+    name: Authenticated User
+  summary: A fundamental chat interface providing a scrollable message list and an
+    input area for composing and sending messages.
+use_cases:
+- actors:
+  - Authenticated User
+  apis:
+  - GET /messages
+  description: User opens the chat page and views the message history in a scrollable
+    area.
+  domains:
+  - chat
+  happy_path:
+  - User navigates to chat page.
+  - System loads and displays messages in chronological order.
+  - New messages appear at the bottom; area auto-scrolls to newest.
+  id: UC1
+  pages:
+  - /chat
+  postconditions:
+  - Chat messages are visible in the message list.
+  preconditions:
+  - User is authenticated.
+  title: View Chat Messages
+- actors:
+  - Authenticated User
+  apis:
+  - POST /messages
+  description: User composes and sends a message using the input area. Input is validated
+    and message appears in the chat.
+  domains:
+  - chat
+  happy_path:
+  - User types a message.
+  - Send button becomes enabled when input is not empty.
+  - User presses Enter or clicks Send.
+  - Message is sent and appears in the list; input is cleared.
+  id: UC2
+  pages:
+  - /chat
+  postconditions:
+  - Message is sent and displayed in the chat list.
+  preconditions:
+  - User is authenticated.
+  - Input area is visible.
+  title: Send Chat Message
+user_journeys:
+- id: J1
+  persona: Authenticated User
+  related_use_cases:
+  - UC1
+  - UC2
+  steps:
+  - action: User opens chat page.
+    page: /chat
+  - action: Messages load and are displayed in scrollable message list.
+    page: /chat
+  - action: User types a message.
+    page: /chat
+  - action: User presses Enter or clicks Send.
+    page: /chat
+  - action: Message is sent and appears in the message list; input clears.
+    page: /chat
+  success_criteria: User reliably sees message history and can send a message that
+    appears instantly in the list.
+  title: Basic Chat Flow

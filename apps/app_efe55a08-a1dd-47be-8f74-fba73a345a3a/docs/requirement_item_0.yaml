@@ -1,0 +1,48 @@
+access: Open to authenticated users. No role-based restrictions for sending/receiving
+  messages at this UI layer.
+behaviour: Responsive design, supporting both desktop and mobile viewports. Smooth
+  scrolling for message area. Input field is always accessible; send action is validated
+  for non-empty input. Keyboard accessibility for input and send.
+name: Chat UI Layout
+page:
+  behaviour: Message area auto-scrolls to latest message. Input area remains visible
+    at all times. Supports keyboard navigation and mobile touch events.
+  id: chat_main
+  purpose: Provides users with a simple, efficient interface to view and send chat
+    messages in real time.
+  sections:
+  - behaviour: Displays messages in chronological order. Auto-scrolls to newest message
+      on update. Allows manual scrolling to view history.
+    blocks:
+    - behaviour: Renders chat messages as a scrollable list. Each entry displays sender,
+        timestamp, and message content. Scrolls to latest on new message.
+      id: message_list
+    id: message_list_container
+    title: Message List
+    visual: Tall, scrollable column with light background. Each message is in a rounded
+      bubble. Alternating alignment for incoming and outgoing messages.
+  - behaviour: User can type message in input field. Send button is enabled only when
+      input is non-empty. Pressing Enter or tapping Send submits the message and clears
+      input.
+    blocks:
+    - behaviour: Captures user input for composing a new message. Supports keyboard
+        shortcuts (Enter to send). Clears after successful send.
+      id: message_input_field
+    - behaviour: Triggers message send action when clicked or Enter is pressed. Disabled
+        when input field is empty.
+      id: send_button
+    id: chat_input_area
+    title: Input Area
+    visual: Fixed bottom bar with a text input occupying most of the width and a prominent
+      Send button on the right. Subtle shadow above for separation.
+  title: Chat Interface
+  visual: 'Vertical split layout: large scrollable message container above, fixed
+    input area at the bottom. Message area uses a soft background with alternating
+    message alignments. Input area spans full width, visually separated with a top
+    border/shadow.'
+summary: A fundamental chat interface providing a scrollable message display area
+  and an input section for users to compose and send messages.
+visual: 'Modern, clean layout with a light background. Primary color #2563EB for action
+  elements. Uses clear, legible sans-serif font (e.g., Inter). Consistent margins
+  and padding. Message area takes most of the vertical space with rounded message
+  bubbles. Input area is fixed to the bottom with a subtle shadow.'
