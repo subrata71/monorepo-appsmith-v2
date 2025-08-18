@@ -1,0 +1,62 @@
+access: Open to all unauthenticated users. All actions require secure HTTPS connections.
+  Registered users are redirected to their dashboard after login; unregistered or
+  unauthenticated users remain on this page.
+behaviour: Fully responsive for desktop and mobile devices. Supports real-time field
+  validation, accessible components, and visible feedback for user actions. Smooth
+  transitions between forms with clear navigation links.
+name: Authentication & Landing Portal
+page:
+  behaviour: Tab or button click switches between forms without page reload. Each
+    form provides instant field validation. Successful actions redirect to the main
+    application or display confirmation messages.
+  id: auth_landing
+  purpose: Entry point for all users to securely register, log in, or recover their
+    account for the platform.
+  sections:
+  - behaviour: Fields validate format (email, password strength, match). Submission
+      disables button and shows spinner. On success, user is logged in and redirected;
+      on error, clear messages are displayed.
+    blocks:
+    - behaviour: Captures email, password (with confirmation), and name. Validates
+        inputs in real-time. On submission, creates user account, handles errors for
+        existing email or weak password, and logs in user on success.
+      id: signup_form
+    id: registration_section
+    title: User Registration
+    visual: Registration form with labeled input fields for Email, Password, Confirm
+      Password, and Name. Primary-colored submit button and helper links for login
+      and password recovery.
+  - behaviour: Email and password fields have basic validation. On successful login,
+      user is redirected to their dashboard. Failed attempts display error messages
+      and allow retry.
+    blocks:
+    - behaviour: Accepts email and password. Validates credentials against backend.
+        Handles incorrect credentials with error feedback. Maintains session on successful
+        login.
+      id: login_form
+    id: login_section
+    title: User Login
+    visual: Login form with fields for Email and Password. Clear 'Forgot Password?'
+      link. Primary CTA for login, secondary CTA for registration.
+  - behaviour: Validates email format. On submission, sends password reset email if
+      the user exists. Displays confirmation regardless (to avoid leaking user existence).
+      Handles errors gracefully.
+    blocks:
+    - behaviour: Collects user email. Sends password reset instructions if applicable.
+        Always shows generic confirmation message. Handles invalid email formats.
+      id: password_recovery
+    id: password_recovery_section
+    title: Password Recovery
+    visual: Minimal form with email input and clear instructions. Success and error
+      messages shown in-line. Return-to-login link.
+  title: Sign Up / Log In / Password Recovery
+  visual: Centered, card-style form area with tabs or segmented controls for switching
+    between Sign Up, Log In, and Password Recovery. Prominent logo at the top, subtle
+    background pattern or illustration.
+summary: A secure, user-friendly gateway for platform access, enabling users to register,
+  log in, or recover their accounts. The portal establishes user profiles and manages
+  initial access to all system features.
+visual: 'Modern, clean layout with a neutral color palette (white background with
+  #2563EB as primary accent). Rounded input fields and prominent CTA buttons. Use
+  of clear visual cues for error, success, and loading states. Consistent branding
+  and logo display at the top.'

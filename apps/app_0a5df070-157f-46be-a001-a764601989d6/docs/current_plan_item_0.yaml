@@ -1,0 +1,18 @@
+id: auth_landing
+name: Authentication & Landing Page
+sub_items:
+- effort: 2
+  id: signup_form
+  name: User Registration
+  summary: Allow new users to create an account with email, password, and basic profile
+    details.
+- effort: 1
+  id: login_form
+  name: User Login
+  summary: Enable existing users to securely log in to their account.
+- effort: 2
+  id: password_recovery
+  name: Password Recovery
+  summary: Provide a way for users to reset forgotten passwords.
+summary: Entry point for users to sign up, log in, or recover their account, providing
+  secure access to the platform.

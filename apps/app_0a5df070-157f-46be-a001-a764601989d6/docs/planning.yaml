@@ -1,0 +1,104 @@
+plan_items:
+- id: auth_landing
+  name: Authentication & Landing Page
+  sub_items:
+  - effort: 2
+    id: signup_form
+    name: User Registration
+    summary: Allow new users to create an account with email, password, and basic
+      profile details.
+  - effort: 1
+    id: login_form
+    name: User Login
+    summary: Enable existing users to securely log in to their account.
+  - effort: 2
+    id: password_recovery
+    name: Password Recovery
+    summary: Provide a way for users to reset forgotten passwords.
+  summary: Entry point for users to sign up, log in, or recover their account, providing
+    secure access to the platform.
+- id: feed_home
+  name: News Feed & Home
+  sub_items:
+  - effort: 3
+    id: feed_display
+    name: Feed Display
+    summary: Show a timeline of posts from friends, pages, and groups the user follows.
+  - effort: 2
+    id: post_creation
+    name: Create Post
+    summary: Allow users to create text, image, or video posts.
+  - effort: 2
+    id: post_interactions
+    name: Like, Comment, Share
+    summary: Enable users to like, comment on, and share posts.
+  summary: Central hub displaying posts from friends and pages, with options to interact
+    and create new content.
+- id: profile_page
+  name: User Profile
+  sub_items:
+  - effort: 2
+    id: profile_info
+    name: Profile Information
+    summary: Show and edit user's bio, profile picture, and cover photo.
+  - effort: 1
+    id: profile_posts
+    name: User's Posts
+    summary: Display all posts created by the user.
+  - effort: 2
+    id: friend_list
+    name: Friends List
+    summary: Show a list of the user's friends and their profiles.
+  summary: Personalized page displaying user's information, posts, and activity.
+- id: friend_discovery
+  name: Friend Discovery & Requests
+  sub_items:
+  - effort: 2
+    id: search_users
+    name: User Search
+    summary: Search for other users by name or email.
+  - effort: 1
+    id: send_friend_request
+    name: Send Friend Request
+    summary: Send a friend request to another user.
+  - effort: 2
+    id: manage_requests
+    name: Manage Friend Requests
+    summary: Accept or decline incoming friend requests.
+  summary: Tools for finding new friends, sending, and managing friend requests.
+- id: messaging
+  name: Private Messaging
+  sub_items:
+  - effort: 2
+    id: message_list
+    name: Message List
+    summary: View a list of recent conversations.
+  - effort: 3
+    id: chat_interface
+    name: Chat Interface
+    summary: Send and receive messages in real time.
+  summary: Direct messaging system for private conversations between users.
+- id: notifications
+  name: Notifications
+  sub_items:
+  - effort: 2
+    id: activity_alerts
+    name: Activity Alerts
+    summary: Show notifications for likes, comments, friend requests, and messages.
+  - effort: 2
+    id: notification_settings
+    name: Notification Settings
+    summary: Allow users to customize which notifications they receive.
+  summary: Centralized area for users to view alerts about activity relevant to them.
+- id: settings_privacy
+  name: Settings & Privacy
+  sub_items:
+  - effort: 2
+    id: account_settings
+    name: Account Settings
+    summary: Update email, password, and other account details.
+  - effort: 2
+    id: privacy_controls
+    name: Privacy Controls
+    summary: Manage who can see posts, profile info, and send friend requests.
+  summary: Page for users to manage account settings, privacy, and security preferences.

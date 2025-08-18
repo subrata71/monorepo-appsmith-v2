@@ -1,0 +1,501 @@
+client:
+  components:
+    entities:
+    - description: User profile entity for state and form context.
+      entity: user
+      name: UserEntity
+      props:
+      - id
+      - email
+      - name
+    features:
+    - description: Registration flow; handles form state, validation, createUser API
+        call, error handling, post-registration login.
+      entities:
+      - UserEntity
+      feature: user_registration
+      name: RegisterUser
+      props:
+      - onSuccess
+      shared:
+      - Button
+      - InputField
+      - Spinner
+      - Toast
+      - ApiClient
+      - ValidationUtils
+    - description: Login flow; handles form state, validation, login API call, session
+        management, error handling.
+      entities:
+      - UserEntity
+      feature: user_login
+      name: LoginUser
+      props:
+      - onSuccess
+      shared:
+      - Button
+      - InputField
+      - Spinner
+      - Toast
+      - ApiClient
+      - ValidationUtils
+    - description: Password recovery flow; handles form state, validation, requestPasswordReset
+        API call, generic confirmation messaging.
+      entities: []
+      feature: password_recovery
+      name: PasswordRecovery
+      props:
+      - onSuccess
+      shared:
+      - Button
+      - InputField
+      - Spinner
+      - Toast
+      - ApiClient
+      - ValidationUtils
+    shared:
+    - category: ui
+      description: Accessible button with spinner, disabled, and focus states.
+      name: Button
+      props:
+      - children
+      - type
+      - onClick
+      - loading
+      - disabled
+    - category: ui
+      description: Accessible input with label, helper/error text, validation.
+      name: InputField
+      props:
+      - label
+      - type
+      - value
+      - onChange
+      - error
+      - helperText
+    - category: ui
+      description: Visual loading indicator for submit actions.
+      name: Spinner
+      props:
+      - size
+    - category: ui
+      description: Inline and global toast messages for errors/success.
+      name: Toast
+      props:
+      - message
+      - type
+    - category: api
+      description: Generated API client from OpenAPI.
+      name: ApiClient
+      props: []
+    - category: lib
+      description: Field and form validation utilities.
+      name: ValidationUtils
+      props: []
+    - category: ui
+      description: Brand logo for header.
+      name: Logo
+      props:
+      - size
+    widgets:
+    - description: Tab/segmented control to switch between Register, Login, Password
+        Recovery forms.
+      entities:
+      - UserEntity
+      features:
+      - RegisterUser
+      - LoginUser
+      - PasswordRecovery
+      name: AuthTabs
+      props:
+      - defaultTab
+      shared:
+      - Button
+      - InputField
+      - Logo
+  pages:
+  - description: Entry point for all users to securely register, log in, or recover
+      their account.
+    queries: []
+    route: /auth
+    title: Sign Up / Log In / Password Recovery
+    widgets:
+    - AuthTabs
+  stores:
+  - actions:
+    - login(email, password)
+    - register(email, name, password)
+    - logout()
+    - setUser(user)
+    - setTokens(accessToken, refreshToken)
+    - setError(error)
+    description: Holds authentication state (user, tokens, status, error).
+    layer: features
+    name: userAuthStore
+    state_shape:
+    - name: user
+      type: User | null
+    - name: status
+      type: '"idle" | "loading" | "authenticated" | "error"'
+    - name: error
+      type: string | null
+    - name: accessToken
+      type: string | null
+    - name: refreshToken
+      type: string | null
+  - actions:
+    - requestRecovery(email)
+    - setStatus(status)
+    - setError(error)
+    description: Holds password recovery flow state.
+    layer: features
+    name: passwordRecoveryStore
+    state_shape:
+    - name: status
+      type: '"idle" | "loading" | "sent" | "error"'
+    - name: error
+      type: string | null
+  - actions:
+    - resetPassword(token, newPassword, confirmPassword)
+    - setStatus(status)
+    - setError(error)
+    description: Holds state for password reset form.
+    layer: features
+    name: passwordResetStore
+    state_shape:
+    - name: status
+      type: '"idle" | "loading" | "success" | "error"'
+    - name: error
+      type: string | null
+components:
+  parameters:
+  - in_: query
+    name: limit
+    required: false
+  - in_: query
+    name: offset
+    required: false
+  responses:
+  - code: '200'
+    description: Success
+  - code: '201'
+    description: Created
+  - code: '204'
+    description: No Content
+  - code: '400'
+    description: Validation error
+  - code: '401'
+    description: Unauthorized
+  - code: '403'
+    description: Forbidden
+  - code: '404'
+    description: Not Found
+  - code: '409'
+    description: Conflict
+  schemas:
+  - name: User
+    type: object
+  - name: UserRegistrationRequest
+    type: object
+  - name: LoginRequest
+    type: object
+  - name: PasswordRecoveryRequest
+    type: object
+  - name: PasswordResetRequest
+    type: object
+  - name: AuthResponse
+    type: object
+  - name: PasswordRecoveryResponse
+    type: object
+  - name: PasswordResetSuccess
+    type: object
+  - name: Error
+    type: object
+domains:
+- apis:
+  - method: POST
+    operation:
+      description: Register a new user account.
+      operation_id: createUser
+      summary: Register new user
+      tags:
+      - user
+      - public
+    path: /users/register
+  - method: POST
+    operation:
+      description: Authenticate user and establish session.
+      operation_id: login
+      summary: User login
+      tags:
+      - auth
+      - public
+    path: /auth/login
+  - method: POST
+    operation:
+      description: Initiate password recovery for given email.
+      operation_id: requestPasswordReset
+      summary: Request password reset
+      tags:
+      - auth
+      - public
+    path: /auth/password-recovery
+  - method: POST
+    operation:
+      description: Reset password using a valid reset token.
+      operation_id: resetPassword
+      summary: Reset password via token
+      tags:
+      - auth
+      - public
+    path: /auth/password-reset
+  description: Core domain for user registration, authentication, and account recovery.
+  models:
+  - description: User profile and authentication info.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: uuid
+    - name: email
+      nullable: false
+      pk: false
+      type: string
+    - name: name
+      nullable: false
+      pk: false
+      type: string
+    - name: passwordHash
+      nullable: false
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: Date
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: Date
+    name: User
+  - description: Token for password reset flow.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: uuid
+    - name: userId
+      nullable: false
+      pk: false
+      type: uuid
+    - name: token
+      nullable: false
+      pk: false
+      type: string
+    - name: expiresAt
+      nullable: false
+      pk: false
+      type: Date
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: Date
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: Date
+    name: PasswordResetToken
+  name: user
+  services:
+  - description: Handles user CRUD, registration, and profile update logic. Enforces
+      email uniqueness, password hashing, and triggers authentication events.
+    methods:
+    - registerUser(email, name, password)
+    - updateUser(id, name?, email?)
+    - deleteUser(id)
+    - getUserById(id)
+    name: UserService
+  - description: Handles login, session/jwt issuance, credential checking, and password
+      recovery flows.
+    methods:
+    - login(email, password)
+    - requestPasswordReset(email)
+    - resetPassword(token, newPassword)
+    name: AuthService
+metadata:
+  description: Technical specification for the Authentication & Landing Portal, including
+    user registration, login, and password recovery, adhering to FSD architecture.
+  generated_at: '2024-06-10T17:00:00Z'
+  name: Authentication & Landing Portal
+  version: 1.0.0
+product:
+  features:
+  - description: Register new users with validation for email, password strength,
+      and uniqueness.
+    domains:
+    - user
+    id: user_registration
+    priority: high
+    title: User Registration
+  - description: Authenticate users with email and password and maintain secure sessions.
+    domains:
+    - user
+    id: user_login
+    priority: high
+    title: User Login
+  - description: Allow users to initiate password reset via email, with privacy-preserving
+      confirmation.
+    domains:
+    - user
+    id: password_recovery
+    priority: high
+    title: Password Recovery
+  goals:
+  - Enable secure user registration with real-time validation and error feedback.
+  - Provide reliable, accessible login with session management.
+  - Support password recovery without leaking user existence.
+  - Ensure a visually appealing, responsive, and accessible UI across devices.
+  - Maintain robust security, privacy, and clear user feedback at all stages.
+  personas:
+  - description: A user who has not registered yet and wants to create an account.
+    goals:
+    - Register quickly and easily.
+    - Receive immediate feedback on input errors.
+    - Be automatically logged in after registration.
+    name: New User
+  - description: An existing user who wants to log in securely.
+    goals:
+    - Log in efficiently.
+    - Recover account if password is forgotten.
+    - Experience clear error messages on failure.
+    name: Returning User
+  - description: A user who forgot their password and needs to recover access.
+    goals:
+    - Initiate password recovery without revealing account existence.
+    - Receive clear, actionable next steps.
+    - Return to login easily after recovery.
+    name: Locked-out User
+  summary: A secure, user-friendly gateway for platform access, enabling users to
+    register, log in, or recover their accounts. The portal establishes user profiles
+    and manages initial access to all system features.
+use_cases:
+- actors:
+  - New User
+  apis:
+  - POST /users/register
+  description: Allow a new user to register an account using email, password, and
+    name.
+  domains:
+  - user
+  happy_path:
+  - User navigates to landing portal and selects 'Sign Up'.
+  - User enters name, email, password, confirms password.
+  - System validates inputs in real time; shows errors if invalid.
+  - On successful submission, account is created, user logged in, redirected to dashboard.
+  - On failure (e.g., duplicate email), error is shown; user may retry.
+  id: register_user
+  pages:
+  - /auth
+  postconditions:
+  - New account exists; user is authenticated
+  preconditions:
+  - User is not authenticated
+  title: Register New User
+- actors:
+  - Returning User
+  apis:
+  - POST /auth/login
+  description: Allow an existing user to log in using email and password.
+  domains:
+  - user
+  happy_path:
+  - User navigates to landing portal and selects 'Log In'.
+  - User enters email and password.
+  - System validates credentials.
+  - On success, user is redirected to dashboard.
+  - On failure, error shown; user may retry.
+  id: login_user
+  pages:
+  - /auth
+  postconditions:
+  - User is authenticated
+  preconditions:
+  - User has a registered account
+  title: Log In User
+- actors:
+  - Locked-out User
+  apis:
+  - POST /auth/password-recovery
+  description: Allow a user to request password reset by email.
+  domains:
+  - user
+  happy_path:
+  - User selects 'Forgot Password?' and submits their email.
+  - System validates email format.
+  - If the email exists, password reset instructions are sent.
+  - Confirmation is always shown regardless of email existence.
+  id: recover_password
+  pages:
+  - /auth
+  postconditions:
+  - Password reset email sent if applicable
+  preconditions:
+  - User is not authenticated
+  title: Recover Forgotten Password
+user_journeys:
+- id: registration_journey
+  persona: New User
+  related_use_cases:
+  - register_user
+  steps:
+  - action: Visit landing portal
+    page: /auth
+  - action: Select 'Sign Up' tab
+    page: /auth
+  - action: Fill form (name, email, password, confirm)
+    page: /auth
+  - action: See real-time validation feedback
+    page: /auth
+  - action: Submit form (loading spinner)
+    page: /auth
+  - action: 'On success: redirected to dashboard'
+    page: /auth
+  - action: 'On error: error message, retry option'
+    page: /auth
+  success_criteria: User is registered and authenticated, and lands on dashboard.
+  title: New User Registration
+- id: login_journey
+  persona: Returning User
+  related_use_cases:
+  - login_user
+  steps:
+  - action: Visit landing portal
+    page: /auth
+  - action: Select 'Log In' tab
+    page: /auth
+  - action: Enter email and password
+    page: /auth
+  - action: Submit (spinner shown)
+    page: /auth
+  - action: 'On success: redirected to dashboard'
+    page: /auth
+  - action: 'On error: error message, retry option'
+    page: /auth
+  success_criteria: User is authenticated and lands on dashboard.
+  title: User Login
+- id: password_recovery_journey
+  persona: Locked-out User
+  related_use_cases:
+  - recover_password
+  steps:
+  - action: Click 'Forgot Password?' on login form
+    page: /auth
+  - action: Enter email, submit
+    page: /auth
+  - action: Always see confirmation message
+    page: /auth
+  - action: Option to return to login
+    page: /auth
+  success_criteria: User is informed about password recovery process, regardless of
+    email existence.
+  title: Password Recovery
