@@ -32,7 +32,7 @@ export const SpinControl = memo<SpinControlProps>(({ className = '' }) => {
         >
           {isSpinning ? 'Spinning...' : 'SPIN'}
         </Button>
-        
+
         {winningNumber !== null && !isSpinning && (
           <Button
             onClick={handleReset}
@@ -45,7 +45,7 @@ export const SpinControl = memo<SpinControlProps>(({ className = '' }) => {
           </Button>
         )}
       </div>
-      
+
       {isSpinning && (
         <div className="text-sm text-gray-600 animate-pulse">
           The wheel is spinning...

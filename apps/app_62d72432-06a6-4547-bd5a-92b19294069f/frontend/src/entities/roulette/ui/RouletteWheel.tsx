@@ -21,22 +21,27 @@ export const RouletteWheel = memo<RouletteWheelProps>(
     const centerX = 200;
     const centerY = 200;
     const [rotation, setRotation] = useState(0);
-    const [previousWinningSlot, setPreviousWinningSlot] = useState<number | null>(null);
+    const [previousWinningSlot, setPreviousWinningSlot] = useState<
+      number | null
+    >(null);
 
     // Calculate final rotation when winning slot changes
     const finalRotation = useMemo(() => {
-      if (highlightedSlot === null || highlightedSlot === previousWinningSlot) return rotation;
-      
+      if (highlightedSlot === null || highlightedSlot === previousWinningSlot)
+        return rotation;
+
       // Find the index of the winning slot
-      const winningIndex = slots.findIndex(slot => slot.number === highlightedSlot);
+      const winningIndex = slots.findIndex(
+        slot => slot.number === highlightedSlot
+      );
       if (winningIndex === -1) return rotation;
-      
+
       // Calculate the angle for this slot (accounting for the pointer at top)
       const slotAngle = (360 / slots.length) * winningIndex;
       // Add multiple full rotations for visual effect (3-5 full spins)
       const fullRotations = 3 + Math.random() * 2;
-      const totalRotation = rotation + (fullRotations * 360) + (360 - slotAngle);
-      
+      const totalRotation = rotation + fullRotations * 360 + (360 - slotAngle);
+
       return totalRotation;
     }, [highlightedSlot, slots, rotation, previousWinningSlot]);
 
@@ -45,7 +50,11 @@ export const RouletteWheel = memo<RouletteWheelProps>(
       if (isSpinning && highlightedSlot === null) {
         // Start spinning - continuous rotation
         setRotation(prev => prev + 1800); // 5 full rotations for effect
-      } else if (!isSpinning && highlightedSlot !== null && highlightedSlot !== previousWinningSlot) {
+      } else if (
+        !isSpinning &&
+        highlightedSlot !== null &&
+        highlightedSlot !== previousWinningSlot
+      ) {
         // Spin completed - animate to final position
         setRotation(finalRotation);
         setPreviousWinningSlot(highlightedSlot);

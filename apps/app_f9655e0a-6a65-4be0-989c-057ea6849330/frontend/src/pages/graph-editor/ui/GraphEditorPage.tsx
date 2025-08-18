@@ -7,14 +7,14 @@ import { GraphCanvas } from '@/features/graph-canvas';
 import { GraphToolbar } from '@/features/graph-toolbar';
 import { GraphValidationPanel } from '@/features/graph-validation';
 import { TextInputPanel } from '@/features/graph-text-input';
-import { 
-  useGraph, 
-  useCreateGraph, 
-  useAddNode, 
-  useAddEdge, 
-  useRemoveNode, 
+import {
+  useGraph,
+  useCreateGraph,
+  useAddNode,
+  useAddEdge,
+  useRemoveNode,
   useRemoveEdge,
-  useUpdateGraph
+  useUpdateGraph,
 } from '@/shared/api/graph';
 import type { CanvasPosition } from '@/entities/graph';
 import { validateGraphStructure } from '@/shared/lib/graph-parser';
@@ -22,7 +22,7 @@ import { toast } from 'sonner';
 
 export const GraphEditorPage = React.memo(() => {
   const { id } = useParams<{ id: string }>();
-  
+
   // Zustand store
   const currentGraph = useGraphStore(state => state.currentGraph);
   const selectedNodeIds = useGraphStore(state => state.selectedNodeIds);
@@ -32,7 +32,8 @@ export const GraphEditorPage = React.memo(() => {
   const redoStack = useGraphStore(state => state.redoStack);
   const setGraph = useGraphStore(state => state.setGraph);
   const setSelectedNodeIds = useGraphStore(state => state.setSelectedNodeIds);
-  const setSelectedEdgeIds = useGraphStore(state => state.setSelectedEdgeIds);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _setSelectedEdgeIds = useGraphStore(state => state.setSelectedEdgeIds);
   const clearSelection = useGraphStore(state => state.clearSelection);
   const setMode = useGraphStore(state => state.setMode);
   const pushToUndoStack = useGraphStore(state => state.pushToUndoStack);
@@ -49,7 +50,11 @@ export const GraphEditorPage = React.memo(() => {
   const updateGraphMutation = useUpdateGraph();
 
   // Canvas dimensions
-  const [canvasSize, setCanvasSize] = React.useState({ width: 800, height: 600 });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_canvasSize, _setCanvasSize] = React.useState({
+    width: 800,
+    height: 600,
+  });
 
   // Update graph data when loaded
   React.useEffect(() => {
@@ -88,7 +93,7 @@ export const GraphEditorPage = React.memo(() => {
             break;
         }
       }
-      
+
       // Mode shortcuts
       switch (e.key) {
         case 'Escape':
@@ -112,148 +117,169 @@ export const GraphEditorPage = React.memo(() => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [setMode, clearSelection]);
+  }, [setMode, clearSelection, handleUndo, handleRedo]);
 
   // Canvas event handlers
-  const handleNodeAdd = React.useCallback(async (position: CanvasPosition) => {
-    if (!currentGraph?.id) return;
+  const handleNodeAdd = React.useCallback(
+    async (position: CanvasPosition) => {
+      if (!currentGraph?.id) return;
 
-    // Save current state for undo
-    if (currentGraph) {
-      pushToUndoStack(currentGraph);
-    }
+      // Save current state for undo
+      if (currentGraph) {
+        pushToUndoStack(currentGraph);
+      }
 
-    try {
-      const node = await addNodeMutation.mutateAsync({
-        graphId: currentGraph.id,
-        nodeData: position,
-      });
-      
-      toast.success('Node added successfully');
-    } catch (error) {
-      toast.error('Failed to add node');
-      console.error('Error adding node:', error);
-    }
-  }, [currentGraph, addNodeMutation, pushToUndoStack]);
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _node = await addNodeMutation.mutateAsync({
+          graphId: currentGraph.id,
+          nodeData: position,
+        });
 
-  const handleEdgeDraw = React.useCallback(async (sourceId: string, targetId: string) => {
-    if (!currentGraph?.id) return;
+        toast.success('Node added successfully');
+      } catch (error) {
+        toast.error('Failed to add node');
+        console.error('Error adding node:', error);
+      }
+    },
+    [currentGraph, addNodeMutation, pushToUndoStack]
+  );
 
-    // Client-side validation before making server call
-    const proposedEdges = [
-      ...currentGraph.edges,
-      {
-        id: 'temp-edge', // Temporary ID for validation
-        sourceId,
-        targetId,
-      } as any // Type assertion for validation purposes
-    ];
-    
-    const validation = validateGraphStructure(currentGraph.nodes, proposedEdges);
-    
-    if (!validation.isValid) {
-      // Show specific validation error
-      const errorMessage = validation.errors[0] || 'Cannot add edge';
-      toast.error(errorMessage);
-      return;
-    }
+  const handleEdgeDraw = React.useCallback(
+    async (sourceId: string, targetId: string) => {
+      if (!currentGraph?.id) return;
 
-    // Save current state for undo
-    if (currentGraph) {
-      pushToUndoStack(currentGraph);
-    }
+      // Client-side validation before making server call
+      const proposedEdges = [
+        ...currentGraph.edges,
+        {
+          id: 'temp-edge', // Temporary ID for validation
+          sourceId,
+          targetId,
+        } as GraphEdge, // Type assertion for validation purposes
+      ];
 
-    try {
-      await addEdgeMutation.mutateAsync({
-        graphId: currentGraph.id,
-        edgeData: { sourceId, targetId },
-      });
-      
-      toast.success('Edge added successfully');
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to add edge');
-      console.error('Error adding edge:', error);
-    }
-  }, [currentGraph, addEdgeMutation, pushToUndoStack]);
+      const validation = validateGraphStructure(
+        currentGraph.nodes,
+        proposedEdges
+      );
 
-  const handleNodeClick = React.useCallback((nodeId: string) => {
-    if (mode.type === 'DELETE') {
-      handleDelete(nodeId);
-      return;
-    }
+      if (!validation.isValid) {
+        // Show specific validation error
+        const errorMessage = validation.errors[0] || 'Cannot add edge';
+        toast.error(errorMessage);
+        return;
+      }
 
-    // Toggle selection
-    const isSelected = selectedNodeIds.includes(nodeId);
-    if (isSelected) {
-      setSelectedNodeIds(selectedNodeIds.filter(id => id !== nodeId));
-    } else {
-      setSelectedNodeIds([...selectedNodeIds, nodeId]);
-    }
-  }, [mode.type, selectedNodeIds, setSelectedNodeIds]);
+      // Save current state for undo
+      if (currentGraph) {
+        pushToUndoStack(currentGraph);
+      }
 
-  const handleNodeMove = React.useCallback(async (nodeId: string, position: CanvasPosition) => {
-    if (!currentGraph) return;
+      try {
+        await addEdgeMutation.mutateAsync({
+          graphId: currentGraph.id,
+          edgeData: { sourceId, targetId },
+        });
 
-    // Update the node position locally
-    const updatedNodes = currentGraph.nodes.map(node =>
-      node.id === nodeId ? { ...node, x: position.x, y: position.y } : node
-    );
+        toast.success('Edge added successfully');
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : 'Failed to add edge'
+        );
+        console.error('Error adding edge:', error);
+      }
+    },
+    [currentGraph, addEdgeMutation, pushToUndoStack]
+  );
 
-    const updatedGraph = {
-      ...currentGraph,
-      nodes: updatedNodes,
-    };
+  const handleNodeClick = React.useCallback(
+    (nodeId: string) => {
+      if (mode.type === 'DELETE') {
+        handleDelete(nodeId);
+        return;
+      }
 
-    setGraph(updatedGraph);
+      // Toggle selection
+      const isSelected = selectedNodeIds.includes(nodeId);
+      if (isSelected) {
+        setSelectedNodeIds(selectedNodeIds.filter(id => id !== nodeId));
+      } else {
+        setSelectedNodeIds([...selectedNodeIds, nodeId]);
+      }
+    },
+    [mode.type, selectedNodeIds, setSelectedNodeIds, handleDelete]
+  );
 
-    // Update on server
-    try {
-      await updateGraphMutation.mutateAsync({
-        id: currentGraph.id,
-        updates: { nodes: updatedNodes },
-      });
-    } catch (error) {
-      console.error('Error updating node position:', error);
-      // Revert on error
-      setGraph(currentGraph);
-    }
-  }, [currentGraph, updateGraphMutation, setGraph]);
+  const handleNodeMove = React.useCallback(
+    async (nodeId: string, position: CanvasPosition) => {
+      if (!currentGraph) return;
 
-  const handleCanvasClick = React.useCallback((position: CanvasPosition) => {
+      // Update the node position locally
+      const updatedNodes = currentGraph.nodes.map(node =>
+        node.id === nodeId ? { ...node, x: position.x, y: position.y } : node
+      );
+
+      const updatedGraph = {
+        ...currentGraph,
+        nodes: updatedNodes,
+      };
+
+      setGraph(updatedGraph);
+
+      // Update on server
+      try {
+        await updateGraphMutation.mutateAsync({
+          id: currentGraph.id,
+          updates: { nodes: updatedNodes },
+        });
+      } catch (error) {
+        console.error('Error updating node position:', error);
+        // Revert on error
+        setGraph(currentGraph);
+      }
+    },
+    [currentGraph, updateGraphMutation, setGraph]
+  );
+
+  const handleCanvasClick = React.useCallback(() => {
     // Clear selection when clicking on empty canvas
     clearSelection();
   }, [clearSelection]);
 
-  const handleDelete = React.useCallback(async (itemId: string) => {
-    if (!currentGraph?.id) return;
+  const handleDelete = React.useCallback(
+    async (itemId: string) => {
+      if (!currentGraph?.id) return;
 
-    // Save current state for undo
-    if (currentGraph) {
-      pushToUndoStack(currentGraph);
-    }
-
-    const isNode = currentGraph.nodes.some(n => n.id === itemId);
-    const isEdge = currentGraph.edges.some(e => e.id === itemId);
-
-    try {
-      if (isNode) {
-        await removeNodeMutation.mutateAsync({
-          graphId: currentGraph.id,
-          nodeId: itemId,
-        });
-        toast.success('Node deleted successfully');
-      } else if (isEdge) {
-        await removeEdgeMutation.mutateAsync({
-          graphId: currentGraph.id,
-          edgeId: itemId,
-        });
-        toast.success('Edge deleted successfully');
+      // Save current state for undo
+      if (currentGraph) {
+        pushToUndoStack(currentGraph);
       }
-    } catch (error) {
-      toast.error('Failed to delete item');
-      console.error('Error deleting item:', error);
-    }
-  }, [currentGraph, removeNodeMutation, removeEdgeMutation, pushToUndoStack]);
+
+      const isNode = currentGraph.nodes.some(n => n.id === itemId);
+      const isEdge = currentGraph.edges.some(e => e.id === itemId);
+
+      try {
+        if (isNode) {
+          await removeNodeMutation.mutateAsync({
+            graphId: currentGraph.id,
+            nodeId: itemId,
+          });
+          toast.success('Node deleted successfully');
+        } else if (isEdge) {
+          await removeEdgeMutation.mutateAsync({
+            graphId: currentGraph.id,
+            edgeId: itemId,
+          });
+          toast.success('Edge deleted successfully');
+        }
+      } catch (error) {
+        toast.error('Failed to delete item');
+        console.error('Error deleting item:', error);
+      }
+    },
+    [currentGraph, removeNodeMutation, removeEdgeMutation, pushToUndoStack]
+  );
 
   const handleUndo = React.useCallback(() => {
     const previousGraph = undo();
@@ -359,14 +385,18 @@ export const GraphEditorPage = React.memo(() => {
         <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
           <Tabs defaultValue="text-input" className="flex flex-col h-full">
             <TabsList className="grid w-full grid-cols-2 m-0 rounded-none border-b">
-              <TabsTrigger value="text-input" className="rounded-none">Text Input</TabsTrigger>
-              <TabsTrigger value="validation" className="rounded-none">Validation</TabsTrigger>
+              <TabsTrigger value="text-input" className="rounded-none">
+                Text Input
+              </TabsTrigger>
+              <TabsTrigger value="validation" className="rounded-none">
+                Validation
+              </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="text-input" className="flex-1 m-0 p-0">
               <TextInputPanel className="h-full" />
             </TabsContent>
-            
+
             <TabsContent value="validation" className="flex-1 m-0 p-0">
               <GraphValidationPanel graph={currentGraph} />
             </TabsContent>

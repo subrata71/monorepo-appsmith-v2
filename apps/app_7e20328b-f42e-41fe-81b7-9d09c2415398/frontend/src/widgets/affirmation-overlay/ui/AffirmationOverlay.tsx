@@ -1,8 +1,8 @@
 /**
  * AffirmationOverlay Widget
- * 
- * Overlay card that appears after mood submission, displaying randomly selected 
- * affirmation with confetti animation. Disables background interaction, 
+ *
+ * Overlay card that appears after mood submission, displaying randomly selected
+ * affirmation with confetti animation. Disables background interaction,
  * auto-dismisses after delay or on tap.
  */
 
@@ -18,9 +18,9 @@ export interface AffirmationOverlayProps {
 export const AffirmationOverlay = React.memo<AffirmationOverlayProps>(
   ({ open, onClose, className }) => {
     return (
-      <AffirmationFeedback 
-        open={open} 
-        onClose={onClose} 
+      <AffirmationFeedback
+        open={open}
+        onClose={onClose}
         className={className}
       />
     );

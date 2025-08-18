@@ -1,0 +1,43 @@
+plan_items:
+- id: '1'
+  name: User Input and Configuration
+  sub_items:
+  - effort: 2
+    id: '1.1'
+    name: Array Input UI
+    summary: Create a UI component for users to input a custom array or generate a
+      random array.
+  - effort: 1
+    id: '1.2'
+    name: Speed Control UI
+    summary: Add a slider or dropdown to control the speed of the visualisation.
+  summary: Allow the user to input or generate an array and configure visualisation
+    settings.
+- id: '2'
+  name: Quick Sort Visualisation
+  sub_items:
+  - effort: 2
+    id: '2.1'
+    name: Array Visualisation Component
+    summary: Render the array as bars or blocks, with visual cues for pivots and swaps.
+  - effort: 3
+    id: '2.2'
+    name: Quick Sort Animation Logic
+    summary: Implement the quick sort algorithm with step-by-step animation support.
+  - effort: 1
+    id: '2.3'
+    name: Control Buttons
+    summary: Add play, pause, step, and reset buttons for the visualisation.
+  summary: Display the array and animate the quick sort algorithm step by step.
+- id: '3'
+  name: Algorithm Explanation
+  sub_items:
+  - effort: 1
+    id: '3.1'
+    name: Static Explanation Section
+    summary: Display a static description of the quick sort algorithm.
+  - effort: 2
+    id: '3.2'
+    name: Dynamic Step Description
+    summary: Show a dynamic description of the current step in the algorithm.
+  summary: Show a brief explanation of quick sort and highlight the current step.

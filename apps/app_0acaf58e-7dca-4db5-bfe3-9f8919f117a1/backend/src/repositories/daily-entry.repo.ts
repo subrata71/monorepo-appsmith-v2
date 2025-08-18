@@ -1,12 +1,16 @@
 /**
  * Daily Entry Repository
- * 
+ *
  * Data access layer for daily entry operations
  */
 
 import { and, eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { dailyEntries, type DailyEntry, type NewDailyEntry } from '../db/schema';
+import {
+  dailyEntries,
+  type DailyEntry,
+  type NewDailyEntry,
+} from '../db/schema';
 
 export class DailyEntryRepository {
   constructor(private db: NodePgDatabase<typeof import('../db/schema')>) {}
@@ -14,16 +18,21 @@ export class DailyEntryRepository {
   /**
    * Find a daily entry by user ID and date
    */
-  async findByUserAndDate(userId: string, entryDate: string): Promise<DailyEntry | null> {
+  async findByUserAndDate(
+    userId: string,
+    entryDate: string
+  ): Promise<DailyEntry | null> {
     const [entry] = await this.db
       .select()
       .from(dailyEntries)
-      .where(and(
-        eq(dailyEntries.userId, userId),
-        eq(dailyEntries.entryDate, entryDate)
-      ))
+      .where(
+        and(
+          eq(dailyEntries.userId, userId),
+          eq(dailyEntries.entryDate, entryDate)
+        )
+      )
       .limit(1);
-    
+
     return entry || null;
   }
 
@@ -39,26 +48,32 @@ export class DailyEntryRepository {
         updatedAt: new Date(),
       })
       .returning();
-    
+
     return entry;
   }
 
   /**
    * Update an existing daily entry
    */
-  async update(userId: string, entryDate: string, sentence: string): Promise<DailyEntry | null> {
+  async update(
+    userId: string,
+    entryDate: string,
+    sentence: string
+  ): Promise<DailyEntry | null> {
     const [entry] = await this.db
       .update(dailyEntries)
       .set({
         sentence,
         updatedAt: new Date(),
       })
-      .where(and(
-        eq(dailyEntries.userId, userId),
-        eq(dailyEntries.entryDate, entryDate)
-      ))
+      .where(
+        and(
+          eq(dailyEntries.userId, userId),
+          eq(dailyEntries.entryDate, entryDate)
+        )
+      )
       .returning();
-    
+
     return entry || null;
   }
 
@@ -66,11 +81,11 @@ export class DailyEntryRepository {
    * Get entries for a user with pagination
    */
   async findByUser(
-    userId: string, 
+    userId: string,
     options: { limit?: number; offset?: number } = {}
   ): Promise<DailyEntry[]> {
     const { limit = 50, offset = 0 } = options;
-    
+
     return await this.db
       .select()
       .from(dailyEntries)

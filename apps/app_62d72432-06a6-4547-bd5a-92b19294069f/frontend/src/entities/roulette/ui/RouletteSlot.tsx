@@ -93,8 +93,8 @@ export const RouletteSlot = memo<RouletteSlotProps>(
         <path
           d={`M ${x1} ${y1} L ${x2} ${y2} A ${radius} ${radius} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${radius - 40} ${radius - 40} 0 0 0 ${x1} ${y1}`}
           fill={getSlotColor()}
-          stroke={highlighted ? "#fbbf24" : "#ffffff"}
-          strokeWidth={highlighted ? "3" : "1"}
+          stroke={highlighted ? '#fbbf24' : '#ffffff'}
+          strokeWidth={highlighted ? '3' : '1'}
         />
 
         {/* Number text */}
@@ -104,13 +104,13 @@ export const RouletteSlot = memo<RouletteSlotProps>(
           textAnchor="middle"
           dominantBaseline="middle"
           fill={highlighted ? '#000000' : textColor}
-          fontSize={highlighted ? "14" : "12"}
+          fontSize={highlighted ? '14' : '12'}
           fontWeight="bold"
           transform={`rotate(${angle}, ${textX}, ${textY})`}
         >
           {slot.number}
         </text>
-        
+
         {/* Additional glow for text when highlighted */}
         {highlighted && (
           <text

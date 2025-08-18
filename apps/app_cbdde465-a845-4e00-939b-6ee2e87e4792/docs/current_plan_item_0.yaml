@@ -1,0 +1,14 @@
+id: '1'
+name: User Input and Configuration
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Array Input UI
+  summary: Create a UI component for users to input a custom array or generate a random
+    array.
+- effort: 1
+  id: '1.2'
+  name: Speed Control UI
+  summary: Add a slider or dropdown to control the speed of the visualisation.
+summary: Allow the user to input or generate an array and configure visualisation
+  settings.

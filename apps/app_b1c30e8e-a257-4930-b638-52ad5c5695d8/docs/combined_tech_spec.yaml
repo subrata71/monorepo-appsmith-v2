@@ -1,0 +1,206 @@
+metadata:
+  description: Comprehensive technical specification combining all individual plan
+    specifications
+  generated_from_files:
+  - tech_spec_item_0.yaml
+  title: Combined Technical Specification
+  total_plans: 1
+plans:
+- plan_name: item_0
+  source_file: tech_spec_item_0.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Displays a single LLM provider's data in the chart or legend
+          entity: llmProviderMarketShare
+          name: LlmProviderMarketShareEntityView
+          props:
+          - provider_name
+          - market_share_percentage
+        features:
+        - description: Handles highlighting and tooltip display on pie chart hover
+          entities:
+          - LlmProviderMarketShareEntityView
+          feature: PieChart
+          name: PieChartHoverInteraction
+          props:
+          - data
+          shared:
+          - PieChart
+        - description: Syncs legend highlight with hovered chart segment
+          entities:
+          - LlmProviderMarketShareEntityView
+          feature: Legend
+          name: LegendHighlightSync
+          props:
+          - highlighted
+          shared:
+          - Legend
+        shared:
+        - category: ui
+          description: Reusable pie chart visualization component
+          name: PieChart
+          props:
+          - data
+          - colorScheme
+        - category: ui
+          description: Displays color mapping for pie chart segments
+          name: Legend
+          props:
+          - items
+          - highlighted
+        - category: lib
+          description: Exports the static data array for LLM provider market share
+          name: StaticMarketShareData
+          props: []
+        widgets:
+        - description: Composes pie chart and legend for the main visualization
+          entities:
+          - LlmProviderMarketShareEntityView
+          features:
+          - PieChartHoverInteraction
+          - LegendHighlightSync
+          name: LlmProviderMarketSharePieChartWidget
+          props:
+          - data
+          shared:
+          - PieChart
+          - Legend
+      pages:
+      - description: Visualize static market share data for LLM providers to provide
+          a snapshot overview for users.
+        queries: []
+        route: /llm-provider-market-share
+        title: LLM Provider Market Share
+        widgets:
+        - LlmProviderMarketSharePieChartWidget
+        - Legend
+      - description: Section title and description above the chart.
+        queries: []
+        route: /llm-provider-market-share/intro
+        title: Introduction
+        widgets:
+        - SectionTitle
+        - SectionSummary
+      - description: Pie chart focus area with legend and interactivity.
+        queries: []
+        route: /llm-provider-market-share/pie-chart
+        title: Pie Chart Visualization
+        widgets:
+        - PieChart
+        - Legend
+      stores:
+      - actions:
+        - 'setHighlightedProvider(providerName: string | null)'
+        description: Holds the static LLM provider market share data and highlight
+          state.
+        layer: entities
+        name: llmProviderMarketShareStore
+        state_shape:
+        - name: data
+          type: LlmProviderMarketShare[]
+        - name: highlightedProviderName
+          type: string | null
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: LlmProviderMarketShare
+        type: object
+      - name: LlmProviderMarketShareList
+        type: array
+    domains:
+    - apis: []
+      description: Static domain for LLM provider market share data, used for dashboard
+        visualization.
+      models:
+      - description: Static representation of an LLM provider's market share.
+        fields:
+        - name: provider_name
+          nullable: false
+          pk: false
+          type: string
+        - name: market_share_percentage
+          nullable: false
+          pk: false
+          type: number
+        name: LlmProviderMarketShare
+      name: llmProviderMarketShare
+      services:
+      - description: Provides static array of LlmProviderMarketShare objects for visualization.
+        methods:
+        - getStaticMarketShareData
+        name: StaticMarketShareService
+    metadata:
+      description: Technical specification for a static, interactive pie chart displaying
+        LLM provider market share with no backend or authentication.
+      generated_at: '2024-06-10T12:00:00Z'
+      name: llm-provider-market-share-static-data
+      version: 1.0.0
+    product:
+      features:
+      - description: Display static LLM provider market share as an interactive, accessible
+          pie chart.
+        domains:
+        - llmProviderMarketShare
+        id: static-market-share-pie-chart
+        priority: high
+        title: Static Market Share Pie Chart
+      goals:
+      - Present a clear, visually engaging snapshot of LLM provider market share
+      - Allow users to interactively explore market share data with tooltips and highlights
+      - Ensure accessibility and responsiveness for all users
+      personas:
+      - description: Any user interested in LLM market share, viewing a public, static
+          dashboard.
+        goals:
+        - Quickly understand LLM provider market distribution
+        - Interact with the chart for details
+        - View the dashboard on any device
+        name: Dashboard Viewer
+      summary: Visualizes static LLM provider market share data in an interactive,
+        responsive pie chart without authentication.
+    use_cases:
+    - actors:
+      - Dashboard Viewer
+      apis: []
+      description: User visits the dashboard to view a chart of LLM provider market
+        share.
+      domains:
+      - llmProviderMarketShare
+      happy_path:
+      - Navigate to the dashboard page
+      - Read the introduction
+      - View the pie chart and legend
+      - Hover over chart segments to see details
+      - Hover over legend entries to highlight corresponding chart segments
+      id: view-market-share
+      pages:
+      - /llm-provider-market-share
+      postconditions:
+      - User sees and can interact with the pie chart and legend
+      preconditions:
+      - User accesses the dashboard page
+      title: View LLM Provider Market Share
+    user_journeys:
+    - id: explore-market-share
+      persona: Dashboard Viewer
+      related_use_cases:
+      - view-market-share
+      steps:
+      - action: Read the introduction above the chart
+        page: /llm-provider-market-share
+      - action: View the static pie chart
+        page: /llm-provider-market-share
+      - action: Hover over a chart segment for details
+        page: /llm-provider-market-share
+      - action: Reference the legend for color mapping
+        page: /llm-provider-market-share
+      success_criteria: User can see and interactively explore the LLM provider market
+        share data with no confusion.
+      title: Explore LLM Provider Market Share Data
+summary:
+  plan_names:
+  - item_0
+  total_plans: 1

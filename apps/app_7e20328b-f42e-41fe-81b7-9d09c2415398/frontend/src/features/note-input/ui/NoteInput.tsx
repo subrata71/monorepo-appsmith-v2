@@ -93,7 +93,8 @@ export const NoteInput = React.memo<NoteInputProps>(
           {isOverLimit && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 mt-2">
               <p className="text-sm text-red-700 flex items-center gap-2">
-                ⚠️ Please keep your note under {maxLength} characters for the best experience
+                ⚠️ Please keep your note under {maxLength} characters for the
+                best experience
               </p>
             </div>
           )}

@@ -13,18 +13,18 @@ interface ReminderCardProps {
 
 /**
  * ReminderCard Component
- * 
+ *
  * Displays a single reminder with enhanced visual feedback for completion status,
  * smooth animations, and dedicated feature components for actions.
  */
-export const ReminderCard = React.memo<ReminderCardProps>(({
-  reminder,
-}) => {
+export const ReminderCard = React.memo<ReminderCardProps>(({ reminder }) => {
   const [justCompleted, setJustCompleted] = React.useState(false);
   const toggleCompletion = useReminderStore(state => state.toggleCompletion);
 
   const formattedDate = React.useMemo(() => {
-    return formatDistanceToNow(new Date(reminder.createdAt), { addSuffix: true });
+    return formatDistanceToNow(new Date(reminder.createdAt), {
+      addSuffix: true,
+    });
   }, [reminder.createdAt]);
 
   // Track completion status changes for animation
@@ -44,44 +44,50 @@ export const ReminderCard = React.memo<ReminderCardProps>(({
     }
   }, [reminder.isCompleted, reminder.id, toggleCompletion]);
 
-  const handleKeyDown = React.useCallback((event: React.KeyboardEvent) => {
-    // Add keyboard accessibility
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      if (reminder.isCompleted) {
-        toggleCompletion(reminder.id);
-      } else {
-        // Trigger mark as done functionality for uncompleted items
-        const markAsDoneButton = event.currentTarget.querySelector('[data-reminder-id]');
-        if (markAsDoneButton) {
-          (markAsDoneButton as HTMLButtonElement).click();
+  const handleKeyDown = React.useCallback(
+    (event: React.KeyboardEvent) => {
+      // Add keyboard accessibility
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        if (reminder.isCompleted) {
+          toggleCompletion(reminder.id);
+        } else {
+          // Trigger mark as done functionality for uncompleted items
+          const markAsDoneButton =
+            event.currentTarget.querySelector('[data-reminder-id]');
+          if (markAsDoneButton) {
+            (markAsDoneButton as HTMLButtonElement).click();
+          }
         }
       }
-    }
-  }, [reminder.isCompleted, reminder.id, toggleCompletion]);
+    },
+    [reminder.isCompleted, reminder.id, toggleCompletion]
+  );
 
   return (
-    <Card 
+    <Card
       tabIndex={0}
       onKeyDown={handleKeyDown}
       className={cn(
         'transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-blue-500',
         reminder.isCompleted && 'opacity-70 scale-[0.98]',
-        justCompleted && 'animate-pulse ring-2 ring-green-200 bg-green-50/50',
+        justCompleted && 'animate-pulse ring-2 ring-green-200 bg-green-50/50'
       )}
     >
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <p 
+            <p
               className={cn(
                 'text-sm font-medium transition-all duration-300',
-                reminder.isCompleted 
-                  ? 'line-through text-muted-foreground cursor-pointer hover:text-foreground' 
+                reminder.isCompleted
+                  ? 'line-through text-muted-foreground cursor-pointer hover:text-foreground'
                   : 'text-foreground'
               )}
               onClick={handleTextClick}
-              title={reminder.isCompleted ? 'Click to mark as incomplete' : undefined}
+              title={
+                reminder.isCompleted ? 'Click to mark as incomplete' : undefined
+              }
             >
               {reminder.text}
             </p>
@@ -94,15 +100,13 @@ export const ReminderCard = React.memo<ReminderCardProps>(({
               </p>
             )}
           </div>
-          
+
           <div className="flex gap-2 flex-shrink-0">
-            <MarkAsDoneButton 
+            <MarkAsDoneButton
               reminderId={reminder.id}
               isCompleted={reminder.isCompleted}
             />
-            <DeleteReminderButton 
-              reminderId={reminder.id}
-            />
+            <DeleteReminderButton reminderId={reminder.id} />
           </div>
         </div>
       </CardContent>

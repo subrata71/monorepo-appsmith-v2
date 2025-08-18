@@ -1,0 +1,371 @@
+metadata:
+  description: Comprehensive technical specification combining all individual plan
+    specifications
+  generated_from_files:
+  - tech_spec_item_0.yaml
+  title: Combined Technical Specification
+  total_plans: 1
+plans:
+- plan_name: item_0
+  source_file: tech_spec_item_0.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: A single bar in the visualization, receives value, highlighted,
+            and sorted as props.
+          entity: array
+          name: ArrayBar
+          props:
+          - value
+          - highlighted
+          - sorted
+        features:
+        - description: Handles validation, parsing, and updating array input.
+          entities: []
+          feature: array-input
+          name: ArrayInputFeature
+          props: []
+          shared:
+          - TextInput
+          - Button
+        - description: Handles random generation and array size selection.
+          entities: []
+          feature: array-input
+          name: RandomArrayGeneratorFeature
+          props: []
+          shared:
+          - NumberSpinner
+          - Button
+        - description: Renders and animates the bar chart, highlighting algorithm
+            steps.
+          entities:
+          - ArrayBar
+          feature: visualization-anim
+          name: VisualizationFeature
+          props: []
+          shared: []
+        - description: Connects control buttons and speed slider to visualization
+            state.
+          entities: []
+          feature: controls
+          name: ControlPanelFeature
+          props: []
+          shared:
+          - Button
+          - Slider
+        shared:
+        - category: ui
+          description: Accessible, validated text input for arrays.
+          name: TextInput
+          props:
+          - value
+          - onChange
+          - error
+        - category: ui
+          description: Input for selecting array size (2-20), used for random generation.
+          name: NumberSpinner
+          props:
+          - value
+          - onChange
+          - min
+          - max
+        - category: ui
+          description: Clickable control button with icon and text.
+          name: Button
+          props:
+          - onClick
+          - disabled
+          - icon
+          - label
+        - category: ui
+          description: Adjusts animation speed from 0.2x to 3x.
+          name: Slider
+          props:
+          - value
+          - onChange
+          - min
+          - max
+        widgets:
+        - description: Layout for array input and random generation controls.
+          entities: []
+          features:
+          - ArrayInputFeature
+          - RandomArrayGeneratorFeature
+          name: ArrayInputSection
+          props: []
+          shared: []
+        - description: Visualizes the array as animated bars.
+          entities:
+          - ArrayBar
+          features:
+          - VisualizationFeature
+          name: VisualizationSection
+          props: []
+          shared: []
+        - description: Row of control buttons and speed slider.
+          entities: []
+          features:
+          - ControlPanelFeature
+          name: ControlPanelSection
+          props: []
+          shared: []
+      pages:
+      - description: Central page for interacting with and visualizing heap sort.
+        queries: []
+        route: /heap-sort-visualizer
+        title: Heap Sort Visualizer
+        widgets:
+        - ArrayInputSection
+        - VisualizationSection
+        - ControlPanelSection
+      stores:
+      - actions:
+        - 'initialize(array: number[], speed?: number): void'
+        - 'setArray(array: number[]): void'
+        - 'setArraySize(size: number): void'
+        - 'setStatus(status: ''idle'' | ''running'' | ''paused'' | ''completed''):
+          void'
+        - 'step(): void'
+        - 'reset(): void'
+        - 'setSpeed(speed: number): void'
+        - 'setError(error: string | null): void'
+        description: Central store for visualization state and algorithm progress.
+        layer: entities
+        name: visualizationStore
+        state_shape:
+        - name: array
+          type: number[]
+        - name: originalArray
+          type: number[]
+        - name: arraySize
+          type: number
+        - name: status
+          type: '''idle'' | ''running'' | ''paused'' | ''completed'''
+        - name: currentStep
+          type: number
+        - name: highlightedIndices
+          type: number[]
+        - name: sortedPartition
+          type: number
+        - name: animationSpeed
+          type: number
+        - name: error
+          type: string | null
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: VisualizationState
+        type: object
+      - name: ArrayInput
+        type: object
+    domains:
+    - apis: []
+      description: Client-side state and logic for array input, validation, heap sort
+        algorithm, and stepwise visualization.
+      models:
+      - description: The complete visualization state, including current array, sorting
+          progress, control state, and animation settings.
+        fields:
+        - name: array
+          nullable: false
+          pk: false
+          type: number[]
+        - name: originalArray
+          nullable: false
+          pk: false
+          type: number[]
+        - name: arraySize
+          nullable: false
+          pk: false
+          type: number
+        - name: status
+          nullable: false
+          pk: false
+          type: '''idle'' | ''running'' | ''paused'' | ''completed'''
+        - name: currentStep
+          nullable: false
+          pk: false
+          type: number
+        - name: highlightedIndices
+          nullable: false
+          pk: false
+          type: number[]
+        - name: sortedPartition
+          nullable: false
+          pk: false
+          type: number
+        - name: animationSpeed
+          nullable: false
+          pk: false
+          type: number
+        - name: error
+          nullable: true
+          pk: false
+          type: string | null
+        name: VisualizationState
+      name: visualization
+      services:
+      - description: Encapsulates heap sort algorithm logic and provides action methods
+          for visualization control.
+        methods:
+        - 'init(array: number[], speed: number): VisualizationState'
+        - 'generateRandomArray(size: number): number[]'
+        - 'validateArrayInput(input: string): { valid: boolean, array?: number[],
+          error?: string }'
+        - 'start(): void'
+        - 'pause(): void'
+        - 'step(): void'
+        - 'reset(): void'
+        - 'setSpeed(speed: number): void'
+        name: HeapSortService
+    metadata:
+      description: Technical specification for the main user interface of the Heap
+        Sort Visualizer, focused on interactive array input, visualization, and user
+        controls with a modern, accessible frontend.
+      generated_at: '2024-06-11T20:18:00Z'
+      name: Heap Sort Visualizer UI
+      version: 1.0.0
+    product:
+      features:
+      - description: Manual or random array input with validation and instant visualization
+          update.
+        domains:
+        - visualization
+        id: array-input
+        priority: high
+        title: Array Input
+      - description: Smooth, informative visualization of heap sort, highlighting
+          comparisons and swaps.
+        domains:
+        - visualization
+        id: visualization-anim
+        priority: high
+        title: Animated Heap Sort Visualization
+      - description: Start, Pause, Step, Reset buttons and live speed adjustment.
+        domains:
+        - visualization
+        id: controls
+        priority: high
+        title: Visualization Controls
+      goals:
+      - Enable users to learn and experiment with heap sort via input and animated
+        visualization.
+      - Provide granular controls for sorting steps, speed, and state.
+      - Offer a clean, responsive, and accessible user experience.
+      personas:
+      - description: Learner interested in understanding sorting algorithms through
+          visual experimentation.
+        goals:
+        - Try out heap sort on different arrays.
+        - Control and observe each algorithm step.
+        - Understand how swapping and comparisons work.
+        name: Student
+      - description: Teacher or presenter who demonstrates algorithms interactively.
+        goals:
+        - Show the heap sort process in class.
+        - Pause and step through key moments.
+        - Generate examples rapidly.
+        name: Educator
+      - description: User interested in exploring how heap sort works.
+        goals:
+        - Experiment with various inputs.
+        - See real-time feedback.
+        - Adjust speed for comfort.
+        name: Curious Visitor
+      summary: A modern, interactive page that visualizes the heap sort algorithm
+        on user-provided or randomly generated arrays, with fine-grained control over
+        playback and speed.
+    use_cases:
+    - actors:
+      - Student
+      - Educator
+      - Curious Visitor
+      apis: []
+      description: User enters a comma-separated array, which is validated and visualized
+        immediately.
+      domains:
+      - visualization
+      happy_path:
+      - User types '3, 1, 4, 2' in the input box.
+      - Input is validated and displayed as bars.
+      - User starts sorting.
+      id: manual-input
+      pages:
+      - /heap-sort-visualizer
+      postconditions:
+      - Array is visualized.
+      - Controls are enabled for sorting.
+      preconditions:
+      - Page loaded.
+      - No visualization in progress or visualization is paused/reset.
+      title: Manually input array
+    - actors:
+      - Student
+      - Curious Visitor
+      apis: []
+      description: User sets array length, clicks generate, and sees a new random
+        array.
+      domains:
+      - visualization
+      happy_path:
+      - User selects 10 on spinner.
+      - User clicks 'Generate'.
+      - Random array appears in visualization.
+      id: random-array
+      pages:
+      - /heap-sort-visualizer
+      postconditions:
+      - Random array is visualized.
+      preconditions:
+      - Page loaded.
+      - No visualization in progress or visualization is paused/reset.
+      title: Generate random array
+    - actors:
+      - Student
+      - Educator
+      - Curious Visitor
+      apis: []
+      description: User starts, pauses, steps, resets, and adjusts speed of the visualization.
+      domains:
+      - visualization
+      happy_path:
+      - User clicks 'Start', bars animate.
+      - User clicks 'Pause', animation halts.
+      - User adjusts speed, animation updates.
+      - User clicks 'Step', one algorithm step completes.
+      - User clicks 'Reset', visualization returns to initial state.
+      id: control-playback
+      pages:
+      - /heap-sort-visualizer
+      postconditions:
+      - Heap sort is animated as per user controls.
+      preconditions:
+      - Array visualized.
+      title: Control visualization playback
+    user_journeys:
+    - id: journey-1
+      persona: Curious Visitor
+      related_use_cases:
+      - manual-input
+      - random-array
+      - control-playback
+      steps:
+      - action: Arrives at visualizer page.
+        page: /heap-sort-visualizer
+      - action: Sets array size to 8 and generates random array.
+        page: /heap-sort-visualizer
+      - action: Clicks Start and watches the algorithm animate.
+        page: /heap-sort-visualizer
+      - action: Adjusts speed slider to slow down animation.
+        page: /heap-sort-visualizer
+      - action: Pauses, edits the array manually, resumes.
+        page: /heap-sort-visualizer
+      success_criteria: User understands and controls the heap sort animation; no
+        errors encountered.
+      title: Explore Heap Sort with Random Array
+summary:
+  plan_names:
+  - item_0
+  total_plans: 1

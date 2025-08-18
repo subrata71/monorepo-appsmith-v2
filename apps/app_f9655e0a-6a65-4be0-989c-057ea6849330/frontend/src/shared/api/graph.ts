@@ -1,12 +1,6 @@
 import { get, post, put, del, handleError } from '@/shared/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { 
-  Graph, 
-  NewGraph, 
-  GraphUpdateRequest,
-  GraphNode,
-  GraphEdge
-} from '@app/shared/api-types/graph';
+import type { NewGraph, GraphUpdateRequest } from '@app/shared/api-types/graph';
 
 // API functions
 export const graphApi = {
@@ -60,7 +54,10 @@ export const graphApi = {
   },
 
   // Add node to graph
-  addNode: async (graphId: string, nodeData: { x: number; y: number; label?: string }) => {
+  addNode: async (
+    graphId: string,
+    nodeData: { x: number; y: number; label?: string }
+  ) => {
     const { data, error } = await post('/graphs/{id}/nodes', {
       params: {
         path: { id: graphId },
@@ -74,7 +71,10 @@ export const graphApi = {
   },
 
   // Add edge to graph
-  addEdge: async (graphId: string, edgeData: { sourceId: string; targetId: string }) => {
+  addEdge: async (
+    graphId: string,
+    edgeData: { sourceId: string; targetId: string }
+  ) => {
     const { data, error } = await post('/graphs/{id}/edges', {
       params: {
         path: { id: graphId },
@@ -118,7 +118,7 @@ export const graphApi = {
 export const useGraph = (id: string | null) =>
   useQuery({
     queryKey: ['graph', id],
-    queryFn: () => id ? graphApi.getGraph(id) : null,
+    queryFn: () => (id ? graphApi.getGraph(id) : null),
     enabled: !!id,
   });
 
@@ -138,8 +138,13 @@ export const useUpdateGraph = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, updates }: { id: string; updates: GraphUpdateRequest }) => 
-      graphApi.updateGraph(id, updates),
+    mutationFn: ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: GraphUpdateRequest;
+    }) => graphApi.updateGraph(id, updates),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['graph', variables.id] });
     },
@@ -162,9 +167,12 @@ export const useAddNode = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ graphId, nodeData }: { 
-      graphId: string; 
-      nodeData: { x: number; y: number; label?: string; } 
+    mutationFn: ({
+      graphId,
+      nodeData,
+    }: {
+      graphId: string;
+      nodeData: { x: number; y: number; label?: string };
     }) => graphApi.addNode(graphId, nodeData),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['graph', variables.graphId] });
@@ -176,9 +184,12 @@ export const useAddEdge = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ graphId, edgeData }: { 
-      graphId: string; 
-      edgeData: { sourceId: string; targetId: string; } 
+    mutationFn: ({
+      graphId,
+      edgeData,
+    }: {
+      graphId: string;
+      edgeData: { sourceId: string; targetId: string };
     }) => graphApi.addEdge(graphId, edgeData),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['graph', variables.graphId] });
@@ -190,7 +201,7 @@ export const useRemoveNode = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ graphId, nodeId }: { graphId: string; nodeId: string }) => 
+    mutationFn: ({ graphId, nodeId }: { graphId: string; nodeId: string }) =>
       graphApi.removeNode(graphId, nodeId),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['graph', variables.graphId] });
@@ -202,7 +213,7 @@ export const useRemoveEdge = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ graphId, edgeId }: { graphId: string; edgeId: string }) => 
+    mutationFn: ({ graphId, edgeId }: { graphId: string; edgeId: string }) =>
       graphApi.removeEdge(graphId, edgeId),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['graph', variables.graphId] });

@@ -5,7 +5,7 @@ import { useReminderStore, ReminderCard } from '@/entities/reminder';
 
 /**
  * RemindersListWidget
- * 
+ *
  * Main widget for displaying the list of reminders with smooth animations.
  * Uses FadeTransition for enhanced UX when reminders appear/disappear.
  */
@@ -56,7 +56,7 @@ export const RemindersListWidget = React.memo(() => {
 
   return (
     <div className="space-y-4">
-      {sortedReminders.map((reminder) => (
+      {sortedReminders.map(reminder => (
         <FadeTransition key={reminder.id} in={true}>
           <ReminderCard reminder={reminder} />
         </FadeTransition>

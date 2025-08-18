@@ -63,7 +63,11 @@ export const MoodEntryItem = React.memo<MoodEntryItemProps>(
         <div
           className={`flex items-center justify-center w-16 h-16 rounded-2xl border-2 shadow-sm ${moodOption.color}`}
         >
-          <span className="text-2xl animate-pulse" role="img" aria-label={moodOption.label}>
+          <span
+            className="text-2xl animate-pulse"
+            role="img"
+            aria-label={moodOption.label}
+          >
             {moodOption.emoji}
           </span>
         </div>
@@ -72,7 +76,9 @@ export const MoodEntryItem = React.memo<MoodEntryItemProps>(
         <div className="flex-1 min-w-0">
           {/* Mood Label */}
           <div className="flex items-center gap-2 mb-2">
-            <h3 className="font-bold text-lg text-foreground">{moodOption.label}</h3>
+            <h3 className="font-bold text-lg text-foreground">
+              {moodOption.label}
+            </h3>
             <span className="text-sm text-primary">✨</span>
           </div>
 

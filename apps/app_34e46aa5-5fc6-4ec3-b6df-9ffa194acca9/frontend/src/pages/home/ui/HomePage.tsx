@@ -5,18 +5,18 @@ import { useReminderStore } from '@/entities/reminder';
 
 /**
  * HomePage
- * 
+ *
  * Main page displaying the reminder list. Shows the total count of reminders
  * and renders the RemindersListWidget for the main functionality.
  */
 export const HomePage = React.memo(() => {
   const reminders = useReminderStore(state => state.reminders);
-  
+
   const reminderStats = React.useMemo(() => {
     const total = reminders.length;
     const completed = reminders.filter(r => r.isCompleted).length;
     const pending = total - completed;
-    
+
     return { total, completed, pending };
   }, [reminders]);
 
@@ -28,10 +28,9 @@ export const HomePage = React.memo(() => {
             My Reminders
           </h1>
           <p className="text-muted-foreground">
-            {reminderStats.total === 0 
+            {reminderStats.total === 0
               ? 'No reminders yet'
-              : `${reminderStats.pending} pending, ${reminderStats.completed} completed`
-            }
+              : `${reminderStats.pending} pending, ${reminderStats.completed} completed`}
           </p>
         </div>
 

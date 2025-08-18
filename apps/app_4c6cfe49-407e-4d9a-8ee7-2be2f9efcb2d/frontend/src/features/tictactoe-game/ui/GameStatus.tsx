@@ -38,9 +38,7 @@ export const GameStatus = React.memo<GameStatusProps>(
 
     return (
       <div className="text-center space-y-2">
-        <h2 className={`text-xl ${getStatusColor}`}>
-          {getStatusMessage}
-        </h2>
+        <h2 className={`text-xl ${getStatusColor}`}>{getStatusMessage}</h2>
         {status === 'playing' && (
           <p className="text-gray-500 text-sm">
             Click on an empty cell to place your {currentPlayer}

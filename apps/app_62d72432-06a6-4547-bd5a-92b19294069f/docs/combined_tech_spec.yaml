@@ -1,0 +1,328 @@
+metadata:
+  description: Comprehensive technical specification combining all individual plan
+    specifications
+  generated_from_files:
+  - tech_spec_item_0.yaml
+  title: Combined Technical Specification
+  total_plans: 1
+plans:
+- plan_name: item_0
+  source_file: tech_spec_item_0.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Component rendering the SVG or Canvas wheel, accepts slots
+            and highlight state.
+          entity: roulette
+          name: RouletteWheel
+          props:
+          - slots
+          - highlightedSlot
+          - isSpinning
+        - description: Represents a single slot on the wheel. Used internally by RouletteWheel.
+          entity: roulette
+          name: RouletteSlot
+          props:
+          - number
+          - color
+          - highlighted
+        - description: Displays the result after spinning.
+          entity: roulette
+          name: RouletteResult
+          props:
+          - winningNumber
+        features:
+        - description: Enables/disables the Spin button and triggers the spin event.
+          entities:
+          - RouletteWheel
+          feature: interactive_roulette_wheel
+          name: SpinControl
+          props:
+          - onSpin
+          - isSpinning
+          shared:
+          - Button
+        - description: Handles the spin animation, timing, and transition of the wheel.
+          entities:
+          - RouletteWheel
+          feature: interactive_roulette_wheel
+          name: WheelAnimation
+          props:
+          - isSpinning
+          - onComplete
+          shared:
+          - useAnimationFrame
+        - description: Highlights the winning slot on the wheel after spin completes.
+          entities:
+          - RouletteWheel
+          - RouletteSlot
+          feature: instant_result_display
+          name: ResultHighlight
+          props:
+          - winningNumber
+          shared: []
+        - description: Announces state changes and results for screen readers.
+          entities: []
+          feature: accessible_ui
+          name: AccessibilityAnnouncer
+          props:
+          - message
+          shared:
+          - VisuallyHidden
+        shared:
+        - category: ui
+          description: Accessible, themed button component.
+          name: Button
+          props:
+          - onClick
+          - disabled
+          - children
+          - aria-label
+        - category: ui
+          description: A component to visually hide content but keep it accessible
+            to screen readers.
+          name: VisuallyHidden
+          props:
+          - children
+        - category: config
+          description: Provides theme variables and context.
+          name: ThemeProvider
+          props:
+          - children
+          - theme
+        - category: lib
+          description: Custom hook for smooth animation using requestAnimationFrame.
+          name: useAnimationFrame
+          props:
+          - callback
+        - category: lib
+          description: Helper for random number generation.
+          name: useRandom
+          props: []
+        - category: lib
+          description: Hook to manage responsive layout.
+          name: useResponsive
+          props: []
+        widgets:
+        - description: Contains the wheel, Spin control, and manages state and layout.
+          entities:
+          - RouletteWheel
+          features:
+          - SpinControl
+          - WheelAnimation
+          - ResultHighlight
+          name: RouletteSection
+          props:
+          - children
+          shared: []
+        - description: Displays the result (winning number) and any result-specific
+            animations or announcements.
+          entities:
+          - RouletteResult
+          features:
+          - AccessibilityAnnouncer
+          name: ResultSection
+          props:
+          - winningNumber
+          shared:
+          - VisuallyHidden
+      pages:
+      - description: Allow users to interactively spin a roulette wheel and see the
+          randomly chosen result for UI/UX prototyping purposes.
+        queries: []
+        route: /roulette
+        title: Roulette Wheel
+        widgets:
+        - RouletteSection
+        - ResultSection
+      stores:
+      - actions:
+        - spin()
+        - reset()
+        description: Manages the state of the roulette wheel, including isSpinning,
+          slots, and winningNumber. Provides actions for spinning and resetting.
+        layer: entities
+        name: useRouletteStore
+        state_shape:
+        - name: isSpinning
+          type: boolean
+        - name: winningNumber
+          type: number | null
+        - name: slots
+          type: '{ number: number, color: string }[]'
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: RouletteState
+        type: object
+    domains:
+    - apis: []
+      description: Contains the client-side logic for the roulette wheel, including
+        spin state and result.
+      models:
+      - description: Tracks the current state of the wheel, including whether it is
+          spinning and the last winning number.
+        fields:
+        - name: isSpinning
+          nullable: false
+          pk: false
+          type: boolean
+        - name: winningNumber
+          nullable: true
+          pk: false
+          type: integer | null
+        - name: slots
+          nullable: false
+          pk: false
+          type: array of objects
+        name: RouletteState
+      name: roulette
+      services:
+      - description: Handles spinning the wheel and randomly choosing a winning number,
+          updating state accordingly.
+        methods:
+        - spin
+        - reset
+        name: RouletteService
+    metadata:
+      description: Technical specification for a client-only, interactive roulette
+        wheel UI prototype with accessible, animated spinning and visual result highlighting.
+      generated_at: '2024-06-12T10:00:00Z'
+      name: Roulette Wheel UI Prototype - Technical Specification
+      version: 1.0.0
+    product:
+      features:
+      - description: Users can spin a visually appealing, animated roulette wheel
+          and see the resulting number highlighted.
+        domains:
+        - roulette
+        id: interactive_roulette_wheel
+        priority: high
+        title: Interactive Roulette Wheel
+      - description: All controls and results are accessible via keyboard and screen
+          readers.
+        domains:
+        - roulette
+        id: accessible_ui
+        priority: high
+        title: Fully Accessible UI
+      - description: The wheel highlights the winning number immediately after each
+          spin, with no persistence or backend.
+        domains:
+        - roulette
+        id: instant_result_display
+        priority: high
+        title: Instant Result Display
+      goals:
+      - Deliver a visually engaging roulette wheel UI prototype that users can spin
+        and see results instantly.
+      - Ensure the UI is modern, mobile-responsive, and fully accessible (keyboard
+        and screen reader).
+      - No backend, authentication, or data persistence is required.
+      personas:
+      - description: Designs and evaluates user interface prototypes for interactive
+          experiences.
+        goals:
+        - Assess visual appeal and usability of the roulette wheel.
+        - Test accessibility and responsiveness.
+        name: UI/UX Designer
+      - description: Reviews and approves UI prototypes before further development.
+        goals:
+        - Experience the wheel interaction and result flow.
+        - Validate UI/UX direction.
+        name: Product Stakeholder
+      - description: Any user accessing the prototype for demo or entertainment purposes.
+        goals:
+        - Spin the wheel and see a random result.
+        - Enjoy smooth, accessible interaction.
+        name: Visitor
+      summary: An interactive, front-end-only roulette wheel prototype that animates
+        spins, highlights the result, and is fully accessible with no backend or persistence.
+    use_cases:
+    - actors:
+      - Visitor
+      apis: []
+      description: User presses the Spin button, the wheel animates, and the winning
+        number is highlighted after the spin.
+      domains:
+      - roulette
+      happy_path:
+      - User focuses or clicks on the Spin button.
+      - User activates the Spin button.
+      - Wheel animates spinning, Spin button disabled.
+      - Animation completes, winning slot is highlighted.
+      - Result is shown; Spin button is re-enabled.
+      id: spin_wheel
+      pages:
+      - /roulette
+      postconditions:
+      - Spin button re-enabled, result displayed.
+      preconditions:
+      - The wheel is idle, Spin button enabled.
+      title: Spin the Wheel
+    - actors:
+      - Visitor
+      apis: []
+      description: User navigates and controls the wheel and spin via keyboard and
+        receives accessible feedback.
+      domains:
+      - roulette
+      happy_path:
+      - User navigates to Spin button via tab or screen reader.
+      - User activates the Spin button via keyboard.
+      - Animated feedback is announced; result is read aloud when available.
+      id: accessibility_navigation
+      pages:
+      - /roulette
+      postconditions:
+      - User is able to operate all controls and receive result feedback.
+      preconditions:
+      - Browser supports accessibility features.
+      title: Use UI with Keyboard or Screen Reader
+    user_journeys:
+    - id: basic_spin_journey
+      persona: Visitor
+      related_use_cases:
+      - spin_wheel
+      steps:
+      - action: User lands on Roulette Wheel page.
+        page: /roulette
+      - action: User observes the central wheel and Spin button.
+        page: /roulette
+      - action: User clicks or focuses and presses Enter on Spin button.
+        page: /roulette
+      - action: Wheel animates spinning.
+        page: /roulette
+      - action: Winning number is highlighted on the wheel.
+        page: /roulette
+      - action: Result is shown in bold below the wheel.
+        page: /roulette
+      - action: User can spin again.
+        page: /roulette
+      success_criteria: User can repeatedly spin the wheel and see the result, with
+        no errors and smooth animations.
+      title: Basic Spin Journey
+    - id: accessible_usage_journey
+      persona: Visitor
+      related_use_cases:
+      - accessibility_navigation
+      steps:
+      - action: User navigates using keyboard to Spin button.
+        page: /roulette
+      - action: Screen reader announces “Spin the roulette wheel.”
+        page: /roulette
+      - action: User triggers spin via space/enter key.
+        page: /roulette
+      - action: Wheel animation is described or announced.
+        page: /roulette
+      - action: After animation, screen reader announces the winning number.
+        page: /roulette
+      success_criteria: All controls are operable via keyboard and screen reader;
+        result is read aloud after spin.
+      title: Accessible Usage Journey
+summary:
+  plan_names:
+  - item_0
+  total_plans: 1

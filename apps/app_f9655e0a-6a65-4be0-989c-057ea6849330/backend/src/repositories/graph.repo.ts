@@ -1,7 +1,14 @@
 import type * as schema from '../db/schema';
 import { eq } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type { Graph, NewGraph, GraphNode, NewGraphNode, GraphEdge, NewGraphEdge } from '../db/schema';
+import type {
+  Graph,
+  NewGraph,
+  GraphNode,
+  NewGraphNode,
+  GraphEdge,
+  NewGraphEdge,
+} from '../db/schema';
 import { graphs, graphNodes, graphEdges } from '../db/schema';
 import { log } from '../utils/index';
 
@@ -14,8 +21,8 @@ export const graphRepo = (db: NodePgDatabase<typeof schema>) => ({
   },
 
   findGraphById: async (id: string): Promise<Graph | null> => {
-    const graph = await db.query.graphs.findFirst({ 
-      where: eq(graphs.id, id) 
+    const graph = await db.query.graphs.findFirst({
+      where: eq(graphs.id, id),
     });
     return graph || null;
   },
@@ -23,7 +30,7 @@ export const graphRepo = (db: NodePgDatabase<typeof schema>) => ({
   findAllGraphs: () => db.select().from(graphs),
 
   updateGraph: async (id: string, updates: Partial<Graph>) => {
-    log.info('Updating graph', { graphId: id });
+    log.info({ graphId: id }, 'Updating graph');
     const [updated] = await db
       .update(graphs)
       .set({
@@ -35,8 +42,7 @@ export const graphRepo = (db: NodePgDatabase<typeof schema>) => ({
     return updated;
   },
 
-  deleteGraph: (id: string) =>
-    db.delete(graphs).where(eq(graphs.id, id)),
+  deleteGraph: (id: string) => db.delete(graphs).where(eq(graphs.id, id)),
 
   // Node operations
   createNode: async (p: NewGraphNode) => {
@@ -49,14 +55,14 @@ export const graphRepo = (db: NodePgDatabase<typeof schema>) => ({
     db.select().from(graphNodes).where(eq(graphNodes.graphId, graphId)),
 
   findNodeById: async (id: string): Promise<GraphNode | null> => {
-    const node = await db.query.graphNodes.findFirst({ 
-      where: eq(graphNodes.id, id) 
+    const node = await db.query.graphNodes.findFirst({
+      where: eq(graphNodes.id, id),
     });
     return node || null;
   },
 
   updateNode: async (id: string, updates: Partial<GraphNode>) => {
-    log.info('Updating graph node', { nodeId: id });
+    log.info({ nodeId: id }, 'Updating graph node');
     const [updated] = await db
       .update(graphNodes)
       .set(updates)
@@ -82,8 +88,8 @@ export const graphRepo = (db: NodePgDatabase<typeof schema>) => ({
     db.select().from(graphEdges).where(eq(graphEdges.graphId, graphId)),
 
   findEdgeById: async (id: string): Promise<GraphEdge | null> => {
-    const edge = await db.query.graphEdges.findFirst({ 
-      where: eq(graphEdges.id, id) 
+    const edge = await db.query.graphEdges.findFirst({
+      where: eq(graphEdges.id, id),
     });
     return edge || null;
   },
@@ -96,17 +102,17 @@ export const graphRepo = (db: NodePgDatabase<typeof schema>) => ({
 
   // Full graph with nodes and edges
   findFullGraphById: async (id: string) => {
-    const graph = await db.query.graphs.findFirst({ 
-      where: eq(graphs.id, id) 
+    const graph = await db.query.graphs.findFirst({
+      where: eq(graphs.id, id),
     });
-    
+
     if (!graph) {
       return null;
     }
 
     const [nodes, edges] = await Promise.all([
       db.select().from(graphNodes).where(eq(graphNodes.graphId, id)),
-      db.select().from(graphEdges).where(eq(graphEdges.graphId, id))
+      db.select().from(graphEdges).where(eq(graphEdges.graphId, id)),
     ]);
 
     return {

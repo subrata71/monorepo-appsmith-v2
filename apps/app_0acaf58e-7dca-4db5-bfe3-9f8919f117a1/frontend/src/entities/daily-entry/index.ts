@@ -1,6 +1,6 @@
 /**
  * Daily Entry Entity
- * 
+ *
  * Exports all components and hooks related to daily entry functionality
  */
 

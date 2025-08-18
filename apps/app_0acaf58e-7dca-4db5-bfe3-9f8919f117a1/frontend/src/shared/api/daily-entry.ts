@@ -1,6 +1,6 @@
 /**
  * Daily Entry API
- * 
+ *
  * API functions for daily entry operations
  */
 
@@ -21,7 +21,9 @@ const getTodayDate = (): string => {
 /**
  * Get daily entry for a specific date (defaults to today)
  */
-export const getDailyEntry = async (entryDate?: string): Promise<DailyEntry | null> => {
+export const getDailyEntry = async (
+  entryDate?: string
+): Promise<DailyEntry | null> => {
   try {
     const response = await get('/daily-entry', {
       params: {
@@ -39,7 +41,12 @@ export const getDailyEntry = async (entryDate?: string): Promise<DailyEntry | nu
     const data = response.data as DailyEntryResponse;
     return data.data;
   } catch (error) {
-    if (error && typeof error === 'object' && 'code' in error && error.code === 404) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 404
+    ) {
       return null; // Entry not found is expected
     }
     throw error;
@@ -77,7 +84,9 @@ export const createDailyEntry = async (
 /**
  * Update an existing daily entry
  */
-export const updateDailyEntry = async (sentence: string): Promise<DailyEntry> => {
+export const updateDailyEntry = async (
+  sentence: string
+): Promise<DailyEntry> => {
   try {
     const requestData: DailyEntryUpdateRequest = {
       sentence,
@@ -108,6 +117,8 @@ export const getTodaysDailyEntry = async (): Promise<DailyEntry | null> => {
 /**
  * Create today's daily entry
  */
-export const createTodaysDailyEntry = async (sentence: string): Promise<DailyEntry> => {
+export const createTodaysDailyEntry = async (
+  sentence: string
+): Promise<DailyEntry> => {
   return await createDailyEntry(sentence, getTodayDate());
 };

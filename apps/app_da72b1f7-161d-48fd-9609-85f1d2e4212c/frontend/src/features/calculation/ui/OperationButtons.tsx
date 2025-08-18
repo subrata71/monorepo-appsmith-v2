@@ -31,7 +31,7 @@ const operations = [
 
 /**
  * OperationButtons component for selecting arithmetic operations
- * 
+ *
  * Features:
  * - Four large, horizontally arranged buttons
  * - Visual highlighting of selected operation
@@ -39,10 +39,10 @@ const operations = [
  * - Immediate calculation trigger on selection
  * - Consistent with design system button variants
  */
-export function OperationButtons({ 
-  selectedOperation, 
-  onSelect, 
-  disabled = false 
+export function OperationButtons({
+  selectedOperation,
+  onSelect,
+  disabled = false,
 }: OperationButtonsProps) {
   const calculate = useCalculationStore(state => state.calculate);
 
@@ -53,7 +53,7 @@ export function OperationButtons({
   };
 
   return (
-    <div 
+    <div
       className="grid grid-cols-4 gap-3"
       role="group"
       aria-label="Arithmetic operations"

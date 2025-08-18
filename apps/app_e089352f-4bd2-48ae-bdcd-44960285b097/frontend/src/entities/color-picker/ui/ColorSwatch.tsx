@@ -10,8 +10,10 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
   ({ className = '' }) => {
     const swatchId = useColorPickerStore(state => state.swatchId);
     const selectedColor = useColorPickerStore(state => state.selectedColor);
-    const isTrackingPointer = useColorPickerStore(state => state.isTrackingPointer);
-    
+    const isTrackingPointer = useColorPickerStore(
+      state => state.isTrackingPointer
+    );
+
     // State for smooth color transitions
     const [displayedColor, setDisplayedColor] = useState(selectedColor);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -20,13 +22,16 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
     useEffect(() => {
       if (selectedColor !== displayedColor) {
         setIsAnimating(true);
-        
+
         // Use a short timeout to create a smooth transition effect
-        const timeout = setTimeout(() => {
-          setDisplayedColor(selectedColor);
-          setIsAnimating(false);
-        }, isTrackingPointer ? 50 : 150); // Faster updates while actively selecting
-        
+        const timeout = setTimeout(
+          () => {
+            setDisplayedColor(selectedColor);
+            setIsAnimating(false);
+          },
+          isTrackingPointer ? 50 : 150
+        ); // Faster updates while actively selecting
+
         return () => clearTimeout(timeout);
       }
     }, [selectedColor, displayedColor, isTrackingPointer]);
@@ -78,17 +83,17 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
           ${isAnimating ? 'animate-pulse' : ''}
           ${isTrackingPointer ? 'duration-75' : 'duration-300'}
         `}
-          style={{ 
+          style={{
             backgroundColor: swatchConfig.color,
-            transition: `background-color ${isTrackingPointer ? '75ms' : '300ms'} ease-out, transform 300ms ease-out, box-shadow 300ms ease-out`
+            transition: `background-color ${isTrackingPointer ? '75ms' : '300ms'} ease-out, transform 300ms ease-out, box-shadow 300ms ease-out`,
           }}
         >
           {/* Main color display area */}
           <div
             className={`absolute inset-0 transition-colors ease-out ${isTrackingPointer ? 'duration-75' : 'duration-300'}`}
-            style={{ 
+            style={{
               backgroundColor: swatchConfig.color,
-              transition: `background-color ${isTrackingPointer ? '75ms' : '300ms'} ease-out`
+              transition: `background-color ${isTrackingPointer ? '75ms' : '300ms'} ease-out`,
             }}
           >
             {/* Enhanced checkerboard pattern for better transparency visibility */}
@@ -171,7 +176,8 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
 
           {/* Active tracking indicator */}
           {isTrackingPointer && (
-            <div className="
+            <div
+              className="
               absolute top-2 right-2 
               w-3 h-3 
               bg-white 
@@ -179,29 +185,24 @@ export const ColorSwatch = React.memo<ColorSwatchProps>(
               shadow-lg 
               animate-pulse
               border-2 border-blue-500
-            " />
+            "
+            />
           )}
         </div>
 
         {/* Additional accessibility info with live status */}
         <div className="text-center">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {isTrackingPointer 
-              ? 'Selecting color...' 
-              : 'Click or focus to view color details'
-            }
+            {isTrackingPointer
+              ? 'Selecting color...'
+              : 'Click or focus to view color details'}
           </p>
-          
+
           {/* Live status indicator for screen readers */}
-          <div 
-            className="sr-only" 
-            aria-live="polite" 
-            aria-atomic="true"
-          >
-            {isTrackingPointer 
-              ? `Actively selecting color: ${swatchConfig.color}` 
-              : `Selected color: ${swatchConfig.color}`
-            }
+          <div className="sr-only" aria-live="polite" aria-atomic="true">
+            {isTrackingPointer
+              ? `Actively selecting color: ${swatchConfig.color}`
+              : `Selected color: ${swatchConfig.color}`}
           </div>
         </div>
       </div>

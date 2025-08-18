@@ -2,13 +2,8 @@ import React, { useMemo } from 'react';
 import { useVisualizationStore } from '../model/store';
 
 export const ArrayDisplay = React.memo(() => {
-  const { 
-    array, 
-    error, 
-    highlightedIndices, 
-    sortedPartition,
-    status 
-  } = useVisualizationStore();
+  const { array, error, highlightedIndices, sortedPartition, status } =
+    useVisualizationStore();
 
   const maxValue = useMemo(() => Math.max(...array, 1), [array]);
 
@@ -38,10 +33,10 @@ export const ArrayDisplay = React.memo(() => {
           const height = (value / maxValue) * 240; // Max height of 240px
           const isHighlighted = highlightedIndices.includes(index);
           const isSorted = index >= array.length - sortedPartition;
-          
+
           let barColor = 'bg-primary';
           let textColor = 'text-primary-foreground';
-          
+
           if (isSorted) {
             barColor = 'bg-green-500';
             textColor = 'text-white';
@@ -49,14 +44,16 @@ export const ArrayDisplay = React.memo(() => {
             barColor = 'bg-red-500';
             textColor = 'text-white';
           }
-          
+
           return (
             <div
               key={index}
               className={`${barColor} rounded-t-sm min-w-[20px] flex items-end justify-center transition-all duration-300 border-2 ${
-                isHighlighted ? 'border-red-300 scale-105' : 
-                isSorted ? 'border-green-300' : 
-                'border-transparent'
+                isHighlighted
+                  ? 'border-red-300 scale-105'
+                  : isSorted
+                    ? 'border-green-300'
+                    : 'border-transparent'
               }`}
               style={{ height: `${height}px` }}
               title={`Index ${index}: ${value}${isSorted ? ' (sorted)' : ''}${isHighlighted ? ' (highlighted)' : ''}`}
@@ -74,7 +71,7 @@ export const ArrayDisplay = React.memo(() => {
             Array of {array.length} numbers: [{array.join(', ')}]
           </p>
         </div>
-        
+
         {/* Legend */}
         {status !== 'idle' && (
           <div className="flex flex-wrap justify-center gap-4 text-xs">

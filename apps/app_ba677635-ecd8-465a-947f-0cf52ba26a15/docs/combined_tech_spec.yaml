@@ -1,0 +1,349 @@
+metadata:
+  description: Comprehensive technical specification combining all individual module
+    specifications
+  generated_from_files:
+  - tech_spec_0.yaml
+  title: Combined Technical Specification
+  total_modules: 1
+modules:
+- module_name: '0'
+  source_file: tech_spec_0.yaml
+  specification:
+    client:
+      components:
+        atoms:
+        - description: Generic button component.
+          name: Button
+          props:
+          - onClick
+          - children
+          - disabled
+        - description: Basic text renderer.
+          name: Text
+          props:
+          - children
+        - description: Visualizes a single tile cell in the grid.
+          name: Tile
+          props:
+          - value
+          - isNew
+          - merged
+        - description: Displays a value in a stylized pill.
+          name: Badge
+          props:
+          - value
+        molecules:
+        - atoms:
+          - Badge
+          description: Shows the current score in a badge.
+          name: ScoreBadge
+          props:
+          - score
+        - atoms:
+          - Badge
+          description: Shows the best score in a badge.
+          name: BestScoreBadge
+          props:
+          - bestScore
+        - atoms:
+          - Tile
+          description: Single interactive cell in the grid, renders a Tile.
+          name: GridCell
+          props:
+          - value
+          - isNew
+          - merged
+        - atoms:
+          - Button
+          description: Button to reset the game.
+          name: RestartButton
+          props:
+          - onRestart
+        organisms:
+        - atoms:
+          - Tile
+          description: The interactive 4x4 grid of tiles, handling animations and
+            user input.
+          molecules:
+          - GridCell
+          name: GameGrid
+          props:
+          - grid
+          - onMove
+        - atoms:
+          - Text
+          description: Displays the 2048 title, current score, and best score.
+          molecules:
+          - ScoreBadge
+          - BestScoreBadge
+          name: HeaderBar
+          props:
+          - score
+          - bestScore
+        - atoms:
+          - Text
+          - Button
+          description: Popup overlay for win/loss messages, blocking input and showing
+            reset option.
+          molecules: []
+          name: StatusOverlay
+          props:
+          - status
+          - onRestart
+        - atoms: []
+          description: Houses restart button and any additional controls.
+          molecules:
+          - RestartButton
+          name: ControlsPanel
+          props:
+          - onRestart
+      pages:
+      - description: 'Interactive interface for playing 2048: grid, score, controls,
+          status overlays.'
+        organisms:
+        - HeaderBar
+        - GameGrid
+        - ControlsPanel
+        - StatusOverlay
+        queries:
+        - initGame
+        - applyMove
+        - checkGameState
+        - resetGame
+        route: /
+        title: 2048 Game
+      stores:
+      - actions:
+        - initGame
+        - applyMove
+        - checkGameState
+        - resetGame
+        - updateBestScore
+        description: Manages the current game state and best score in session.
+        name: gameStore
+        state_shape:
+        - name: currentGame
+          type: Game
+        - name: bestScore
+          type: number
+        - name: status
+          type: string
+    domains:
+    - apis:
+      - description: Initializes a new game grid (4x4) with two tiles (2 or 4) placed
+          randomly. Returns the initial state.
+        input: none
+        method: POST
+        name: initGame
+        output: Game
+        path: /games/init
+      - description: Given a direction, moves and merges tiles in the grid, updates
+          score, and adds a random new tile (2 or 4) if any move occurred. Returns
+          the new state and score.
+        input: '{id: string, direction: ''up''|''down''|''left''|''right''}'
+        method: POST
+        name: applyMove
+        output: Game
+        path: /games/{id}/move
+      - description: Checks if the game is won (2048 tile present) or lost (no valid
+          moves left).
+        input: '{id: string}'
+        method: POST
+        name: checkGameState
+        output: '{status: string}'
+        path: /games/{id}/check
+      - description: Resets the game to the initial state with a fresh grid and score.
+        input: '{id: string}'
+        method: POST
+        name: resetGame
+        output: Game
+        path: /games/{id}/reset
+      description: Domain for 2048 game state, board logic, score tracking, and win/loss
+        detection.
+      models:
+      - description: Represents a single instance of a 2048 game session.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: grid
+          nullable: false
+          pk: false
+          type: number[][]
+        - name: score
+          nullable: false
+          pk: false
+          type: number
+        - name: bestScore
+          nullable: false
+          pk: false
+          type: number
+        - name: status
+          nullable: false
+          pk: false
+          type: string
+        - name: createdAt
+          nullable: false
+          pk: false
+          type: Date
+        - name: updatedAt
+          nullable: false
+          pk: false
+          type: Date
+        name: Game
+      name: game
+      services:
+      - description: Business logic for tile movement, merging, new tile generation,
+          score calculation, and win/loss detection.
+        methods:
+        - initGame()
+        - applyMove(direction)
+        - checkGameState()
+        - resetGame()
+        name: GameService
+    metadata:
+      description: Web-based implementation of the 2048 sliding tile puzzle game with
+        dynamic score updates, win/loss detection, and immediate interactive feedback.
+      generated_at: '2024-06-09T18:45:00Z'
+      name: 2048 Game
+      version: 1.0.0
+    product:
+      features:
+      - description: Play 2048 instantly on any device with no login or installation.
+        domains:
+        - game
+        id: browser_play
+        priority: high
+        title: Instant Browser Play
+      - description: The game board adapts to device size, with smooth tile animations
+          and color-coded values.
+        domains:
+        - game
+        id: responsive_grid
+        priority: high
+        title: Responsive 4x4 Grid
+      - description: Score updates in real-time with a display of the best session
+          score.
+        domains:
+        - game
+        id: dynamic_score
+        priority: medium
+        title: Live Score & Best Score
+      - description: Clear overlays indicate victory or loss, blocking further moves
+          and offering a reset option.
+        domains:
+        - game
+        id: win_loss_feedback
+        priority: high
+        title: Win/Loss Overlays & Reset
+      goals:
+      - Provide an engaging and responsive 2048 game experience in the browser
+      - Enable immediate play with no authentication or persistent profiles
+      - Deliver smooth animations and clear feedback for all interactions
+      - Support both keyboard and touch controls for broad device compatibility
+      personas:
+      - description: Enjoys quick, simple puzzles and seeks a smooth, accessible game
+          experience.
+        goals:
+        - Play instantly without setup
+        - Experience smooth gameplay and clear feedback
+        - Restart and try to beat personal bests
+        name: Casual Player
+      - description: Returns frequently to improve scores and optimize strategies.
+        goals:
+        - Track and beat best scores
+        - Receive immediate response to moves
+        - Understand win/loss status easily
+        name: Competitive Player
+      summary: A minimalist browser-based 2048 game where users play on a 4x4 grid,
+        merging numbered tiles to reach the goal of 2048.
+    use_cases:
+    - actors:
+      - Casual Player
+      - Competitive Player
+      apis:
+      - initGame
+      - applyMove
+      - checkGameState
+      - resetGame
+      description: User interacts with the 4x4 grid to move and merge tiles, aiming
+        for 2048.
+      domains:
+      - game
+      happy_path:
+      - Open the game in a browser
+      - View the initialized game grid with two tiles
+      - Use keyboard arrows or swipe gestures to move tiles
+      - Watch tiles merge and score update
+      - Continue play until 2048 tile appears or no moves remain
+      - View win or loss overlay; choose to reset and play again
+      id: play_2048
+      pages:
+      - main_game
+      postconditions:
+      - Game is won or lost, or user restarts
+      preconditions:
+      - User is on the main game page
+      title: Play 2048 Game
+    - actors:
+      - Casual Player
+      - Competitive Player
+      apis:
+      - resetGame
+      description: User restarts the game after a win, loss, or at any time.
+      domains:
+      - game
+      happy_path:
+      - Click the 'Restart' button
+      - Grid resets to initial state with two random tiles and score zero
+      - Play resumes
+      id: reset_game
+      pages:
+      - main_game
+      postconditions:
+      - Grid resets to initial state with two random tiles and score zero; play resumes
+      preconditions:
+      - A game session is active
+      title: Reset Game
+    user_journeys:
+    - id: first_play_journey
+      persona: Casual Player
+      related_use_cases:
+      - play_2048
+      - reset_game
+      steps:
+      - action: Open the 2048 game page
+        page: main_game
+      - action: Sees the initialized grid and score
+        page: main_game
+      - action: Makes moves using keyboard or swipe
+        page: main_game
+      - action: Receives feedback for valid/invalid moves
+        page: main_game
+      - action: Achieves 2048 or gets stuck; sees corresponding overlay
+        page: main_game
+      - action: Uses restart to play again
+        page: main_game
+      success_criteria: User understands gameplay and completes a round.
+      title: First Playthrough
+    - id: improve_score_journey
+      persona: Competitive Player
+      related_use_cases:
+      - play_2048
+      - reset_game
+      steps:
+      - action: Opens the game and sees best score from session
+        page: main_game
+      - action: Plays several rounds, monitoring score updates
+        page: main_game
+      - action: Compares current and best scores after each game
+        page: main_game
+      - action: Restarts as desired
+        page: main_game
+      success_criteria: User is able to track and attempt to beat their best score.
+      title: Improve Score Session
+summary:
+  module_names:
+  - '0'
+  total_modules: 1

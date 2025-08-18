@@ -1,0 +1,73 @@
+access: No authentication required. Anyone can play instantly. No profile or data
+  persistence beyond the current browser session.
+behaviour: The grid responds to arrow keys (or swipes on mobile), moving and merging
+  tiles. Score updates dynamically. A win popup appears upon reaching 2048. The game
+  blocks further moves on win/loss and allows reset. All interactions are immediate,
+  with feedback for invalid moves.
+name: 2048 Game
+pages:
+- behaviour: Handles keyboard and touch input for tile movement. Animates tile moves
+    and merges. Shows win/loss overlays. Score updates live. Restart resets the session.
+  id: main_game
+  purpose: Provides the interactive interface for playing 2048, including the grid,
+    score, controls, and status messages.
+  queries:
+  - initGame
+  - applyMove
+  - checkGameState
+  - resetGame
+  sections:
+  - behaviour: Updates score on every move. Best score stored in local session.
+    blocks:
+    - behaviour: Displays static '2048' title.
+      id: game_title
+    - behaviour: Shows current score, updating live.
+      id: score_block
+    - behaviour: Shows best score from current browser session.
+      id: best_score_block
+    id: header_section
+    title: Header
+    visual: 'Centered at the top: bold game title left, score and best score right
+      in pill badges.'
+  - behaviour: Responds to arrow keys/swipes, animates moves and merges, updates state
+      after each input.
+    blocks:
+    - behaviour: Displays all tiles, animates their movement and merging, highlights
+        new tiles.
+      id: game_grid
+    id: grid_section
+    title: Game Board
+    visual: Centered 4x4 grid with square tiles, margin between tiles, colored backgrounds
+      according to value.
+  - behaviour: Restart button resets the game. Overlay disables input and offers a
+      restart after win/loss.
+    blocks:
+    - behaviour: Resets the game state when clicked.
+      id: restart_button
+    - behaviour: Shows 'You Win!' (on 2048) or 'Game Over' (if stuck), blocks further
+        input until reset.
+      id: status_overlay
+    id: controls_section
+    title: Controls & Status
+    visual: Restart button below grid, overlay popup for win/loss messages.
+  title: 2048 Game
+  visual: 'Column layout: title and scores at top, 4x4 game grid in the center, buttons
+    and status message below. All centered and responsive.'
+queries:
+- id: initGame
+  responsibility: Initializes a new game grid (4x4) with two tiles (2 or 4) placed
+    randomly. Returns the initial state.
+- id: applyMove
+  responsibility: Given a direction (up, down, left, right), moves and merges tiles
+    in the grid, updates score, and adds a random new tile (2 or 4) if any move occurred.
+    Returns the new state and score.
+- id: checkGameState
+  responsibility: Checks if the game is won (2048 tile present) or lost (no valid
+    moves left).
+- id: resetGame
+  responsibility: Resets the game to the initial state with a fresh grid and score.
+summary: A simple web-based implementation of the 2048 sliding tile puzzle game. Users
+  play on a 4x4 grid, moving and merging numbered tiles to reach 2048 points.
+visual: Minimalist, clean layout with a centered 4x4 grid, subtle background, and
+  soft shadows. Tiles have rounded corners, distinct colors for different values,
+  and smooth merging/movement animations.

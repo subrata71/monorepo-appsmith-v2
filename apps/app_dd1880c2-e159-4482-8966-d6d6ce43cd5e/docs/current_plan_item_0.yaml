@@ -1,0 +1,18 @@
+id: '1'
+name: Entry Management
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Add Entry Form
+  summary: Create a form for users to input amount, category, date, notes, and type
+    (income/expense).
+- effort: 2
+  id: '1.2'
+  name: Edit Entry
+  summary: Enable editing of existing entries with pre-filled form.
+- effort: 1
+  id: '1.3'
+  name: Delete Entry
+  summary: Allow users to delete entries from the list.
+summary: Allow users to add, edit, and delete income and expense entries with amount,
+  category, date, and notes.

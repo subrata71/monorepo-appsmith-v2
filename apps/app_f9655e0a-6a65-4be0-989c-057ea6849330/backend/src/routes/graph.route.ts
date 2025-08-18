@@ -22,11 +22,7 @@ export default async function graphRoutes(
       };
     } catch (error) {
       reply.code(400);
-      return {
-        error: {
-          message: error instanceof Error ? error.message : 'Failed to create graph',
-        },
-      };
+      throw error;
     }
   });
 
@@ -43,18 +39,26 @@ export default async function graphRoutes(
       };
     } catch (error) {
       reply.code(404);
-      return {
-        error: {
-          message: error instanceof Error ? error.message : 'Graph not found',
-        },
-      };
+      throw error;
     }
   });
 
   // Update graph
   app.put<GraphRoutes.Update>('/graphs/:id', async (req, reply) => {
     try {
-      const updated = await svc.update(req.params.id, req.body);
+      // Transform request body to include graphId for nodes and edges
+      const updateData = {
+        ...req.body,
+        nodes: req.body.nodes?.map(node => ({
+          ...node,
+          graphId: req.params.id,
+        })),
+        edges: req.body.edges?.map(edge => ({
+          ...edge,
+          graphId: req.params.id,
+        })),
+      };
+      const updated = await svc.update(req.params.id, updateData);
       return {
         data: {
           ...updated,
@@ -63,25 +67,18 @@ export default async function graphRoutes(
         },
       };
     } catch (error) {
-      if (error instanceof Error && (
-        error.message.includes('cycle') || 
-        error.message.includes('Self-loop') || 
-        error.message.includes('already exists')
-      )) {
+      if (
+        error instanceof Error &&
+        (error.message.includes('cycle') ||
+          error.message.includes('Self-loop') ||
+          error.message.includes('already exists'))
+      ) {
         reply.code(400);
-        return {
-          error: {
-            message: error.message,
-          },
-        };
+        throw error;
       }
-      
+
       reply.code(404);
-      return {
-        error: {
-          message: error instanceof Error ? error.message : 'Graph not found',
-        },
-      };
+      throw error;
     }
   });
 
@@ -92,11 +89,6 @@ export default async function graphRoutes(
       reply.code(204);
     } catch (error) {
       reply.code(404);
-      return {
-        error: {
-          message: error instanceof Error ? error.message : 'Graph not found',
-        },
-      };
     }
   });
 
@@ -114,11 +106,7 @@ export default async function graphRoutes(
       return { data: node };
     } catch (error) {
       reply.code(400);
-      return {
-        error: {
-          message: error instanceof Error ? error.message : 'Failed to add node',
-        },
-      };
+      throw error;
     }
   });
 
@@ -134,11 +122,7 @@ export default async function graphRoutes(
       return { data: edge };
     } catch (error) {
       reply.code(400);
-      return {
-        error: {
-          message: error instanceof Error ? error.message : 'Failed to add edge',
-        },
-      };
+      throw error;
     }
   });
 
@@ -152,11 +136,6 @@ export default async function graphRoutes(
       reply.code(204);
     } catch (error) {
       reply.code(404);
-      return {
-        error: {
-          message: error instanceof Error ? error.message : 'Node not found',
-        },
-      };
     }
   });
 
@@ -170,11 +149,6 @@ export default async function graphRoutes(
       reply.code(204);
     } catch (error) {
       reply.code(404);
-      return {
-        error: {
-          message: error instanceof Error ? error.message : 'Edge not found',
-        },
-      };
     }
   });
 }

@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "engines": {
-    "node": "~22.17.1",
+    "node": ">=22.17.1",
     "pnpm": "~10.14.0"
   },
   "scripts": {
@@ -45,6 +45,7 @@
     "fastify": "^5.4.0",
     "fastify-plugin": "^5.0.1",
     "pg": "^8.16.3",
-    "pino": "^9.7.0"
+    "pino": "^9.7.0",
+    "zod": "^4.0.17"
   }
 }

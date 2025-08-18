@@ -7,7 +7,7 @@ import { CalculatorCard } from '@/widgets/CalculatorCard';
 
 /**
  * Calculator page component
- * 
+ *
  * Features:
  * - Single-purpose page for calculator functionality
  * - Centered layout with proper padding

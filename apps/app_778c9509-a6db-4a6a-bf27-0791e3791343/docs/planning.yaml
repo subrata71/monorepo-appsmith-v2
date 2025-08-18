@@ -1,0 +1,22 @@
+plan_items:
+- id: counter-prototype
+  name: Simple Counter Prototype
+  sub_items:
+  - effort: 1
+    id: display-counter
+    name: Display Counter Value
+    summary: Show the current value of the counter on the page.
+  - effort: 1
+    id: increment-button
+    name: Increment Button
+    summary: Add a button that increases the counter value by 1 when clicked.
+  - effort: 1
+    id: decrement-button
+    name: Decrement Button
+    summary: Add a button that decreases the counter value by 1 when clicked.
+  - effort: 1
+    id: reset-button
+    name: Reset Button
+    summary: Add a button that resets the counter value to 0 when clicked.
+  summary: A single-page prototype with a counter that can be incremented, decremented,
+    and reset. No backend required.

@@ -26,7 +26,7 @@ export const HeapSortVisualizerPage = React.memo(() => {
                 <h2 className="text-xl font-semibold mb-4">Array Input</h2>
                 <ArrayInputSection />
               </div>
-              
+
               <div>
                 <h2 className="text-xl font-semibold mb-4">Controls</h2>
                 <ControlPanelSection />

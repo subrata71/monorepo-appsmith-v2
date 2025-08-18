@@ -1,6 +1,6 @@
 /**
  * AffirmationFeedback Feature
- * 
+ *
  * Exports for the affirmation feedback feature.
  */
 

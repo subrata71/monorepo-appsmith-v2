@@ -1,12 +1,12 @@
 export { useGraphStore } from './model/store';
-export type { 
-  Graph, 
-  GraphNode, 
-  GraphEdge, 
+export type {
+  Graph,
+  GraphNode,
+  GraphEdge,
   GraphValidationError,
   GraphEditorMode,
   GraphEditorState,
   CanvasPosition,
   NodeCreationData,
-  EdgeCreationData
+  EdgeCreationData,
 } from './model/types';

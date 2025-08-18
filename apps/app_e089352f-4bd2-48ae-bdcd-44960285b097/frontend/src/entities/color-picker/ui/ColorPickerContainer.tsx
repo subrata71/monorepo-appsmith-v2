@@ -9,13 +9,23 @@ interface ColorPickerContainerProps {
 export const ColorPickerContainer = React.memo<ColorPickerContainerProps>(
   ({ className = '' }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    
+
     const colorPickerId = useColorPickerStore(state => state.colorPickerId);
-    const isTrackingPointer = useColorPickerStore(state => state.isTrackingPointer);
-    const startPointerTracking = useColorPickerStore(state => state.startPointerTracking);
-    const updatePointerPosition = useColorPickerStore(state => state.updatePointerPosition);
-    const stopPointerTracking = useColorPickerStore(state => state.stopPointerTracking);
-    const calculateColorFromPosition = useColorPickerStore(state => state.calculateColorFromPosition);
+    const isTrackingPointer = useColorPickerStore(
+      state => state.isTrackingPointer
+    );
+    const startPointerTracking = useColorPickerStore(
+      state => state.startPointerTracking
+    );
+    const updatePointerPosition = useColorPickerStore(
+      state => state.updatePointerPosition
+    );
+    const stopPointerTracking = useColorPickerStore(
+      state => state.stopPointerTracking
+    );
+    const calculateColorFromPosition = useColorPickerStore(
+      state => state.calculateColorFromPosition
+    );
 
     const containerConfig: ColorPickerContainerType = {
       id: colorPickerId,
@@ -25,46 +35,60 @@ export const ColorPickerContainer = React.memo<ColorPickerContainerProps>(
     };
 
     // Get relative position within the container
-    const getRelativePosition = useCallback((clientX: number, clientY: number) => {
-      if (!containerRef.current) return { x: 0, y: 0 };
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      return {
-        x: clientX - rect.left,
-        y: clientY - rect.top,
-      };
-    }, []);
+    const getRelativePosition = useCallback(
+      (clientX: number, clientY: number) => {
+        if (!containerRef.current) return { x: 0, y: 0 };
+
+        const rect = containerRef.current.getBoundingClientRect();
+        return {
+          x: clientX - rect.left,
+          y: clientY - rect.top,
+        };
+      },
+      []
+    );
 
     // Handle pointer down (mouse/touch start)
-    const handlePointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      const position = getRelativePosition(event.clientX, event.clientY);
-      
-      if (containerRef.current) {
+    const handlePointerDown = useCallback(
+      (event: React.PointerEvent<HTMLDivElement>) => {
+        event.preventDefault();
+        const position = getRelativePosition(event.clientX, event.clientY);
+
+        if (containerRef.current) {
+          const containerSize = {
+            width: containerRef.current.offsetWidth,
+            height: containerRef.current.offsetHeight,
+          };
+
+          startPointerTracking(position);
+          calculateColorFromPosition(position, containerSize);
+        }
+      },
+      [startPointerTracking, calculateColorFromPosition, getRelativePosition]
+    );
+
+    // Handle pointer move (mouse/touch move)
+    const handlePointerMove = useCallback(
+      (event: React.PointerEvent<HTMLDivElement>) => {
+        if (!isTrackingPointer || !containerRef.current) return;
+
+        event.preventDefault();
+        const position = getRelativePosition(event.clientX, event.clientY);
         const containerSize = {
           width: containerRef.current.offsetWidth,
           height: containerRef.current.offsetHeight,
         };
-        
-        startPointerTracking(position);
-        calculateColorFromPosition(position, containerSize);
-      }
-    }, [startPointerTracking, calculateColorFromPosition, getRelativePosition]);
 
-    // Handle pointer move (mouse/touch move)
-    const handlePointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
-      if (!isTrackingPointer || !containerRef.current) return;
-      
-      event.preventDefault();
-      const position = getRelativePosition(event.clientX, event.clientY);
-      const containerSize = {
-        width: containerRef.current.offsetWidth,
-        height: containerRef.current.offsetHeight,
-      };
-      
-      updatePointerPosition(position);
-      calculateColorFromPosition(position, containerSize);
-    }, [isTrackingPointer, updatePointerPosition, calculateColorFromPosition, getRelativePosition]);
+        updatePointerPosition(position);
+        calculateColorFromPosition(position, containerSize);
+      },
+      [
+        isTrackingPointer,
+        updatePointerPosition,
+        calculateColorFromPosition,
+        getRelativePosition,
+      ]
+    );
 
     // Handle pointer up (mouse/touch end)
     const handlePointerUp = useCallback(() => {
@@ -72,60 +96,63 @@ export const ColorPickerContainer = React.memo<ColorPickerContainerProps>(
     }, [stopPointerTracking]);
 
     // Handle keyboard navigation
-    const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (!containerRef.current) return;
-      
-      const step = event.shiftKey ? 10 : 1; // Larger steps with Shift key
-      const containerSize = {
-        width: containerRef.current.offsetWidth,
-        height: containerRef.current.offsetHeight,
-      };
-      
-      let newX = containerSize.width * 0.5; // Default to center
-      let newY = containerSize.height * 0.5;
-      
-      // Get current position or default to center
-      const currentPosition = useColorPickerStore.getState().pickerPosition;
-      if (currentPosition) {
-        newX = currentPosition.x;
-        newY = currentPosition.y;
-      }
-      
-      switch (event.key) {
-        case 'ArrowLeft':
-          event.preventDefault();
-          newX = Math.max(0, newX - step);
-          break;
-        case 'ArrowRight':
-          event.preventDefault();
-          newX = Math.min(containerSize.width, newX + step);
-          break;
-        case 'ArrowUp':
-          event.preventDefault();
-          newY = Math.max(0, newY - step);
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          newY = Math.min(containerSize.height, newY + step);
-          break;
-        case 'Home':
-          event.preventDefault();
-          newX = 0;
-          newY = 0;
-          break;
-        case 'End':
-          event.preventDefault();
-          newX = containerSize.width;
-          newY = containerSize.height;
-          break;
-        default:
-          return; // Don't handle other keys
-      }
-      
-      const position = { x: newX, y: newY };
-      updatePointerPosition(position);
-      calculateColorFromPosition(position, containerSize);
-    }, [updatePointerPosition, calculateColorFromPosition]);
+    const handleKeyDown = useCallback(
+      (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!containerRef.current) return;
+
+        const step = event.shiftKey ? 10 : 1; // Larger steps with Shift key
+        const containerSize = {
+          width: containerRef.current.offsetWidth,
+          height: containerRef.current.offsetHeight,
+        };
+
+        let newX = containerSize.width * 0.5; // Default to center
+        let newY = containerSize.height * 0.5;
+
+        // Get current position or default to center
+        const currentPosition = useColorPickerStore.getState().pickerPosition;
+        if (currentPosition) {
+          newX = currentPosition.x;
+          newY = currentPosition.y;
+        }
+
+        switch (event.key) {
+          case 'ArrowLeft':
+            event.preventDefault();
+            newX = Math.max(0, newX - step);
+            break;
+          case 'ArrowRight':
+            event.preventDefault();
+            newX = Math.min(containerSize.width, newX + step);
+            break;
+          case 'ArrowUp':
+            event.preventDefault();
+            newY = Math.max(0, newY - step);
+            break;
+          case 'ArrowDown':
+            event.preventDefault();
+            newY = Math.min(containerSize.height, newY + step);
+            break;
+          case 'Home':
+            event.preventDefault();
+            newX = 0;
+            newY = 0;
+            break;
+          case 'End':
+            event.preventDefault();
+            newX = containerSize.width;
+            newY = containerSize.height;
+            break;
+          default:
+            return; // Don't handle other keys
+        }
+
+        const position = { x: newX, y: newY };
+        updatePointerPosition(position);
+        calculateColorFromPosition(position, containerSize);
+      },
+      [updatePointerPosition, calculateColorFromPosition]
+    );
 
     // Global pointer up handler to stop tracking even when pointer leaves container
     useEffect(() => {
@@ -195,10 +222,11 @@ export const ColorPickerContainer = React.memo<ColorPickerContainerProps>(
 
           {/* Hidden instructions for screen readers */}
           <div id="color-picker-instructions" className="sr-only">
-            Interactive color picker area. Click and drag or use keyboard navigation to select colors.
-            Use arrow keys to adjust color position, Shift + arrow keys for larger steps.
-            Press Home for top-left corner, End for bottom-right corner.
-            Selected color updates in real-time in the swatch below.
+            Interactive color picker area. Click and drag or use keyboard
+            navigation to select colors. Use arrow keys to adjust color
+            position, Shift + arrow keys for larger steps. Press Home for
+            top-left corner, End for bottom-right corner. Selected color updates
+            in real-time in the swatch below.
           </div>
         </div>
 

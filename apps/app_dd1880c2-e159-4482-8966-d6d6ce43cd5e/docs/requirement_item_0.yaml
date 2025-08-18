@@ -1,0 +1,65 @@
+access: Accessible to authenticated users. All actions (add, edit, delete) require
+  user to be logged in. No special roles at this stage.
+behaviour: Immediate feedback on actions (e.g. after saving, editing, or deleting
+  an entry). Forms validate required fields in real time. Confirmation prompt before
+  delete. Form pre-fills values for edit. List updates instantly after changes. Undo
+  option for delete within a short window.
+name: Entry Management
+page:
+  behaviour: '''Add Entry'' button displays the form. Editing an entry pre-fills the
+    form. Deleting asks for confirmation and supports undo. List auto-updates on changes.
+    Smooth transitions between add/edit modes. Error states and empty-list messages
+    are clear.'
+  id: entry_management
+  purpose: Central page for users to manage (add, edit, delete) their income and expense
+    entries.
+  sections:
+  - behaviour: Form validates input on blur and submit. When adding, fields are blank.
+      When editing, fields pre-fill with selected data. Save submits and updates list.
+      Cancel resets or hides form. Required fields must be filled before saving.
+    blocks:
+    - behaviour: Numeric input. Must be positive and required.
+      id: amount_input
+    - behaviour: Dropdown with categories. Required.
+      id: category_select
+    - behaviour: Date input. Defaults to today for add, entry's date for edit. Required.
+      id: date_picker
+    - behaviour: Multiline text, optional, max 250 chars.
+      id: notes_field
+    - behaviour: Toggle or radio; choose income or expense. Required.
+      id: type_toggle
+    - behaviour: Validates and submits form if valid.
+      id: save_button
+    - behaviour: Resets/hides form.
+      id: cancel_button
+    id: entry_form_section
+    title: Add/Edit Entry Form
+    visual: 'Card or modal with labeled fields: Amount (number), Category (dropdown),
+      Date (datepicker), Notes (textarea), Type (income/expense toggle). Action buttons
+      below form. Highlight errors inline.'
+  - behaviour: Shows all entries sorted by date, newest first. Edit opens form in
+      edit mode. Delete prompts confirmation and supports undo. List updates instantly
+      after changes. Empty state message if no entries.
+    blocks:
+    - behaviour: Displays all entries, updated in real time.
+      id: entries_table
+    - behaviour: Opens form with entry data for editing.
+      id: edit_entry_action
+    - behaviour: Prompts confirmation, deletes entry, supports undo for short window.
+      id: delete_entry_action
+    id: entries_list_section
+    title: Entries List
+    visual: 'Table or cards. Columns: Amount, Category, Type, Date, Notes, Actions
+      (edit, delete). Alternating row background for readability. Edit and delete
+      icons/buttons at row end.'
+  title: Entry Management
+  visual: 'Two main areas: (1) Entry List showing all entries in a table or card layout,
+    and (2) Entry Form for add/edit actions. On mobile, stack sections vertically;
+    on desktop, show side by side. Prominent action buttons with clear feedback.'
+summary: Allow users to add, edit, and delete income and expense entries with amount,
+  category, date, and notes. The system provides a simple, efficient interface for
+  tracking financial entries.
+visual: Clean, modern interface with clear separation between input forms and listings.
+  Use soft background with accent colors for primary actions (e.g. blue for save,
+  red for delete). Responsive design for desktop and mobile. Icons for edit/delete
+  actions. Readable fonts and sufficient spacing.

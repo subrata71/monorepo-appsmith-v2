@@ -11,11 +11,7 @@ export const ResetGame = React.memo<ResetGameProps>(({ onReset }) => {
   }, [onReset]);
 
   return (
-    <Button
-      variant="outline"
-      onClick={handleReset}
-      className="px-6 py-2"
-    >
+    <Button variant="outline" onClick={handleReset} className="px-6 py-2">
       Reset Game
     </Button>
   );

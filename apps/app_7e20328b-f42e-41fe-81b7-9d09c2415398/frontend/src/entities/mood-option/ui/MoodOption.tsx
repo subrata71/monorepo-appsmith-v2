@@ -45,20 +45,24 @@ export const MoodOption = React.memo<MoodOptionProps>(
         aria-label={`Select ${option.label} mood`}
         aria-pressed={selected}
       >
-        <span 
-          className="text-3xl animate-bounce" 
-          role="img" 
+        <span
+          className="text-3xl animate-bounce"
+          role="img"
           aria-label={option.label}
           style={{
-            filter: selected ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' : 'none',
+            filter: selected
+              ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))'
+              : 'none',
             animationDuration: selected ? '0.6s' : '2s',
             animationIterationCount: selected ? '2' : 'infinite',
-            animationDelay: selected ? '0s' : `${Math.random() * 2}s`
+            animationDelay: selected ? '0s' : `${Math.random() * 2}s`,
           }}
         >
           {option.emoji}
         </span>
-        <span className="text-sm font-semibold tracking-wide">{option.label}</span>
+        <span className="text-sm font-semibold tracking-wide">
+          {option.label}
+        </span>
       </Button>
     );
   }

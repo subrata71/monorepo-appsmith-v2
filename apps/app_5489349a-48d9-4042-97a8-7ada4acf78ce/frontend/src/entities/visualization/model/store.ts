@@ -15,11 +15,12 @@ interface VisualizationActions {
   setError: (error: string | null) => void;
 }
 
-type VisualizationStore = VisualizationState & VisualizationActions & {
-  sortSteps: SortStep[];
-  totalSteps: number;
-  currentDescription: string;
-};
+type VisualizationStore = VisualizationState &
+  VisualizationActions & {
+    sortSteps: SortStep[];
+    totalSteps: number;
+    currentDescription: string;
+  };
 
 // Default array for demonstration
 const DEFAULT_ARRAY = [64, 34, 25, 12, 22, 11, 90];
@@ -56,7 +57,7 @@ export const useVisualizationStore = create<VisualizationStore>((set, get) => ({
   initialize: (array: number[], speed = 1) => {
     const algorithm = new HeapSortAlgorithm(array);
     const sortSteps = algorithm.getSteps();
-    
+
     // Clear any existing animation
     if (animationTimeoutId) {
       clearTimeout(animationTimeoutId);
@@ -82,7 +83,7 @@ export const useVisualizationStore = create<VisualizationStore>((set, get) => ({
   setArray: (array: number[]) => {
     const algorithm = new HeapSortAlgorithm(array);
     const sortSteps = algorithm.getSteps();
-    
+
     // Clear any existing animation
     if (animationTimeoutId) {
       clearTimeout(animationTimeoutId);
@@ -117,12 +118,12 @@ export const useVisualizationStore = create<VisualizationStore>((set, get) => ({
     if (state.array.length === 0 || state.status === 'running') return;
 
     set({ status: 'running' });
-    
+
     const runAnimation = () => {
       const currentState = get();
-      
+
       if (currentState.status !== 'running') return;
-      
+
       if (currentState.currentStep >= currentState.totalSteps) {
         set({ status: 'completed' });
         return;
@@ -158,7 +159,7 @@ export const useVisualizationStore = create<VisualizationStore>((set, get) => ({
 
   step: () => {
     const state = get();
-    
+
     if (state.currentStep >= state.totalSteps) {
       set({ status: 'completed' });
       return;
@@ -172,14 +173,15 @@ export const useVisualizationStore = create<VisualizationStore>((set, get) => ({
         sortedPartition: step.sortedPartition,
         currentDescription: step.description,
         currentStep: state.currentStep + 1,
-        status: state.currentStep + 1 >= state.totalSteps ? 'completed' : 'paused',
+        status:
+          state.currentStep + 1 >= state.totalSteps ? 'completed' : 'paused',
       });
     }
   },
 
   reset: () => {
     const state = get();
-    
+
     // Clear any existing animation
     if (animationTimeoutId) {
       clearTimeout(animationTimeoutId);

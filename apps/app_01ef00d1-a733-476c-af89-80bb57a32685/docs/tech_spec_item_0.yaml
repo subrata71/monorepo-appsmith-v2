@@ -1,0 +1,339 @@
+client:
+  components:
+    entities:
+    - description: Displays timer information and handles timer state.
+      entity: timer
+      name: TimerEntity
+      props:
+      - timer
+    features:
+    - description: Handles start/pause logic and toggling button label/state.
+      entities:
+      - TimerEntity
+      feature: start-pause-control
+      name: StartPauseTimerFeature
+      props:
+      - timer
+      - onStartPause
+      shared:
+      - Button
+    - description: Handles reset logic and disables if already at initial value.
+      entities:
+      - TimerEntity
+      feature: reset-control
+      name: ResetTimerFeature
+      props:
+      - timer
+      - onReset
+      shared:
+      - Button
+    shared:
+    - category: ui
+      description: Accessible button component
+      name: Button
+      props:
+      - onClick
+      - disabled
+      - children
+    - category: lib
+      description: Utility to format seconds as MM:SS
+      name: formatSeconds
+      props:
+      - seconds
+    - category: ui
+      description: For accessible labels
+      name: VisuallyHidden
+      props:
+      - children
+    - category: ui
+      description: Focus indicator for keyboard navigation
+      name: FocusRing
+      props:
+      - children
+    - category: lib
+      description: Custom hook for timer ticking
+      name: useInterval
+      props:
+      - callback
+      - delay
+    widgets:
+    - description: Displays large MM:SS timer in the center
+      entities:
+      - TimerEntity
+      features: []
+      name: TimerDisplayWidget
+      props:
+      - timer
+      shared:
+      - formatSeconds
+    - description: Arranges Start/Pause and Reset buttons horizontally, accessible
+        and responsive.
+      entities: []
+      features:
+      - StartPauseTimerFeature
+      - ResetTimerFeature
+      name: TimerControlsWidget
+      props:
+      - timer
+      - onStartPause
+      - onReset
+      shared:
+      - Button
+      - FocusRing
+  pages:
+  - description: Single-page Pomodoro timer app with large countdown and simple controls.
+    queries:
+    - useTimerStore
+    route: /
+    title: Pomodoro Timer
+    widgets:
+    - TimerDisplayWidget
+    - TimerControlsWidget
+  stores:
+  - actions:
+    - 'initializeTimer(initialSeconds: number)'
+    - startTimer()
+    - pauseTimer()
+    - tick()
+    - resetTimer()
+    - 'setError(error: string)'
+    description: State store for timer (current value, running/paused, etc).
+    layer: entities
+    name: timerStore
+    state_shape:
+    - name: timer
+      type: Timer
+    - name: loading
+      type: boolean
+    - name: error
+      type: string | null
+components:
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  responses:
+  - code: '200'
+    description: Success
+  - code: '400'
+    description: Validation error
+  - code: '404'
+    description: Not found
+  - code: '500'
+    description: Internal server error
+  schemas:
+  - name: Timer
+    type: object
+  - name: ErrorResponse
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns the current timer state from client memory.
+      operation_id: getTimer
+      summary: Get current timer state
+      tags:
+      - Timer
+    path: /timer
+  - method: POST
+    operation:
+      description: Creates a new timer with default initialSeconds and idle state.
+      operation_id: createTimer
+      summary: Initialize timer instance
+      tags:
+      - Timer
+    path: /timer
+  - method: PUT
+    operation:
+      description: Update timer (e.g., start, pause, tick, reset); idempotent.
+      operation_id: updateTimer
+      summary: Update timer state
+      tags:
+      - Timer
+    path: /timer/{id}
+  - method: DELETE
+    operation:
+      description: Removes timer state (resets to default).
+      operation_id: deleteTimer
+      summary: Delete timer instance
+      tags:
+      - Timer
+    path: /timer/{id}
+  description: Timer domain encapsulates the state and operations for the Pomodoro
+    countdown, including current time, running/paused state, and duration settings.
+  models:
+  - description: Represents the current Pomodoro timer state in client memory.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: currentSeconds
+      nullable: false
+      pk: false
+      type: integer
+    - name: status
+      nullable: false
+      pk: false
+      type: string
+    - name: initialSeconds
+      nullable: false
+      pk: false
+      type: integer
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Timer
+  name: timer
+  services:
+  - description: 'Encapsulates timer business logic: start, pause, tick (countdown),
+      reset, and state validation.'
+    methods:
+    - getTimer
+    - createTimer
+    - updateTimer
+    - deleteTimer
+    name: TimerService
+metadata:
+  description: Minimalist, accessible, single-page Pomodoro timer UI with live countdown,
+    start/pause, and reset controls. All state is client-side, no authentication or
+    persistence required.
+  generated_at: '2024-06-13T15:10:00Z'
+  name: Pomodoro Timer UI
+  version: 1.0.0
+product:
+  features:
+  - description: Real-time countdown display in MM:SS, updating every second, never
+      below zero.
+    domains:
+    - timer
+    id: live-timer
+    priority: high
+    title: Live Countdown Timer
+  - description: Toggle timer running state with a single button; accessible and responsive.
+    domains:
+    - timer
+    id: start-pause-control
+    priority: high
+    title: Start/Pause Control
+  - description: Reset timer to starting value; disables or visually subdues if already
+      reset.
+    domains:
+    - timer
+    id: reset-control
+    priority: medium
+    title: Reset Control
+  - description: Keyboard navigation, focus indicators, ARIA roles/labels, and color
+      contrast.
+    domains:
+    - ui
+    id: accessibility
+    priority: high
+    title: Accessibility
+  - description: Optimized for both desktop and mobile with flexible layout and tap
+      targets.
+    domains:
+    - ui
+    id: responsiveness
+    priority: medium
+    title: Responsive Layout
+  goals:
+  - Enable users to run focused Pomodoro sessions with an uncluttered interface
+  - Ensure accessibility and responsiveness for all users
+  - Provide intuitive, immediate timer controls
+  personas:
+  - description: A person seeking to improve productivity through timeboxing with
+      a simple, non-distracting tool.
+    goals:
+    - Start a Pomodoro timer quickly
+    - Avoid unnecessary distractions
+    - Easily control the timer with keyboard or mouse
+    name: Focused Individual
+  summary: A minimalist, distraction-free Pomodoro timer app that is responsive and
+    fully accessible, with simple controls for starting, pausing, and resetting the
+    timer.
+use_cases:
+- actors:
+  - Focused Individual
+  apis:
+  - GET /timer
+  - POST /timer
+  - PUT /timer
+  description: User starts the Pomodoro timer to begin a focused session.
+  domains:
+  - timer
+  happy_path:
+  - User activates Start button (click or keyboard).
+  - Timer begins counting down, updating every second.
+  - Start button changes to "Pause".
+  id: start-pomodoro
+  pages:
+  - /
+  postconditions:
+  - Timer runs until paused or reset.
+  preconditions:
+  - Page is loaded; timer is at initial value.
+  title: Start Pomodoro Timer
+- actors:
+  - Focused Individual
+  apis:
+  - PUT /timer
+  description: User pauses the running timer.
+  domains:
+  - timer
+  happy_path:
+  - User activates Pause button (click or keyboard).
+  - Timer stops counting down.
+  - Button label changes to "Start".
+  id: pause-pomodoro
+  pages:
+  - /
+  postconditions:
+  - Timer is paused; can be resumed or reset.
+  preconditions:
+  - Timer is running.
+  title: Pause Pomodoro Timer
+- actors:
+  - Focused Individual
+  apis:
+  - PUT /timer
+  description: User resets the timer to its initial value.
+  domains:
+  - timer
+  happy_path:
+  - User activates Reset button (click or keyboard).
+  - Timer stops and resets to initial value.
+  - Reset button is visually subdued if already reset.
+  id: reset-pomodoro
+  pages:
+  - /
+  postconditions:
+  - Timer is at initial value, stopped.
+  preconditions:
+  - Timer is running or paused.
+  title: Reset Pomodoro Timer
+user_journeys:
+- id: normal-session
+  persona: Focused Individual
+  related_use_cases:
+  - start-pomodoro
+  - pause-pomodoro
+  - reset-pomodoro
+  steps:
+  - action: User loads app, sees timer at 25:00.
+    page: /
+  - action: Presses Start; timer counts down.
+    page: /
+  - action: Pauses mid-way, then resumes.
+    page: /
+  - action: At any point, can reset to 25:00.
+    page: /
+  success_criteria: User completes a session or resets as desired. All actions are
+    accessible and responsive.
+  title: Standard Pomodoro Session

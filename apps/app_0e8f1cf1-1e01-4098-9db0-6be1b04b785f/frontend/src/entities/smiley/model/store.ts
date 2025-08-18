@@ -26,16 +26,16 @@ const getRandomColor = (): ColorType => {
 };
 
 export const useSmileyStore = create<SmileyStore>()(
-  subscribeWithSelector((set) => ({
+  subscribeWithSelector(set => ({
     // Initial state
     mouth: 'happy',
     eyes: 'normal',
     color: '#FFD700',
 
     // Actions
-    setMouth: (mouth) => set({ mouth }),
-    setEyes: (eyes) => set({ eyes }),
-    setColor: (color) => set({ color }),
+    setMouth: mouth => set({ mouth }),
+    setEyes: eyes => set({ eyes }),
+    setColor: color => set({ color }),
     randomize: () =>
       set({
         mouth: getRandomMouth(),

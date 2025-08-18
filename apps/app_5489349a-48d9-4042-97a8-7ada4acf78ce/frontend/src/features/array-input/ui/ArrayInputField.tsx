@@ -1,12 +1,15 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Input, Label, Button } from '@/shared/ui';
 import { useVisualizationStore } from '@/entities/visualization';
-import { validateArrayInput, formatArrayForInput } from '@/entities/visualization/lib/array-utils';
+import {
+  validateArrayInput,
+  formatArrayForInput,
+} from '@/entities/visualization/lib/array-utils';
 
 export const ArrayInputField = React.memo(() => {
   const [inputValue, setInputValue] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
-  
+
   const array = useVisualizationStore(state => state.array);
   const setArray = useVisualizationStore(state => state.setArray);
   const setError = useVisualizationStore(state => state.setError);
@@ -22,24 +25,27 @@ export const ArrayInputField = React.memo(() => {
     }
   }, [array]);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
-    
-    // Clear previous errors
-    setValidationError(null);
-    setError(null);
-  }, [setError]);
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setInputValue(value);
+
+      // Clear previous errors
+      setValidationError(null);
+      setError(null);
+    },
+    [setError]
+  );
 
   const handleApplyArray = useCallback(() => {
     const validation = validateArrayInput(inputValue);
-    
+
     if (!validation.valid) {
       setValidationError(validation.error || 'Invalid input');
       setError(validation.error || 'Invalid input');
       return;
     }
-    
+
     if (validation.array) {
       setArray(validation.array);
       setValidationError(null);
@@ -47,11 +53,14 @@ export const ArrayInputField = React.memo(() => {
     }
   }, [inputValue, setArray, setError]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleApplyArray();
-    }
-  }, [handleApplyArray]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleApplyArray();
+      }
+    },
+    [handleApplyArray]
+  );
 
   const isDisabled = useMemo(() => status === 'running', [status]);
   const hasError = useMemo(() => Boolean(validationError), [validationError]);
@@ -73,7 +82,7 @@ export const ArrayInputField = React.memo(() => {
           aria-invalid={hasError}
           className="flex-1"
         />
-        <Button 
+        <Button
           onClick={handleApplyArray}
           disabled={isDisabled || !inputValue.trim()}
           variant="default"

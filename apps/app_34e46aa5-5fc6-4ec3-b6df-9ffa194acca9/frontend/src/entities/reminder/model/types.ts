@@ -1,6 +1,6 @@
 /**
  * Reminder Domain Types
- * 
+ *
  * These types define the shape of reminder data for local state management.
  */
 

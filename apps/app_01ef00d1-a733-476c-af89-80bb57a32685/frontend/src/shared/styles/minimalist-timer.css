@@ -1,0 +1,111 @@
+/* Minimalist Timer Styles */
+
+/* Custom CSS variables for minimalist timer */
+:root {
+  --timer-bg: #ffffff;
+  --timer-primary: #262626;
+  --timer-secondary: #525252;
+  --timer-muted: #a3a3a3;
+  --timer-light: #f5f5f5;
+  --timer-border: #d4d4d4;
+  --timer-border-hover: #171717;
+}
+
+/* Global minimalist timer styles */
+.minimal-timer-container {
+  background: var(--timer-bg);
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--timer-primary);
+  letter-spacing: -0.025em;
+}
+
+/* Minimalist button styling */
+.minimal-button-primary {
+  --button-bg: transparent;
+  --button-border: var(--timer-border);
+  --button-text: var(--timer-secondary);
+  --button-hover-border: var(--timer-border-hover);
+  --button-hover-bg: var(--timer-light);
+}
+
+.minimal-button-secondary {
+  --button-bg: transparent;
+  --button-border: var(--timer-border);
+  --button-text: var(--timer-secondary);
+  --button-hover-border: var(--timer-border-hover);
+  --button-hover-bg: var(--timer-light);
+}
+
+/* Minimalist focus states for accessibility */
+.minimal-focus:focus-visible {
+  outline: 2px solid var(--timer-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Subtle animation for timer state changes */
+.minimal-timer-transition {
+  transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Typography enhancements for minimalist look */
+.minimal-typography {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Minimalist separator */
+.minimal-divider {
+  border-color: var(--timer-border);
+  opacity: 0.6;
+}
+
+/* Breathing space utilities */
+.minimal-spacing-small {
+  gap: 0.75rem;
+}
+
+.minimal-spacing-medium {
+  gap: 1.5rem;
+}
+
+.minimal-spacing-large {
+  gap: 3rem;
+}
+
+/* Hover effects for interactive elements */
+.minimal-hover-scale {
+  transition: transform 0.2s ease-out;
+}
+
+.minimal-hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.minimal-hover-scale:active {
+  transform: scale(0.98);
+}
+
+/* Clean button reset for minimal style */
+.minimal-button-reset {
+  background: none;
+  border: 1px solid var(--timer-border);
+  color: var(--timer-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+}
+
+.minimal-button-reset:hover {
+  border-color: var(--timer-border-hover);
+  background-color: var(--timer-light);
+}
+
+.minimal-button-reset:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

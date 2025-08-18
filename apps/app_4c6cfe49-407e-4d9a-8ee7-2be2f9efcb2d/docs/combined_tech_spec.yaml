@@ -1,0 +1,362 @@
+metadata:
+  description: Comprehensive technical specification combining all individual plan
+    specifications
+  generated_from_files:
+  - tech_spec_item_0.yaml
+  title: Combined Technical Specification
+  total_plans: 1
+plans:
+- plan_name: item_0
+  source_file: tech_spec_item_0.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Represents a single board cell (blank, X, O), handles click/disabled
+            logic
+          entity: cell
+          name: TicTacToeCell
+          props:
+          - value
+          - onClick
+          - disabled
+        - description: Renders the 3x3 grid, manages cell click events
+          entity: board
+          name: TicTacToeBoard
+          props:
+          - board
+          - onCellClick
+          - disabled
+        features:
+        - description: Shows current player, win, or draw status
+          entities:
+          - TicTacToeGame
+          feature: status
+          name: GameStatus
+          props:
+          - status
+          - currentPlayer
+          - winner
+          shared:
+          - Text
+        - description: Handles reset button logic and triggers game state reset
+          entities:
+          - TicTacToeGame
+          feature: reset
+          name: ResetGame
+          props:
+          - onReset
+          shared:
+          - Button
+        shared:
+        - category: ui
+          description: Reusable button component, accent color, rounded, white text
+          name: Button
+          props:
+          - onClick
+          - disabled
+          - children
+        - category: ui
+          description: Typography component for status and controls
+          name: Text
+          props:
+          - children
+          - variant
+        - category: ui
+          description: Square grid cell with hover/focus logic
+          name: Cell
+          props:
+          - value
+          - onClick
+          - disabled
+        - category: ui
+          description: Layout container centering content on page
+          name: CenteredContainer
+          props:
+          - children
+        widgets:
+        - description: Combines board, status display, and reset into main game area
+          entities:
+          - TicTacToeBoard
+          features:
+          - GameStatus
+          - ResetGame
+          name: TicTacToeWidget
+          props: []
+          shared:
+          - CenteredContainer
+      pages:
+      - description: Allows users to play and restart a game of TicTacToe
+        queries: []
+        route: /
+        title: TicTacToe Game
+        widgets:
+        - TicTacToeWidget
+      - description: Status display above board, shows current player or result, disables
+          interaction after end.
+        queries: []
+        route: /
+        title: Game Status
+        widgets:
+        - GameStatus
+      - description: 3x3 grid of interactive cells, responsive layout.
+        queries: []
+        route: /
+        title: Game Board
+        widgets:
+        - TicTacToeBoard
+      - description: Reset button to restart the game, always visible.
+        queries: []
+        route: /
+        title: Reset Game
+        widgets:
+        - ResetGame
+      stores:
+      - actions:
+        - startNewGame
+        - makeMove
+        - resetGame
+        - getGameState
+        description: Manages the TicTacToe game state, including board, current player,
+          status, and exposes actions for moves and reset
+        layer: entities
+        name: TicTacToeGameStore
+        state_shape:
+        - name: id
+          type: string
+        - name: board
+          type: string[]
+        - name: currentPlayer
+          type: string
+        - name: status
+          type: string
+        - name: winner
+          type: string
+        - name: createdAt
+          type: string
+        - name: updatedAt
+          type: string
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: TicTacToeGame
+        type: object
+    domains:
+    - apis:
+      - method: GET
+        operation:
+          description: Returns the current game session state from the client store.
+          operation_id: getTicTacToeGame
+          summary: Get current TicTacToe game state
+          tags:
+          - TicTacToeGame
+        path: /game
+      - method: POST
+        operation:
+          description: Initializes a new game session in the client store.
+          operation_id: createTicTacToeGame
+          summary: Start a new TicTacToe game
+          tags:
+          - TicTacToeGame
+        path: /game
+      - method: POST
+        operation:
+          description: Updates the board by marking a cell and progressing game state.
+          operation_id: updateTicTacToeGame
+          summary: Update TicTacToe game state (make a move)
+          tags:
+          - TicTacToeGame
+        path: /game/move
+      - method: DELETE
+        operation:
+          description: Clears the board, sets turn to X, and resets game state.
+          operation_id: deleteTicTacToeGame
+          summary: Reset the TicTacToe game
+          tags:
+          - TicTacToeGame
+        path: /game
+      description: Domain containing the core game state and logic for the TicTacToe
+        game session on the client.
+      models:
+      - description: Represents the state of a single TicTacToe game session.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: board
+          nullable: false
+          pk: false
+          type: string[]
+        - name: currentPlayer
+          nullable: false
+          pk: false
+          type: string
+        - name: status
+          nullable: false
+          pk: false
+          type: string
+        - name: winner
+          nullable: true
+          pk: false
+          type: string
+        - name: createdAt
+          nullable: false
+          pk: false
+          type: string
+        - name: updatedAt
+          nullable: false
+          pk: false
+          type: string
+        name: TicTacToeGame
+      name: tictactoe
+      services:
+      - description: Provides business logic for handling moves, win/draw detection,
+          and game resets.
+        methods:
+        - startNewGame
+        - makeMove
+        - resetGame
+        - getGameState
+        name: TicTacToeGameService
+    metadata:
+      description: Differential technical specification for the client-side TicTacToe
+        game with a 3x3 grid, player turn logic, win/draw detection, stateful UI,
+        and reset functionality.
+      generated_at: '2024-06-13T12:00:00Z'
+      name: TicTacToe Game UI
+      version: 1.0.0
+    product:
+      features:
+      - description: 3x3 interactive grid with alternating turns, player indicators,
+          win/draw logic, and reset functionality.
+        domains:
+        - tictactoe
+        id: main_board
+        priority: high
+        title: TicTacToe Game Board
+      - description: Real-time display of current game status, including player turn,
+          victory, or draw.
+        domains:
+        - tictactoe
+        id: game_status_display
+        priority: high
+        title: Game Status Display
+      - description: One-click reset to restart the game state and UI instantly.
+        domains:
+        - tictactoe
+        id: game_reset
+        priority: medium
+        title: Game Reset
+      goals:
+      - Provide an instant-playable TicTacToe experience in the browser
+      - Enforce game rules and win/draw detection, preventing invalid moves
+      - Deliver a clean, responsive, and accessible UI for all devices
+      - Allow users to easily restart the game at any time
+      personas:
+      - description: Wants to quickly play a game of TicTacToe in the browser for
+          fun or nostalgia.
+        goals:
+        - Play a quick game of TicTacToe easily
+        name: Casual User
+      - description: Expects a responsive and touch-friendly game experience on a
+          mobile device.
+        goals:
+        - Play TicTacToe comfortably on mobile devices
+        name: Mobile User
+      - description: Evaluates the interface for clarity, accessibility, and adherence
+          to visual guidelines.
+        goals:
+        - Verify UI clarity and accessibility
+        name: Designer/QA
+      summary: A fully interactive, browser-based TicTacToe game with modern, minimal
+        UI, real-time play, and automatic status detection. All logic is client-side
+        only; no authentication or server required.
+    use_cases:
+    - actors:
+      - Casual User
+      - Mobile User
+      apis:
+      - updateTicTacToeGame
+      description: User plays a complete game with alternating turns, with UI reflecting
+        moves and outcome.
+      domains:
+      - tictactoe
+      happy_path:
+      - 'User sees empty board and ''Current Player: X'''
+      - User clicks a cell; cell updates to 'X', turn updates to 'O'
+      - User and opponent alternate moves until win/draw
+      - Status updates to 'Player X wins!', 'Player O wins!', or 'Draw!' as appropriate
+      - Board disables further moves after game ends
+      id: play_single_game
+      pages:
+      - /
+      postconditions:
+      - Game completed, status shown, board locked
+      preconditions:
+      - Game page is loaded, empty board
+      title: Play a full game of TicTacToe
+    - actors:
+      - Casual User
+      - Mobile User
+      apis:
+      - deleteTicTacToeGame
+      description: User clicks 'Reset' to restart the board and play again.
+      domains:
+      - tictactoe
+      happy_path:
+      - User clicks 'Reset' button
+      - 'Board clears, status resets to ''Current Player: X'''
+      - All cells re-enabled for input
+      id: reset_game
+      pages:
+      - /
+      postconditions:
+      - New game started, ready for play
+      preconditions:
+      - Game in any state
+      title: Reset the current game
+    user_journeys:
+    - id: start_to_win
+      persona: Casual User
+      related_use_cases:
+      - play_single_game
+      - reset_game
+      steps:
+      - action: 'Open TicTacToe page; see empty board and ''Current Player: X''.'
+        page: /
+      - action: Take turns marking cells with another player.
+        page: /
+      - action: Achieve three in a row.
+        page: /
+      - action: Status updates to 'Player X wins!' (or 'Player O wins!').
+        page: /
+      - action: Board disables further input.
+        page: /
+      - action: Click 'Reset' to play again.
+        page: /
+      success_criteria: User can play a complete game, win, and restart successfully.
+      title: Start a game and win
+    - id: draw_game
+      persona: Mobile User
+      related_use_cases:
+      - play_single_game
+      - reset_game
+      steps:
+      - action: Open TicTacToe page.
+        page: /
+      - action: Alternate marking cells until all filled, no winner.
+        page: /
+      - action: Status updates to 'Draw!'.
+        page: /
+      - action: Board disables further input.
+        page: /
+      - action: Click 'Reset' for a new game.
+        page: /
+      success_criteria: User can play to a draw and restart the game.
+      title: Play to a draw
+summary:
+  plan_names:
+  - item_0
+  total_plans: 1

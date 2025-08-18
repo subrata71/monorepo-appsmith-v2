@@ -12,7 +12,7 @@ export type {
   GraphEditorState,
   CanvasPosition,
   NodeCreationData,
-  EdgeCreationData
+  EdgeCreationData,
 } from '@app/shared/api-types/graph';
 
 // UI-specific types

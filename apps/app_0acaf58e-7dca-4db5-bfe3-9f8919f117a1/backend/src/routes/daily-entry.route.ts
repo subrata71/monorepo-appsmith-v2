@@ -1,6 +1,6 @@
 /**
  * Daily Entry Routes
- * 
+ *
  * HTTP route handlers for daily entry endpoints
  */
 
@@ -12,16 +12,28 @@ import { getTodayDate } from '../utils/date';
 
 // Request/Response schemas
 const createDailyEntrySchema = z.object({
-  sentence: z.string().min(1, 'Sentence is required').max(200, 'Sentence cannot exceed 200 characters'),
-  entryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format').optional(),
+  sentence: z
+    .string()
+    .min(1, 'Sentence is required')
+    .max(200, 'Sentence cannot exceed 200 characters'),
+  entryDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
+    .optional(),
 });
 
 const updateDailyEntrySchema = z.object({
-  sentence: z.string().min(1, 'Sentence is required').max(200, 'Sentence cannot exceed 200 characters'),
+  sentence: z
+    .string()
+    .min(1, 'Sentence is required')
+    .max(200, 'Sentence cannot exceed 200 characters'),
 });
 
 const getDailyEntryQuerySchema = z.object({
-  entryDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format').optional(),
+  entryDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Invalid date format')
+    .optional(),
 });
 
 // Mock user ID for now (in a real app, this would come from authentication)
@@ -42,7 +54,8 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ['DailyEntry'],
         summary: "Get today's daily entry for the authenticated user",
-        description: "Returns the user's entry for a specific date (defaults to today if not provided)",
+        description:
+          "Returns the user's entry for a specific date (defaults to today if not provided)",
         querystring: getDailyEntryQuerySchema,
         response: {
           200: {
@@ -58,12 +71,25 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
                   createdAt: { type: 'string', format: 'date-time' },
                   updatedAt: { type: 'string', format: 'date-time' },
                 },
-                required: ['id', 'userId', 'entryDate', 'sentence', 'createdAt', 'updatedAt'],
+                required: [
+                  'id',
+                  'userId',
+                  'entryDate',
+                  'sentence',
+                  'createdAt',
+                  'updatedAt',
+                ],
               },
             },
             required: ['data'],
           },
           404: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
+          500: {
             type: 'object',
             properties: {
               message: { type: 'string' },
@@ -75,14 +101,16 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       try {
         const { entryDate } = request.query as { entryDate?: string };
-        
+
         const entry = await dailyEntryService.getEntry({
           userId: MOCK_USER_ID,
           entryDate: entryDate || getTodayDate(),
         });
 
         if (!entry) {
-          return reply.status(404).send({ message: 'Entry not found for the specified date' });
+          return reply
+            .status(404)
+            .send({ message: 'Entry not found for the specified date' });
         }
 
         return reply.send({ data: entry });
@@ -103,7 +131,8 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ['DailyEntry'],
         summary: 'Create a daily entry for today',
-        description: 'Create a new one-sentence entry for the authenticated user for the given date (default: today). Only one per user per day.',
+        description:
+          'Create a new one-sentence entry for the authenticated user for the given date (default: today). Only one per user per day.',
         body: createDailyEntrySchema,
         response: {
           201: {
@@ -119,7 +148,14 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
                   createdAt: { type: 'string', format: 'date-time' },
                   updatedAt: { type: 'string', format: 'date-time' },
                 },
-                required: ['id', 'userId', 'entryDate', 'sentence', 'createdAt', 'updatedAt'],
+                required: [
+                  'id',
+                  'userId',
+                  'entryDate',
+                  'sentence',
+                  'createdAt',
+                  'updatedAt',
+                ],
               },
             },
             required: ['data'],
@@ -136,13 +172,22 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
               message: { type: 'string' },
             },
           },
+          500: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
         },
       },
     },
     async (request, reply) => {
       try {
-        const { sentence, entryDate } = request.body as { sentence: string; entryDate?: string };
-        
+        const { sentence, entryDate } = request.body as {
+          sentence: string;
+          entryDate?: string;
+        };
+
         const entry = await dailyEntryService.createEntry({
           userId: MOCK_USER_ID,
           sentence,
@@ -152,16 +197,19 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
         return reply.status(201).send({ data: entry });
       } catch (error) {
         fastify.log.error(error);
-        
+
         if (error instanceof Error) {
           if (error.message.includes('already exists')) {
             return reply.status(409).send({ message: error.message });
           }
-          if (error.message.includes('empty') || error.message.includes('exceed')) {
+          if (
+            error.message.includes('empty') ||
+            error.message.includes('exceed')
+          ) {
             return reply.status(400).send({ message: error.message });
           }
         }
-        
+
         return reply.status(500).send({ message: 'Internal server error' });
       }
     }
@@ -177,7 +225,8 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
       schema: {
         tags: ['DailyEntry'],
         summary: "Update today's daily entry",
-        description: 'Update the one-sentence entry for the authenticated user for today. Only allowed before midnight.',
+        description:
+          'Update the one-sentence entry for the authenticated user for today. Only allowed before midnight.',
         body: updateDailyEntrySchema,
         response: {
           200: {
@@ -193,7 +242,14 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
                   createdAt: { type: 'string', format: 'date-time' },
                   updatedAt: { type: 'string', format: 'date-time' },
                 },
-                required: ['id', 'userId', 'entryDate', 'sentence', 'createdAt', 'updatedAt'],
+                required: [
+                  'id',
+                  'userId',
+                  'entryDate',
+                  'sentence',
+                  'createdAt',
+                  'updatedAt',
+                ],
               },
             },
             required: ['data'],
@@ -216,13 +272,19 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
               message: { type: 'string' },
             },
           },
+          500: {
+            type: 'object',
+            properties: {
+              message: { type: 'string' },
+            },
+          },
         },
       },
     },
     async (request, reply) => {
       try {
         const { sentence } = request.body as { sentence: string };
-        
+
         const entry = await dailyEntryService.updateEntry({
           userId: MOCK_USER_ID,
           sentence,
@@ -232,7 +294,7 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
         return reply.send({ data: entry });
       } catch (error) {
         fastify.log.error(error);
-        
+
         if (error instanceof Error) {
           if (error.message.includes('not found')) {
             return reply.status(404).send({ message: error.message });
@@ -240,11 +302,14 @@ export async function dailyEntryRoutes(fastify: FastifyInstance) {
           if (error.message.includes('Cannot edit')) {
             return reply.status(403).send({ message: error.message });
           }
-          if (error.message.includes('empty') || error.message.includes('exceed')) {
+          if (
+            error.message.includes('empty') ||
+            error.message.includes('exceed')
+          ) {
             return reply.status(400).send({ message: error.message });
           }
         }
-        
+
         return reply.status(500).send({ message: 'Internal server error' });
       }
     }

@@ -1,0 +1,52 @@
+access: Accessible to all users. No authentication required. Designed for both desktop
+  and mobile devices.
+behaviour: All UI elements are responsive, provide instant feedback, and validate
+  user input in real time. User actions trigger immediate updates to the configuration
+  state. Invalid input is clearly highlighted with messages.
+name: User Input and Configuration
+page:
+  behaviour: Form validates and provides instant feedback. Configuration is stored
+    in local state, ready for downstream visualisation components.
+  id: user-input-config-page
+  purpose: Allow users to input or generate an array and configure settings that control
+    how the array will be visualised.
+  sections:
+  - behaviour: User can enter a comma-separated list of numbers. Input is validated
+      live. Random array button generates numbers and fills the input field. Submit
+      is enabled only for valid input.
+    blocks:
+    - behaviour: Accepts comma-separated numbers. Validates input format and range.
+        Shows error if input is invalid.
+      id: array-input-field
+    - behaviour: Enabled only when input is valid. Submits or confirms the entered/generated
+        array.
+      id: array-submit-button
+    - behaviour: Generates a random array (e.g., length 10, numbers 1-99) and fills
+        the input field.
+      id: array-generate-random
+    id: array-input-section
+    title: Array Input
+    visual: Contained card with input field and button group. Buttons for submitting
+      and generating random arrays are horizontally aligned.
+  - behaviour: Slider updates speed value in real time. User can drag to select speed.
+      Default is Normal. Value is shown as text and position on slider.
+    blocks:
+    - behaviour: Slider with min-max values. On change, updates speed parameter.
+      id: speed-slider
+    - behaviour: Displays current speed as text label and numeric value. Updates when
+        slider moves.
+      id: speed-value-label
+    id: speed-control-section
+    title: Visualisation Speed Control
+    visual: Card or panel with horizontal slider, labels (Slow-Normal-Fast), and numeric
+      value display.
+  title: User Input & Visualisation Configuration
+  visual: 'Two main sections: array input and visualisation speed, each in their own
+    container. Form elements are spaced for clarity. Use dividers or card backgrounds
+    to visually separate sections.'
+summary: Allow the user to input or generate an array and configure visualisation
+  settings.
+visual: Modern, clean layout with clear sections for array input and speed control.
+  Use card-like containers, subtle shadows, and clear visual separation. Inputs are
+  prominent and accessible. Primary color is blue (#2563eb) with sufficient contrast
+  for accessibility.

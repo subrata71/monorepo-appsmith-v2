@@ -23,37 +23,43 @@ export const MOOD_OPTIONS: MoodOption[] = [
     type: 'happy',
     label: 'Happy',
     emoji: '😃',
-    color: 'bg-mood-happy text-mood-happy-fg hover:brightness-105 border-mood-happy-fg/20',
+    color:
+      'bg-mood-happy text-mood-happy-fg hover:brightness-105 border-mood-happy-fg/20',
   },
   {
     type: 'sad',
     label: 'Sad',
     emoji: '🥺',
-    color: 'bg-mood-sad text-mood-sad-fg hover:brightness-105 border-mood-sad-fg/20',
+    color:
+      'bg-mood-sad text-mood-sad-fg hover:brightness-105 border-mood-sad-fg/20',
   },
   {
     type: 'neutral',
     label: 'Neutral',
     emoji: '😊',
-    color: 'bg-mood-neutral text-mood-neutral-fg hover:brightness-105 border-mood-neutral-fg/20',
+    color:
+      'bg-mood-neutral text-mood-neutral-fg hover:brightness-105 border-mood-neutral-fg/20',
   },
   {
     type: 'excited',
     label: 'Excited',
     emoji: '🤗',
-    color: 'bg-mood-excited text-mood-excited-fg hover:brightness-105 border-mood-excited-fg/20',
+    color:
+      'bg-mood-excited text-mood-excited-fg hover:brightness-105 border-mood-excited-fg/20',
   },
   {
     type: 'anxious',
     label: 'Anxious',
     emoji: '🌻',
-    color: 'bg-mood-anxious text-mood-anxious-fg hover:brightness-105 border-mood-anxious-fg/20',
+    color:
+      'bg-mood-anxious text-mood-anxious-fg hover:brightness-105 border-mood-anxious-fg/20',
   },
   {
     type: 'calm',
     label: 'Calm',
     emoji: '🌸',
-    color: 'bg-mood-calm text-mood-calm-fg hover:brightness-105 border-mood-calm-fg/20',
+    color:
+      'bg-mood-calm text-mood-calm-fg hover:brightness-105 border-mood-calm-fg/20',
   },
 ] as const;
 

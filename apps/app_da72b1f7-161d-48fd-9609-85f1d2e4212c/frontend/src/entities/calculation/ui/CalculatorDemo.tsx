@@ -29,7 +29,9 @@ export function CalculatorDemo() {
   const hasEmptyInputs = firstNumber === null || secondNumber === null;
   const shouldDisableButtons = hasInputErrors || hasEmptyInputs;
 
-  const handleOperationClick = (operation: 'add' | 'subtract' | 'multiply' | 'divide') => {
+  const handleOperationClick = (
+    operation: 'add' | 'subtract' | 'multiply' | 'divide'
+  ) => {
     setOperation(operation);
     calculate();
   };
@@ -39,7 +41,9 @@ export function CalculatorDemo() {
       <Card className="p-6 space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Simple Calculator</h1>
-          <p className="text-muted-foreground">Enter two numbers to see validation in action</p>
+          <p className="text-muted-foreground">
+            Enter two numbers to see validation in action
+          </p>
         </div>
 
         <div className="space-y-4">
@@ -107,14 +111,27 @@ export function CalculatorDemo() {
         <div className="text-sm text-muted-foreground space-y-1">
           <p>Status:</p>
           <ul className="list-disc list-inside space-y-1">
-            <li className={firstNumber !== null ? 'text-green-600' : 'text-orange-600'}>
+            <li
+              className={
+                firstNumber !== null ? 'text-green-600' : 'text-orange-600'
+              }
+            >
               First Number: {firstNumber !== null ? '✓ Valid' : '⚠ Required'}
             </li>
-            <li className={secondNumber !== null ? 'text-green-600' : 'text-orange-600'}>
+            <li
+              className={
+                secondNumber !== null ? 'text-green-600' : 'text-orange-600'
+              }
+            >
               Second Number: {secondNumber !== null ? '✓ Valid' : '⚠ Required'}
             </li>
-            <li className={!shouldDisableButtons ? 'text-green-600' : 'text-orange-600'}>
-              Operation Buttons: {!shouldDisableButtons ? '✓ Enabled' : '✗ Disabled'}
+            <li
+              className={
+                !shouldDisableButtons ? 'text-green-600' : 'text-orange-600'
+              }
+            >
+              Operation Buttons:{' '}
+              {!shouldDisableButtons ? '✓ Enabled' : '✗ Disabled'}
             </li>
           </ul>
         </div>

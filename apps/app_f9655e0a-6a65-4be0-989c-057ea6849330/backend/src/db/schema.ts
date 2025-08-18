@@ -1,4 +1,13 @@
-import { pgTable, uuid, varchar, timestamp, text, boolean, jsonb, real } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  uuid,
+  varchar,
+  timestamp,
+  text,
+  boolean,
+  jsonb,
+  real,
+} from 'drizzle-orm/pg-core';
 
 // Don't delete this schema defintion. It is actually used in the app.
 // Use this schema as a sample to define other tables in the app.
@@ -26,7 +35,9 @@ export const graphs = pgTable('graphs', {
 // GraphNode schema
 export const graphNodes = pgTable('graph_nodes', {
   id: uuid('id').primaryKey().defaultRandom(),
-  graphId: uuid('graph_id').references(() => graphs.id, { onDelete: 'cascade' }).notNull(),
+  graphId: uuid('graph_id')
+    .references(() => graphs.id, { onDelete: 'cascade' })
+    .notNull(),
   label: varchar('label', { length: 10 }).notNull(),
   x: real('x').notNull(),
   y: real('y').notNull(),
@@ -35,9 +46,15 @@ export const graphNodes = pgTable('graph_nodes', {
 // GraphEdge schema
 export const graphEdges = pgTable('graph_edges', {
   id: uuid('id').primaryKey().defaultRandom(),
-  graphId: uuid('graph_id').references(() => graphs.id, { onDelete: 'cascade' }).notNull(),
-  sourceId: uuid('source_id').references(() => graphNodes.id, { onDelete: 'cascade' }).notNull(),
-  targetId: uuid('target_id').references(() => graphNodes.id, { onDelete: 'cascade' }).notNull(),
+  graphId: uuid('graph_id')
+    .references(() => graphs.id, { onDelete: 'cascade' })
+    .notNull(),
+  sourceId: uuid('source_id')
+    .references(() => graphNodes.id, { onDelete: 'cascade' })
+    .notNull(),
+  targetId: uuid('target_id')
+    .references(() => graphNodes.id, { onDelete: 'cascade' })
+    .notNull(),
 });
 
 // Graph types

@@ -1,0 +1,39 @@
+plan_items:
+- id: '1'
+  name: Game Canvas and Core Mechanics
+  sub_items:
+  - effort: 1
+    id: '1.1'
+    name: Create Game Canvas
+    summary: Set up an HTML canvas element for rendering the game.
+  - effort: 2
+    id: '1.2'
+    name: Draw Paddle, Ball, and Bricks
+    summary: Render the paddle, ball, and a simple grid of bricks on the canvas.
+  - effort: 2
+    id: '1.3'
+    name: Implement Paddle Movement
+    summary: Allow the user to move the paddle left and right using keyboard or mouse.
+  - effort: 3
+    id: '1.4'
+    name: Ball Movement and Collision
+    summary: Implement ball movement and collision detection with walls, paddle, and
+      bricks.
+  summary: Implement the main game canvas with paddle, ball, and bricks, and basic
+    game loop.
+- id: '2'
+  name: Basic UI and Game States
+  sub_items:
+  - effort: 1
+    id: '2.1'
+    name: Start Screen
+    summary: Display a start button and simple instructions before the game begins.
+  - effort: 1
+    id: '2.2'
+    name: Game Over Screen
+    summary: Show a game over message and a restart button when the player loses.
+  - effort: 1
+    id: '2.3'
+    name: Score Display
+    summary: Display the current score on the game screen.
+  summary: Add a minimal UI for starting, playing, and restarting the game.

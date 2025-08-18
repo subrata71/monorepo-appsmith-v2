@@ -7,7 +7,10 @@ export const AppRoutes = () => {
     <Routes>
       <Route element={<AppLayout />}>
         <Route path="/" element={<HeapSortVisualizerPage />} />
-        <Route path="/heap-sort-visualizer" element={<HeapSortVisualizerPage />} />
+        <Route
+          path="/heap-sort-visualizer"
+          element={<HeapSortVisualizerPage />}
+        />
       </Route>
     </Routes>
   );

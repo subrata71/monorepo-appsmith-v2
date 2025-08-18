@@ -23,7 +23,8 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
       null
     );
     const [note, setNote] = React.useState<string>('');
-    const [showAffirmation, setShowAffirmation] = React.useState<boolean>(false);
+    const [showAffirmation, setShowAffirmation] =
+      React.useState<boolean>(false);
 
     const handleMoodSelect = React.useCallback((mood: MoodType) => {
       setSelectedMood(mood);
@@ -36,7 +37,7 @@ export const MoodEntryForm = React.memo<MoodEntryFormProps>(
     const handleSubmitSuccess = React.useCallback(() => {
       // Show affirmation overlay first
       setShowAffirmation(true);
-      
+
       // Reset form after successful submission
       setSelectedMood(null);
       setNote('');

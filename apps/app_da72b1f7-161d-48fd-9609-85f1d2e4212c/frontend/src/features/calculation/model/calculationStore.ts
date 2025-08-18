@@ -4,7 +4,10 @@
  */
 
 import { create } from 'zustand';
-import type { Operation, InputErrors } from '@/entities/calculation/model/types';
+import type {
+  Operation,
+  InputErrors,
+} from '@/entities/calculation/model/types';
 
 /**
  * Calculator state shape
@@ -13,13 +16,13 @@ interface CalculationState {
   // Input values
   firstNumber: number | null;
   secondNumber: number | null;
-  
+
   // Current operation
   operation: Operation | null;
-  
+
   // Validation errors for inputs
   inputErrors: InputErrors;
-  
+
   // Calculation result
   result: number | null;
   errorMessage: string | null;
@@ -33,17 +36,17 @@ interface CalculationActions {
   setFirstNumber: (value: number | null) => void;
   setSecondNumber: (value: number | null) => void;
   setOperation: (operation: Operation | null) => void;
-  
+
   // Validation
   validateInputs: () => boolean;
-  
+
   // Result management
   setResult: (result: number | null) => void;
   setErrorMessage: (message: string | null) => void;
-  
+
   // Complete calculation workflow
   calculate: () => void;
-  
+
   // Reset state
   reset: () => void;
 }
@@ -53,22 +56,29 @@ type CalculationStore = CalculationState & CalculationActions;
 /**
  * Validates a single number input
  */
-function validateNumber(value: number | null, fieldName: string): string | undefined {
+function validateNumber(
+  value: number | null,
+  fieldName: string
+): string | undefined {
   if (value === null) {
     return `${fieldName} is required`;
   }
-  
+
   if (isNaN(value) || !isFinite(value)) {
     return `${fieldName} must be a valid number`;
   }
-  
+
   return undefined;
 }
 
 /**
  * Performs arithmetic calculation
  */
-function performCalculation(first: number, second: number, operation: Operation): { result?: number; error?: string } {
+function performCalculation(
+  first: number,
+  second: number,
+  operation: Operation
+): { result?: number; error?: string } {
   switch (operation) {
     case 'add':
       return { result: first + second };
@@ -100,7 +110,7 @@ const initialState: CalculationState = {
 
 /**
  * Zustand store for calculator state management
- * 
+ *
  * Usage (following Zustand rules - separate selector calls):
  * ```tsx
  * const firstNumber = useCalculationStore(state => state.firstNumber);
@@ -111,8 +121,8 @@ const initialState: CalculationState = {
 export const useCalculationStore = create<CalculationStore>((set, get) => ({
   ...initialState,
 
-  setFirstNumber: (value) => {
-    set((state) => ({
+  setFirstNumber: value => {
+    set(state => ({
       firstNumber: value,
       // Clear previous errors and results when input changes
       inputErrors: { ...state.inputErrors, firstNumber: undefined },
@@ -121,8 +131,8 @@ export const useCalculationStore = create<CalculationStore>((set, get) => ({
     }));
   },
 
-  setSecondNumber: (value) => {
-    set((state) => ({
+  setSecondNumber: value => {
+    set(state => ({
       secondNumber: value,
       // Clear previous errors and results when input changes
       inputErrors: { ...state.inputErrors, secondNumber: undefined },
@@ -131,7 +141,7 @@ export const useCalculationStore = create<CalculationStore>((set, get) => ({
     }));
   },
 
-  setOperation: (operation) => {
+  setOperation: operation => {
     set({
       operation,
       result: null,
@@ -154,17 +164,17 @@ export const useCalculationStore = create<CalculationStore>((set, get) => ({
     return Object.keys(errors).length === 0;
   },
 
-  setResult: (result) => {
+  setResult: result => {
     set({ result, errorMessage: null });
   },
 
-  setErrorMessage: (errorMessage) => {
+  setErrorMessage: errorMessage => {
     set({ errorMessage, result: null });
   },
 
   calculate: () => {
     const state = get();
-    
+
     // Validate inputs first
     if (!get().validateInputs()) {
       return;

@@ -1,0 +1,972 @@
+metadata:
+  description: Comprehensive technical specification combining all individual plan
+    specifications
+  generated_from_files:
+  - tech_spec_item_0.yaml
+  - tech_spec_item_1.yaml
+  - tech_spec_item_2.yaml
+  title: Combined Technical Specification
+  total_plans: 3
+plans:
+- plan_name: item_0
+  source_file: tech_spec_item_0.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Renders a single mood option icon/button; handles selection
+            state.
+          entity: mood
+          name: MoodOption
+          props:
+          - type
+          - selected
+          - onSelect
+        - description: Renders a single mood entry (if needed in future).
+          entity: moodEntry
+          name: MoodEntryItem
+          props:
+          - mood
+          - note
+          - createdAt
+        features:
+        - description: Feature component for rendering all mood options and managing
+            selection state.
+          entities:
+          - MoodOption
+          feature: mood-selection
+          name: MoodSelection
+          props:
+          - selectedMood
+          - onSelect
+          shared:
+          - Icon
+        - description: Feature component for multiline note input, enforcing character
+            limit.
+          entities: []
+          feature: note-entry
+          name: NoteInput
+          props:
+          - note
+          - onNoteChange
+          - maxLength
+          shared:
+          - Input
+        - description: Feature component for validating and submitting the mood entry.
+          entities: []
+          feature: local-storage
+          name: SubmitMoodEntry
+          props:
+          - disabled
+          - onSubmit
+          shared:
+          - Button
+          - Snackbar
+        shared:
+        - category: ui
+          description: Reusable primary and secondary button component.
+          name: Button
+          props:
+          - onClick
+          - disabled
+          - children
+        - category: ui
+          description: Reusable text input or textarea component with character counter.
+          name: Input
+          props:
+          - value
+          - onChange
+          - maxLength
+          - placeholder
+        - category: ui
+          description: Renders mood icons.
+          name: Icon
+          props:
+          - type
+          - selected
+        - category: ui
+          description: Displays feedback/toast messages.
+          name: Snackbar
+          props:
+          - message
+          - open
+        widgets:
+        - description: Widget combining mood selection, note input, and submit button
+            into a card UI.
+          entities:
+          - MoodOption
+          features:
+          - MoodSelection
+          - NoteInput
+          - SubmitMoodEntry
+          name: MoodEntryForm
+          props: []
+          shared:
+          - Button
+          - Input
+          - Icon
+          - Snackbar
+      pages:
+      - description: Page for logging a mood and optional note. Centered form card,
+          mood options, note input, and submit button.
+        queries: []
+        route: /mood-entry
+        title: Mood Entry
+        widgets:
+        - MoodEntryForm
+      stores:
+      - actions:
+        - 'selectMood(mood: string)'
+        - 'setNote(note: string)'
+        - submitEntry()
+        - resetForm()
+        - 'showFeedback(message: string)'
+        - loadEntries()
+        description: State management for mood entry form and local mood entries.
+          Handles form state, validation, submission, and feedback.
+        layer: entities
+        name: moodEntryStore
+        state_shape:
+        - name: selectedMood
+          type: string | null
+        - name: note
+          type: string
+        - name: isSubmitting
+          type: boolean
+        - name: showSnackbar
+          type: boolean
+        - name: snackbarMessage
+          type: string
+        - name: entries
+          type: MoodEntry[]
+    components:
+      parameters:
+      - in_: path
+        name: id
+        required: true
+      responses:
+      - code: '404'
+        description: Mood entry not found.
+      - code: '400'
+        description: Invalid input data.
+      - code: '500'
+        description: Unexpected server error.
+      schemas:
+      - name: MoodEntry
+        type: object
+    domains:
+    - apis:
+      - method: GET
+        operation:
+          description: Get all mood entries from local storage.
+          operation_id: getMoodEntries
+          summary: Get all mood entries
+          tags:
+          - MoodEntry
+        path: /mood-entries
+      - method: GET
+        operation:
+          description: Get a single mood entry by ID from local storage.
+          operation_id: getMoodEntryById
+          summary: Get mood entry by ID
+          tags:
+          - MoodEntry
+        path: /mood-entries/{id}
+      - method: POST
+        operation:
+          description: Create a new mood entry in local storage.
+          operation_id: createMoodEntry
+          summary: Create mood entry
+          tags:
+          - MoodEntry
+        path: /mood-entries
+      - method: PUT
+        operation:
+          description: Update an existing mood entry in local storage.
+          operation_id: updateMoodEntry
+          summary: Update mood entry
+          tags:
+          - MoodEntry
+        path: /mood-entries/{id}
+      - method: DELETE
+        operation:
+          description: Delete a mood entry from local storage.
+          operation_id: deleteMoodEntry
+          summary: Delete mood entry
+          tags:
+          - MoodEntry
+        path: /mood-entries/{id}
+      description: Domain for managing mood entries stored on the client side (local
+        only).
+      models:
+      - description: A single mood entry containing selected mood, optional note,
+          and timestamps.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: mood
+          nullable: false
+          pk: false
+          type: string
+        - name: note
+          nullable: true
+          pk: false
+          type: string
+        - name: createdAt
+          nullable: false
+          pk: false
+          type: string
+        - name: updatedAt
+          nullable: false
+          pk: false
+          type: string
+        name: MoodEntry
+      name: moodEntry
+      services:
+      - description: Handles CRUD operations for mood entries in local storage or
+          in-memory store. Provides validation and feedback utilities.
+        methods:
+        - getAll
+        - getById
+        - create
+        - update
+        - delete
+        name: MoodEntryService
+    metadata:
+      description: Technical specification for a mood entry interface allowing users
+        to select a mood, enter a note, and store the entry locally with privacy.
+      generated_at: '2024-06-11T10:00:00Z'
+      name: Mood Entry UI
+      version: 1.0.0
+    product:
+      features:
+      - description: Users select one mood from a predefined list of common moods.
+        domains:
+        - moodEntry
+        id: mood-selection
+        priority: high
+        title: Mood Selection
+      - description: Users can enter an optional note up to 200 characters.
+        domains:
+        - moodEntry
+        id: note-entry
+        priority: medium
+        title: Note Entry
+      - description: Mood entries are saved to localStorage or in-memory and never
+          transmitted externally.
+        domains:
+        - moodEntry
+        id: local-storage
+        priority: high
+        title: Local Entry Storage
+      - description: Users receive confirmation (e.g., snackbar) on successful entry
+          submission.
+        domains:
+        - moodEntry
+        id: visual-feedback
+        priority: medium
+        title: Visual Feedback
+      - description: Interface adapts to mobile and desktop layouts.
+        domains:
+        - moodEntry
+        id: responsive-ui
+        priority: medium
+        title: Responsive UI
+      goals:
+      - Enable users to quickly log their mood and an optional note.
+      - Ensure privacy by storing entries only in local browser storage.
+      - Provide a clean, accessible, and responsive user interface.
+      - Give immediate feedback on successful mood logging.
+      personas:
+      - description: Wants to quickly log their mood and thoughts throughout the day
+          for personal reflection.
+        goals:
+        - Log mood and thoughts quickly.
+        - Review mood history (future expansion).
+        name: Everyday User
+      - description: Cares about data privacy and does not want their mood data stored
+          on external servers.
+        goals:
+        - Keep mood entries private.
+        - Control local data only.
+        name: Privacy-Conscious User
+      summary: A simple and private interface for users to log their current mood
+        and an optional note, with all data stored only in the user's browser.
+    use_cases:
+    - actors:
+      - User
+      apis:
+      - createMoodEntry
+      description: User selects a mood, optionally enters a note, and submits the
+        entry to be stored locally.
+      domains:
+      - moodEntry
+      happy_path:
+      - Navigate to the Mood Entry page.
+      - Select a mood from the available options.
+      - Optionally enter a note (up to 200 characters).
+      - Click the submit button (enabled only after mood is selected).
+      - See a confirmation message and cleared form.
+      id: log-mood-entry
+      pages:
+      - /mood-entry
+      postconditions:
+      - Mood entry is saved to local storage or memory.
+      - Form is reset.
+      - User sees confirmation feedback.
+      preconditions:
+      - User is on the Mood Entry page.
+      title: Log a Mood Entry
+    user_journeys:
+    - id: quick-mood-log
+      persona: Everyday User
+      related_use_cases:
+      - log-mood-entry
+      steps:
+      - action: User opens the Mood Entry UI.
+        page: /mood-entry
+      - action: User taps the "Happy" icon.
+        page: /mood-entry
+      - action: 'User adds a short note: "Great day at work!"'
+        page: /mood-entry
+      - action: User taps "Submit".
+        page: /mood-entry
+      - action: 'User sees a snackbar: "Mood entry saved!" and the form resets.'
+        page: /mood-entry
+      - action: User closes or continues logging.
+        page: /mood-entry
+      success_criteria: Mood entry is saved locally, user receives feedback, and form
+        is reset.
+      title: Quick Mood Logging Journey
+- plan_name: item_1
+  source_file: tech_spec_item_1.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Renders a single mood entry card or row, displaying mood icon/color,
+            note, and timestamp.
+          entity: moodEntry
+          name: MoodEntryItem
+          props:
+          - mood
+          - note
+          - createdAt
+        features: []
+        shared:
+        - category: ui
+          description: Reusable primary and secondary button component.
+          name: Button
+          props:
+          - onClick
+          - disabled
+          - children
+        - category: ui
+          description: Reusable text input or textarea component with character counter.
+          name: Input
+          props:
+          - value
+          - onChange
+          - maxLength
+          - placeholder
+        - category: ui
+          description: Renders mood icons.
+          name: Icon
+          props:
+          - type
+          - selected
+        - category: ui
+          description: Displays feedback/toast messages.
+          name: Snackbar
+          props:
+          - message
+          - open
+        widgets:
+        - description: Widget that maps over mood history data and renders each entry
+            as a MoodEntryItem in a scrollable, styled list. Handles reverse chronological
+            order and responsive layout.
+          entities:
+          - MoodEntryItem
+          features: []
+          name: MoodHistoryList
+          props:
+          - entries
+          shared:
+          - Icon
+      pages:
+      - description: Page for reviewing all previously logged mood entries in a scrollable,
+          visually distinct list.
+        queries:
+        - load mood history from localStorage on mount
+        route: /mood-history
+        title: Mood History
+        widgets:
+        - MoodHistoryList
+      stores:
+      - actions:
+        - 'selectMood(mood: string)'
+        - 'setNote(note: string)'
+        - submitEntry()
+        - resetForm()
+        - 'showFeedback(message: string)'
+        - loadEntries()
+        description: State management for mood entry form and mood entry history.
+          Handles loading, sorting, and updating the list of entries from localStorage,
+          as well as form state and feedback.
+        layer: entities
+        name: moodEntryStore
+        state_shape:
+        - name: selectedMood
+          type: string | null
+        - name: note
+          type: string
+        - name: isSubmitting
+          type: boolean
+        - name: showSnackbar
+          type: boolean
+        - name: snackbarMessage
+          type: string
+        - name: entries
+          type: MoodEntry[]
+    components:
+      parameters:
+      - in_: path
+        name: id
+        required: true
+      responses:
+      - code: '404'
+        description: Mood entry not found.
+      - code: '400'
+        description: Invalid input data.
+      - code: '500'
+        description: Unexpected server error.
+      schemas:
+      - name: MoodEntry
+        type: object
+    domains:
+    - apis:
+      - method: GET
+        operation:
+          description: Get all mood entries from local storage, sorted by most recent
+            first.
+          operation_id: getMoodEntries
+          summary: Get all mood entries
+          tags:
+          - MoodEntry
+        path: /mood-entries
+      description: Domain for managing mood entries stored on the client side (local
+        only).
+      models:
+      - description: A single mood entry containing selected mood, optional note,
+          and timestamps.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: mood
+          nullable: false
+          pk: false
+          type: string
+        - name: note
+          nullable: true
+          pk: false
+          type: string
+        - name: createdAt
+          nullable: false
+          pk: false
+          type: string
+        - name: updatedAt
+          nullable: false
+          pk: false
+          type: string
+        name: MoodEntry
+      name: moodEntry
+      services:
+      - description: Handles CRUD operations for mood entries in local storage or
+          in-memory store. Provides validation and feedback utilities.
+        methods:
+        - getAll
+        - getById
+        - create
+        - update
+        - delete
+        name: MoodEntryService
+    metadata:
+      description: Technical specification for displaying a persistent, private mood
+        entry history using localStorage, providing a reviewable log of previous moods
+        and notes.
+      generated_at: '2024-06-11T12:00:00Z'
+      name: Mood History Display
+      version: 1.1.0
+    product:
+      features:
+      - description: Users can view a chronological list of all their prior mood entries
+          with notes and timestamps, presented in a visually distinct and calming
+          interface.
+        domains:
+        - moodEntry
+        id: mood-history
+        priority: high
+        title: Mood History Display
+      goals:
+      - Allow users to review all past mood entries in a visually clear and calming
+        interface.
+      - Ensure mood history persists between sessions and page refreshes, with no
+        external server communication.
+      - Keep data private to the browser profile; no login required.
+      - Seamless, responsive UI for both mobile and desktop.
+      personas:
+      - description: Wants to reflect on their mood trends and notes over time without
+          worrying about privacy.
+        goals:
+        - Easily browse a personal log of moods and notes.
+        - See clear visual cues for mood at a glance.
+        name: Everyday User
+      - description: Wants a mood tracking experience that is strictly local and confidential.
+        goals:
+        - Ensure historical mood data is never transmitted externally.
+        - Access and manage mood history privately.
+        name: Privacy-Conscious User
+      summary: Displays a persistent, private list of all previously logged mood entries,
+        including moods, notes, and timestamps, using browser localStorage.
+    use_cases:
+    - actors:
+      - User
+      apis:
+      - getMoodEntries
+      description: User reviews a list of previously entered moods and notes, with
+        most recent entries first.
+      domains:
+      - moodEntry
+      happy_path:
+      - User navigates to the Mood History page.
+      - Application loads all mood entries from localStorage.
+      - The list displays each entry with mood icon/color, note, and timestamp, most
+        recent first.
+      - User scrolls to browse older entries.
+      id: view-mood-history
+      pages:
+      - /mood-history
+      postconditions:
+      - User sees a complete, up-to-date mood history list.
+      - Any new entries logged are reflected immediately in the list.
+      preconditions:
+      - User has previously logged at least one mood entry.
+      - User is on the Mood History page.
+      title: View Mood History
+    user_journeys:
+    - id: review-mood-history
+      persona: Everyday User
+      related_use_cases:
+      - view-mood-history
+      steps:
+      - action: User opens the "Mood History" page from the app menu or direct route.
+        page: /mood-history
+      - action: App retrieves all mood entries from localStorage and renders them
+          in reverse chronological order.
+        page: /mood-history
+      - action: User scrolls through the list, visually reviewing each mood, note,
+          and timestamp.
+        page: /mood-history
+      - action: User closes the page or switches to another page.
+        page: /mood-history
+      success_criteria: User can see all prior mood entries with notes and timestamps,
+        with a clear and calming UI.
+      title: Reviewing Mood History
+- plan_name: item_2
+  source_file: tech_spec_item_2.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Renders a single large, colorful mood icon/button with bounce
+            & highlight on selection.
+          entity: mood
+          name: MoodOption
+          props:
+          - type
+          - selected
+          - onSelect
+        - description: (No change) Renders a single mood entry row/card.
+          entity: moodEntry
+          name: MoodEntryItem
+          props:
+          - mood
+          - note
+          - createdAt
+        - description: Displays a positive affirmation message in playful font, with
+            confetti animation.
+          entity: affirmation
+          name: AffirmationMessage
+          props:
+          - message
+        features:
+        - description: Renders mood options in a row with bounce/select animation.
+          entities:
+          - MoodOption
+          feature: mood-selection
+          name: MoodSelection
+          props:
+          - selectedMood
+          - onSelect
+          shared:
+          - Icon
+        - description: (No change) Feature for note input.
+          entities: []
+          feature: note-entry
+          name: NoteInput
+          props:
+          - note
+          - onNoteChange
+          - maxLength
+          shared:
+          - Input
+        - description: (No change) Feature for mood entry submission.
+          entities: []
+          feature: local-storage
+          name: SubmitMoodEntry
+          props:
+          - disabled
+          - onSubmit
+          shared:
+          - Button
+          - Snackbar
+        - description: Handles random selection of affirmation and triggers overlay/animation
+            after mood submission.
+          entities:
+          - AffirmationMessage
+          feature: affirmation-feedback
+          name: AffirmationFeedback
+          props:
+          - open
+          - onClose
+          shared:
+          - Confetti
+        shared:
+        - category: ui
+          description: Reusable, large, rounded primary/secondary button with cheerful
+            colors and subtle shadow. Supports celebratory animation trigger.
+          name: Button
+          props:
+          - onClick
+          - disabled
+          - children
+        - category: ui
+          description: Reusable input/textarea with friendly font, accent border,
+            and playful focus animation.
+          name: Input
+          props:
+          - value
+          - onChange
+          - maxLength
+          - placeholder
+        - category: ui
+          description: Renders mood icons with bright colors, rounded shapes, and
+            smiley faces.
+          name: Icon
+          props:
+          - type
+          - selected
+        - category: ui
+          description: Displays feedback messages in uplifting style.
+          name: Snackbar
+          props:
+          - message
+          - open
+        - category: ui
+          description: Renders celebratory confetti or animation for overlay.
+          name: Confetti
+          props:
+          - active
+        widgets:
+        - description: Card UI combining MoodSelection, NoteInput, and SubmitMoodEntry,
+            styled with cheerful colors, rounded corners, and soft shadow.
+          entities:
+          - MoodOption
+          features:
+          - MoodSelection
+          - NoteInput
+          - SubmitMoodEntry
+          name: MoodEntryForm
+          props: []
+          shared:
+          - Button
+          - Input
+          - Icon
+          - Snackbar
+        - description: Overlay card that appears after mood submission, displaying
+            randomly selected affirmation with confetti animation. Disables background
+            interaction, auto-dismisses after delay or on tap.
+          entities: []
+          features:
+          - AffirmationFeedback
+          name: AffirmationOverlay
+          props: []
+          shared:
+          - Confetti
+      pages:
+      - description: Central, cheerful mood entry UI with playful mood icons, bright
+          background, large submit button, and celebratory overlay for affirmations.
+        queries: []
+        route: /mood-entry
+        title: Mood Entry
+        widgets:
+        - MoodEntryForm
+        - AffirmationOverlay
+      stores:
+      - actions:
+        - 'selectMood(mood: string)'
+        - 'setNote(note: string)'
+        - submitEntry()
+        - resetForm()
+        - 'showFeedback(message: string)'
+        - loadEntries()
+        description: (No change) State management for mood entry form and entries.
+        layer: entities
+        name: moodEntryStore
+        state_shape:
+        - name: selectedMood
+          type: string | null
+        - name: note
+          type: string
+        - name: isSubmitting
+          type: boolean
+        - name: showSnackbar
+          type: boolean
+        - name: snackbarMessage
+          type: string
+        - name: entries
+          type: MoodEntry[]
+      - actions:
+        - loadAffirmations()
+        - showRandomAffirmation()
+        - hideAffirmation()
+        - 'addAffirmation(message: string)'
+        - 'updateAffirmation(id: string, message: string)'
+        - 'deleteAffirmation(id: string)'
+        description: Manages local affirmation list, random selection, and overlay
+          state. Handles fetching, adding, updating, deleting affirmations, and exposing
+          a method to get a random message for overlay.
+        layer: entities
+        name: affirmationStore
+        state_shape:
+        - name: affirmations
+          type: Affirmation[]
+        - name: showOverlay
+          type: boolean
+        - name: currentAffirmation
+          type: Affirmation | null
+    components:
+      parameters:
+      - in_: path
+        name: id
+        required: true
+      - in_: path
+        name: affirmationId
+        required: true
+      responses:
+      - code: '404'
+        description: Affirmation not found
+      - code: '400'
+        description: Invalid affirmation data
+      - code: '500'
+        description: Unexpected server error
+      schemas:
+      - name: Affirmation
+        type: object
+      - name: MoodEntry
+        type: object
+    domains:
+    - apis:
+      - method: GET
+        operation:
+          description: Returns the full list of positive affirmation messages.
+          operation_id: getAffirmations
+          summary: Get all available affirmations
+          tags:
+          - Affirmation
+        path: /affirmations
+      - method: GET
+        operation:
+          description: Returns a randomly selected affirmation message.
+          operation_id: getRandomAffirmation
+          summary: Get a random affirmation
+          tags:
+          - Affirmation
+        path: /affirmations/random
+      - method: POST
+        operation:
+          description: Add a new affirmation message to the local list.
+          operation_id: createAffirmation
+          summary: Create an affirmation
+          tags:
+          - Affirmation
+        path: /affirmations
+      - method: PUT
+        operation:
+          description: Update an existing affirmation message.
+          operation_id: updateAffirmation
+          summary: Update an affirmation
+          tags:
+          - Affirmation
+        path: /affirmations/{id}
+      - method: DELETE
+        operation:
+          description: Remove an affirmation from the list.
+          operation_id: deleteAffirmation
+          summary: Delete an affirmation
+          tags:
+          - Affirmation
+        path: /affirmations/{id}
+      description: Domain for managing positive affirmation messages shown after mood
+        submission, including logic for random selection and celebratory animations.
+      models:
+      - description: A positive affirmation message used to encourage users after
+          submitting a mood.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: message
+          nullable: false
+          pk: false
+          type: string
+        - name: createdAt
+          nullable: false
+          pk: false
+          type: string
+        - name: updatedAt
+          nullable: false
+          pk: false
+          type: string
+        name: Affirmation
+      name: affirmation
+      services:
+      - description: Provides CRUD operations for affirmations and random selection
+          logic for overlay display after mood submission.
+        methods:
+        - getAll
+        - getById
+        - getRandom
+        - create
+        - update
+        - delete
+        name: AffirmationService
+    metadata:
+      description: Introduces a cheerful, uplifting visual style with affirmations
+        and celebratory animations upon mood entry, adapting all Mood Entry UI elements
+        and interactions accordingly.
+      generated_at: '2024-06-12T10:00:00Z'
+      name: Cheerful Visual Design Enhancement
+      version: 1.2.0
+    product:
+      features:
+      - description: The app adopts a bright, playful palette, rounded icons, and
+          friendly typography. Mood icons, buttons, and overlays use soft edges, gentle
+          shadows, and smooth, cheerful animations.
+        domains: []
+        id: cheerful-visual-style
+        priority: high
+        title: Cheerful Visual Style
+      - description: After submitting a mood, the user is shown a randomly selected
+          positive affirmation in an overlay, accompanied by celebratory animation
+          (confetti, etc.), for 2-3 seconds or until dismissed.
+        domains:
+        - affirmation
+        id: affirmation-feedback
+        priority: high
+        title: Positive Affirmation Overlay
+      - description: Upon mood submission, a confetti or other celebratory animation
+          plays to reinforce positive action.
+        domains:
+        - affirmation
+        id: celebratory-animation
+        priority: medium
+        title: Celebratory Animation
+      - description: All cheerful visual elements are accessible and responsive, adapting
+          layouts, contrast, and animation timing as needed.
+        domains: []
+        id: accessible-responsive-ui
+        priority: high
+        title: Accessible & Responsive Cheerful UI
+      goals:
+      - Encourage regular and enjoyable mood tracking through positive, visually engaging
+        feedback.
+      - Reinforce positive behaviors with celebratory animations and affirmations.
+      - Ensure the interface is accessible, responsive, and friendly for all users.
+      - Maintain privacy and simplicity of local-only mood logging.
+      personas:
+      - description: Wants to log moods in a positive, engaging environment and be
+          encouraged to return daily.
+        goals:
+        - Feel uplifted and encouraged after every mood entry.
+        - Enjoy a delightful, friendly interface.
+        name: Everyday User
+      - description: Wants privacy but also appreciates positive reinforcement and
+          accessibility.
+        goals:
+        - Experience cheerful design without compromising privacy.
+        - Use an interface that is both accessible and uplifting.
+        name: Privacy-Conscious User
+      summary: Applies a cheerful, playful, and visually uplifting style throughout
+        the app, including affirmations and celebration on mood submission, to encourage
+        user engagement and positivity.
+    use_cases:
+    - actors:
+      - User
+      apis: []
+      description: User selects a mood and submits it. The app responds with a cheerful
+        overlay featuring a randomly chosen affirmation and celebratory animation,
+        reinforcing the positive action.
+      domains:
+      - moodEntry
+      - affirmation
+      happy_path:
+      - User selects a mood (and optionally enters a note).
+      - User clicks the submit button.
+      - App saves the mood entry locally.
+      - Immediately, an overlay appears with a positive affirmation and celebratory
+        animation.
+      - After 2-3 seconds (or on click/tap), the overlay dismisses and the form resets.
+      id: mood-entry-with-affirmation
+      pages:
+      - /mood-entry
+      postconditions:
+      - Mood entry is stored locally.
+      - User sees uplifting feedback and is encouraged to return.
+      preconditions:
+      - User is on the Mood Entry page.
+      title: Submit Mood Entry and Receive Affirmation
+    user_journeys:
+    - id: cheerful-mood-log
+      persona: Everyday User
+      related_use_cases:
+      - mood-entry-with-affirmation
+      steps:
+      - action: User opens the Mood Entry page with playful colors and inviting mood
+          icons.
+        page: /mood-entry
+      - action: User selects a mood icon, which bounces and highlights with cheerful
+          animation.
+        page: /mood-entry
+      - action: User submits their mood.
+        page: /mood-entry
+      - action: Immediately, an overlay pops up with a random positive affirmation
+          ("You're doing great!" etc.) and confetti animation.
+        page: /mood-entry
+      - action: Overlay auto-dismisses after a short period; the user feels encouraged
+          and can log another mood.
+        page: /mood-entry
+      success_criteria: User feels positively reinforced after every mood entry through
+        affirmations and visual celebration.
+      title: Cheerful Mood Logging Experience
+summary:
+  plan_names:
+  - item_0
+  - item_1
+  - item_2
+  total_plans: 3

@@ -1,5 +1,12 @@
 import { graphRepo } from '../repositories/graph.repo';
-import type { Graph, NewGraph, GraphNode, NewGraphNode, GraphEdge, NewGraphEdge } from '../db/schema';
+import type {
+  Graph,
+  NewGraph,
+  GraphNode,
+  NewGraphNode,
+  GraphEdge,
+  NewGraphEdge,
+} from '../db/schema';
 import type * as schema from '../db/schema';
 import type { FastifyInstance } from 'fastify';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -7,7 +14,11 @@ import { log } from '../utils/index';
 
 // Types for validation
 interface GraphValidationError {
-  type: 'CYCLE_DETECTED' | 'SELF_LOOP' | 'DUPLICATE_EDGE' | 'INVALID_NODE_REFERENCE';
+  type:
+    | 'CYCLE_DETECTED'
+    | 'SELF_LOOP'
+    | 'DUPLICATE_EDGE'
+    | 'INVALID_NODE_REFERENCE';
   message: string;
   details?: Record<string, unknown>;
 }
@@ -18,14 +29,17 @@ interface GraphWithNodes extends Graph {
 }
 
 // Helper function to detect cycles using DFS
-function hasCycle(nodes: GraphNode[], edges: GraphEdge[]): { hasCycle: boolean; cyclePath?: string[] } {
+function hasCycle(
+  nodes: GraphNode[],
+  edges: GraphEdge[]
+): { hasCycle: boolean; cyclePath?: string[] } {
   const adjList = new Map<string, string[]>();
-  
+
   // Build adjacency list
   for (const node of nodes) {
     adjList.set(node.id, []);
   }
-  
+
   for (const edge of edges) {
     const sourceList = adjList.get(edge.sourceId);
     if (sourceList) {
@@ -35,21 +49,27 @@ function hasCycle(nodes: GraphNode[], edges: GraphEdge[]): { hasCycle: boolean; 
 
   const visiting = new Set<string>();
   const visited = new Set<string>();
-  
-  function dfs(nodeId: string, path: string[]): { hasCycle: boolean; cyclePath?: string[] } {
+
+  function dfs(
+    nodeId: string,
+    path: string[]
+  ): { hasCycle: boolean; cyclePath?: string[] } {
     if (visiting.has(nodeId)) {
       // Found cycle - return the cycle path
       const cycleStart = path.indexOf(nodeId);
-      return { hasCycle: true, cyclePath: path.slice(cycleStart).concat(nodeId) };
+      return {
+        hasCycle: true,
+        cyclePath: path.slice(cycleStart).concat(nodeId),
+      };
     }
-    
+
     if (visited.has(nodeId)) {
       return { hasCycle: false };
     }
-    
+
     visiting.add(nodeId);
     const currentPath = [...path, nodeId];
-    
+
     const neighbors = adjList.get(nodeId) || [];
     for (const neighborId of neighbors) {
       const result = dfs(neighborId, currentPath);
@@ -57,13 +77,13 @@ function hasCycle(nodes: GraphNode[], edges: GraphEdge[]): { hasCycle: boolean; 
         return result;
       }
     }
-    
+
     visiting.delete(nodeId);
     visited.add(nodeId);
-    
+
     return { hasCycle: false };
   }
-  
+
   // Check for cycles starting from each unvisited node
   for (const nodeId of adjList.keys()) {
     if (!visited.has(nodeId)) {
@@ -73,47 +93,50 @@ function hasCycle(nodes: GraphNode[], edges: GraphEdge[]): { hasCycle: boolean; 
       }
     }
   }
-  
+
   return { hasCycle: false };
 }
 
 // Validation function
-function validateGraph(nodes: GraphNode[], edges: GraphEdge[]): {
+function validateGraph(
+  nodes: GraphNode[],
+  edges: GraphEdge[]
+): {
   isValid: boolean;
   errors: GraphValidationError[];
 } {
   const errors: GraphValidationError[] = [];
   const nodeIds = new Set(nodes.map(n => n.id));
-  
+
   // Check for invalid node references
   for (const edge of edges) {
     if (!nodeIds.has(edge.sourceId)) {
       errors.push({
         type: 'INVALID_NODE_REFERENCE',
         message: `Source node ${edge.sourceId} does not exist`,
-        details: { edgeId: edge.id, sourceId: edge.sourceId }
+        details: { edgeId: edge.id, sourceId: edge.sourceId },
       });
     }
     if (!nodeIds.has(edge.targetId)) {
       errors.push({
         type: 'INVALID_NODE_REFERENCE',
         message: `Target node ${edge.targetId} does not exist`,
-        details: { edgeId: edge.id, targetId: edge.targetId }
+        details: { edgeId: edge.id, targetId: edge.targetId },
       });
     }
   }
-  
+
   // Check for self-loops
   for (const edge of edges) {
     if (edge.sourceId === edge.targetId) {
       errors.push({
         type: 'SELF_LOOP',
         message: `Self-loop detected on node ${edge.sourceId}`,
-        details: { edgeId: edge.id, nodeId: edge.sourceId }
+        details: { edgeId: edge.id, nodeId: edge.sourceId },
       });
     }
   }
-  
+
   // Check for duplicate edges
   const edgeSet = new Set<string>();
   for (const edge of edges) {
@@ -122,27 +145,28 @@ function validateGraph(nodes: GraphNode[], edges: GraphEdge[]): {
       errors.push({
         type: 'DUPLICATE_EDGE',
         message: `Duplicate edge from ${edge.sourceId} to ${edge.targetId}`,
-        details: { edgeKey }
+        details: { edgeKey },
       });
     }
     edgeSet.add(edgeKey);
   }
-  
+
   // Check for cycles
-  if (errors.length === 0) { // Only check cycles if no other errors
+  if (errors.length === 0) {
+    // Only check cycles if no other errors
     const cycleResult = hasCycle(nodes, edges);
     if (cycleResult.hasCycle) {
       errors.push({
         type: 'CYCLE_DETECTED',
         message: `Cycle detected in graph`,
-        details: { cyclePath: cycleResult.cyclePath }
+        details: { cyclePath: cycleResult.cyclePath },
       });
     }
   }
-  
+
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -158,7 +182,10 @@ function parseAdjacencyList(text: string): {
     return { nodes: [], edges: [] };
   }
 
-  const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+  const lines = text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line);
 
   for (const line of lines) {
     if (!line.includes(':')) continue;
@@ -172,8 +199,11 @@ function parseAdjacencyList(text: string): {
 
     const targetsText = targetsRaw.trim();
     if (targetsText) {
-      const targets = targetsText.split(',').map(t => t.trim()).filter(t => t);
-      
+      const targets = targetsText
+        .split(',')
+        .map(t => t.trim())
+        .filter(t => t);
+
       for (const target of targets) {
         if (!/^[a-zA-Z0-9_-]+$/.test(target)) continue;
         if (target === sourceNode) continue; // Skip self-loops
@@ -197,12 +227,12 @@ function parseAdjacencyList(text: string): {
 // Generate adjacency list string representation
 function generateAdjacencyList(nodes: GraphNode[], edges: GraphEdge[]): string {
   const adjList = new Map<string, string[]>();
-  
+
   // Initialize with all nodes
   for (const node of nodes) {
     adjList.set(node.label, []);
   }
-  
+
   // Add edges
   const nodeLabelMap = new Map(nodes.map(n => [n.id, n.label]));
   for (const edge of edges) {
@@ -215,7 +245,7 @@ function generateAdjacencyList(nodes: GraphNode[], edges: GraphEdge[]): string {
       }
     }
   }
-  
+
   // Convert to string
   const lines: string[] = [];
   for (const [node, targets] of adjList.entries()) {
@@ -225,7 +255,7 @@ function generateAdjacencyList(nodes: GraphNode[], edges: GraphEdge[]): string {
       lines.push(`${node}:`);
     }
   }
-  
+
   return lines.join('\n');
 }
 
@@ -262,18 +292,18 @@ export function makeGraphService(app: FastifyInstance) {
       if (!fullGraph) {
         throw new Error('Graph not found');
       }
-      
+
       return {
         ...fullGraph,
-        validationErrors: Array.isArray(fullGraph.validationErrors) 
-          ? fullGraph.validationErrors 
-          : []
+        validationErrors: Array.isArray(fullGraph.validationErrors)
+          ? fullGraph.validationErrors
+          : [],
       };
     },
 
     async create(data: NewGraph) {
       log.info('Creating new graph');
-      
+
       // Create with default empty state
       const graphData = {
         ...data,
@@ -281,22 +311,25 @@ export function makeGraphService(app: FastifyInstance) {
         isValid: true,
         validationErrors: [],
       };
-      
+
       const newGraph = await repo.createGraph(graphData);
-      
+
       return {
         ...newGraph,
         nodes: [],
         edges: [],
-        validationErrors: []
+        validationErrors: [],
       };
     },
 
-    async update(id: string, updateData: { 
-      nodes?: GraphNode[]; 
-      edges?: GraphEdge[]; 
-      adjacencyList?: string;
-    }) {
+    async update(
+      id: string,
+      updateData: {
+        nodes?: GraphNode[];
+        edges?: GraphEdge[];
+        adjacencyList?: string;
+      }
+    ) {
       const existingGraph = await repo.findFullGraphById(id);
       if (!existingGraph) {
         throw new Error('Graph not found');
@@ -310,7 +343,7 @@ export function makeGraphService(app: FastifyInstance) {
       if (adjacencyList && !updateData.nodes && !updateData.edges) {
         try {
           const parsed = parseAdjacencyList(adjacencyList);
-          
+
           // Clear existing nodes and edges
           await repo.deleteNodesByGraphId(id);
           await repo.deleteEdgesByGraphId(id);
@@ -348,9 +381,8 @@ export function makeGraphService(app: FastifyInstance) {
 
           nodes = newNodes;
           edges = newEdges;
-          
         } catch (error) {
-          log.error('Error parsing adjacency list:', error);
+          log.error(error, 'Error parsing adjacency list');
           throw new Error('Invalid adjacency list format');
         }
       } else {
@@ -378,7 +410,8 @@ export function makeGraphService(app: FastifyInstance) {
 
       // Validate the updated graph
       const validation = validateGraph(nodes, edges);
-      const finalAdjacencyList = adjacencyList || generateAdjacencyList(nodes, edges);
+      const finalAdjacencyList =
+        adjacencyList || generateAdjacencyList(nodes, edges);
 
       // Update graph metadata
       const updatedGraph = await repo.updateGraph(id, {
@@ -395,7 +428,10 @@ export function makeGraphService(app: FastifyInstance) {
       };
     },
 
-    async addNode(graphId: string, nodeData: { x: number; y: number; label?: string }) {
+    async addNode(
+      graphId: string,
+      nodeData: { x: number; y: number; label?: string }
+    ) {
       const existingGraph = await repo.findFullGraphById(graphId);
       if (!existingGraph) {
         throw new Error('Graph not found');
@@ -414,8 +450,11 @@ export function makeGraphService(app: FastifyInstance) {
 
       // Update adjacency list
       const updatedNodes = [...existingGraph.nodes, newNode];
-      const adjacencyList = generateAdjacencyList(updatedNodes, existingGraph.edges);
-      
+      const adjacencyList = generateAdjacencyList(
+        updatedNodes,
+        existingGraph.edges
+      );
+
       await repo.updateGraph(graphId, {
         adjacencyList,
       });
@@ -423,16 +462,23 @@ export function makeGraphService(app: FastifyInstance) {
       return newNode;
     },
 
-    async addEdge(graphId: string, edgeData: { sourceId: string; targetId: string }) {
+    async addEdge(
+      graphId: string,
+      edgeData: { sourceId: string; targetId: string }
+    ) {
       const existingGraph = await repo.findFullGraphById(graphId);
       if (!existingGraph) {
         throw new Error('Graph not found');
       }
 
       // Check if nodes exist
-      const sourceExists = existingGraph.nodes.some(n => n.id === edgeData.sourceId);
-      const targetExists = existingGraph.nodes.some(n => n.id === edgeData.targetId);
-      
+      const sourceExists = existingGraph.nodes.some(
+        n => n.id === edgeData.sourceId
+      );
+      const targetExists = existingGraph.nodes.some(
+        n => n.id === edgeData.targetId
+      );
+
       if (!sourceExists || !targetExists) {
         throw new Error('Source or target node does not exist');
       }
@@ -444,23 +490,29 @@ export function makeGraphService(app: FastifyInstance) {
 
       // Check for duplicate edge
       const duplicateExists = existingGraph.edges.some(
-        e => e.sourceId === edgeData.sourceId && e.targetId === edgeData.targetId
+        e =>
+          e.sourceId === edgeData.sourceId && e.targetId === edgeData.targetId
       );
       if (duplicateExists) {
         throw new Error('Edge already exists');
       }
 
       // Create temporary edge to test for cycles
-      const testEdges = [...existingGraph.edges, {
-        id: 'temp',
-        graphId,
-        sourceId: edgeData.sourceId,
-        targetId: edgeData.targetId,
-      } as GraphEdge];
+      const testEdges = [
+        ...existingGraph.edges,
+        {
+          id: 'temp',
+          graphId,
+          sourceId: edgeData.sourceId,
+          targetId: edgeData.targetId,
+        } as GraphEdge,
+      ];
 
       const validation = validateGraph(existingGraph.nodes, testEdges);
       if (!validation.isValid) {
-        const cycleError = validation.errors.find(e => e.type === 'CYCLE_DETECTED');
+        const cycleError = validation.errors.find(
+          e => e.type === 'CYCLE_DETECTED'
+        );
         if (cycleError) {
           throw new Error('Adding this edge would create a cycle');
         }
@@ -475,7 +527,10 @@ export function makeGraphService(app: FastifyInstance) {
 
       // Update graph validation and adjacency list
       const updatedEdges = [...existingGraph.edges, newEdge];
-      const adjacencyList = generateAdjacencyList(existingGraph.nodes, updatedEdges);
+      const adjacencyList = generateAdjacencyList(
+        existingGraph.nodes,
+        updatedEdges
+      );
       const finalValidation = validateGraph(existingGraph.nodes, updatedEdges);
 
       await repo.updateGraph(graphId, {
@@ -499,8 +554,14 @@ export function makeGraphService(app: FastifyInstance) {
       // Get updated state
       const updatedGraph = await repo.findFullGraphById(graphId);
       if (updatedGraph) {
-        const adjacencyList = generateAdjacencyList(updatedGraph.nodes, updatedGraph.edges);
-        const validation = validateGraph(updatedGraph.nodes, updatedGraph.edges);
+        const adjacencyList = generateAdjacencyList(
+          updatedGraph.nodes,
+          updatedGraph.edges
+        );
+        const validation = validateGraph(
+          updatedGraph.nodes,
+          updatedGraph.edges
+        );
 
         await repo.updateGraph(graphId, {
           adjacencyList,
@@ -521,8 +582,14 @@ export function makeGraphService(app: FastifyInstance) {
       // Get updated state
       const updatedGraph = await repo.findFullGraphById(graphId);
       if (updatedGraph) {
-        const adjacencyList = generateAdjacencyList(updatedGraph.nodes, updatedGraph.edges);
-        const validation = validateGraph(updatedGraph.nodes, updatedGraph.edges);
+        const adjacencyList = generateAdjacencyList(
+          updatedGraph.nodes,
+          updatedGraph.edges
+        );
+        const validation = validateGraph(
+          updatedGraph.nodes,
+          updatedGraph.edges
+        );
 
         await repo.updateGraph(graphId, {
           adjacencyList,

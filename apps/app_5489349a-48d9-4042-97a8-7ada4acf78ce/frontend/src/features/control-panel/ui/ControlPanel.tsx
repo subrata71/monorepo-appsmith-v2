@@ -4,18 +4,18 @@ import { useVisualizationStore } from '@/entities/visualization';
 import { Play, Pause, SkipForward, RotateCcw } from 'lucide-react';
 
 export const ControlPanel = React.memo(() => {
-  const { 
-    status, 
-    animationSpeed, 
+  const {
+    status,
+    animationSpeed,
     array,
     currentStep,
     totalSteps,
     currentDescription,
-    start, 
+    start,
     pause,
-    step, 
-    reset, 
-    setSpeed 
+    step,
+    reset,
+    setSpeed,
   } = useVisualizationStore();
 
   const handleStart = () => {
@@ -43,10 +43,12 @@ export const ControlPanel = React.memo(() => {
   const isDisabled = array.length === 0;
   const canStart = status === 'idle' || status === 'paused';
   const canPause = status === 'running';
-  const canStep = (status === 'idle' || status === 'paused') && currentStep < totalSteps;
+  const canStep =
+    (status === 'idle' || status === 'paused') && currentStep < totalSteps;
   const canReset = status !== 'idle' || currentStep > 0;
 
-  const progressPercentage = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
+  const progressPercentage =
+    totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
 
   return (
     <div className="space-y-6">
@@ -115,9 +117,11 @@ export const ControlPanel = React.memo(() => {
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <label className="text-sm font-medium">Animation Speed</label>
-          <span className="text-sm text-muted-foreground">{animationSpeed.toFixed(1)}x</span>
+          <span className="text-sm text-muted-foreground">
+            {animationSpeed.toFixed(1)}x
+          </span>
         </div>
-        
+
         <Slider
           value={[animationSpeed]}
           onValueChange={handleSpeedChange}
@@ -126,7 +130,7 @@ export const ControlPanel = React.memo(() => {
           step={0.1}
           className="w-full"
         />
-        
+
         <div className="flex justify-between text-xs text-muted-foreground">
           <span>Slower</span>
           <span>Normal</span>
@@ -138,16 +142,21 @@ export const ControlPanel = React.memo(() => {
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">Status</span>
-          <span className={`capitalize px-2 py-1 rounded-full text-xs font-medium ${
-            status === 'idle' ? 'bg-gray-100 text-gray-700' :
-            status === 'running' ? 'bg-blue-100 text-blue-700' :
-            status === 'paused' ? 'bg-yellow-100 text-yellow-700' :
-            'bg-green-100 text-green-700'
-          }`}>
+          <span
+            className={`capitalize px-2 py-1 rounded-full text-xs font-medium ${
+              status === 'idle'
+                ? 'bg-gray-100 text-gray-700'
+                : status === 'running'
+                  ? 'bg-blue-100 text-blue-700'
+                  : status === 'paused'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-green-100 text-green-700'
+            }`}
+          >
             {status}
           </span>
         </div>
-        
+
         {currentDescription && (
           <div className="text-xs text-muted-foreground p-3 bg-muted rounded-md">
             {currentDescription}

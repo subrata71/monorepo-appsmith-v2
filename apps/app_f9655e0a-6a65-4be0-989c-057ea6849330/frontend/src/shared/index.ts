@@ -3,15 +3,15 @@ export { cn } from './lib/utils';
 export { APP_CONFIG, ROUTES } from './config/constants';
 
 // Graph validation utilities
-export { 
-  parseAdjacencyList, 
-  detectCycles, 
-  validateAdjacencyListFormat, 
+export {
+  parseAdjacencyList,
+  detectCycles,
+  validateAdjacencyListFormat,
   validateGraphStructure,
-  generateAdjacencyList 
+  generateAdjacencyList,
 } from './lib/graph-parser';
-export { 
-  useGraphValidation, 
+export {
+  useGraphValidation,
   useGraphChangeValidation,
-  type GraphValidationResult 
+  type GraphValidationResult,
 } from './hooks/use-graph-validation';

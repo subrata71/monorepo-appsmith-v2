@@ -1,6 +1,6 @@
 /**
  * AffirmationOverlay Widget
- * 
+ *
  * Exports for the affirmation overlay widget.
  */
 

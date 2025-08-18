@@ -1,0 +1,51 @@
+access: No authentication or permission required. Accessible for keyboard and screen
+  reader users. Sufficient color contrast for all interactive elements.
+behaviour: Single-page app. Page loads directly to the timer. Timer updates live.
+  Start/pause toggles the countdown; reset brings the timer back to its initial value.
+  All buttons are keyboard accessible and have clear focus states. Responsive for
+  desktop and mobile.
+name: Pomodoro Timer UI
+page:
+  behaviour: Timer can be started and paused by the main button, which toggles label
+    and icon based on state. Reset button stops the timer and brings it to full duration.
+    Timer does not go below zero. All interactive elements give immediate visual feedback
+    on hover/focus.
+  id: pomodoro-timer-ui
+  purpose: Enable users to run a Pomodoro session with a simple, distraction-free
+    interface. Users can start, pause, and reset the timer easily.
+  sections:
+  - behaviour: Displays countdown in real-time. Resets to starting value when reset
+      is pressed. Never shows negative time. Updates every second.
+    blocks:
+    - behaviour: Shows current time left as MM:SS. Updated every second when running.
+        On reset, shows full duration (e.g. 25:00).
+      id: timer-display-block
+    id: timer-display-section
+    title: Timer Display
+    visual: Large, bold number in the center (e.g. 64px+ font size), displaying time
+      in MM:SS. Lots of whitespace around.
+  - behaviour: Start/Pause toggles timer running state, switching button label accordingly.
+      Reset stops countdown (if running) and restores timer. Both buttons are keyboard
+      and screen reader accessible.
+    blocks:
+    - behaviour: If timer is running, button label is 'Pause'. If paused or not started,
+        label is 'Start'. On click or keyboard activation, toggles state and updates
+        timer accordingly.
+      id: start-pause-button-block
+    - behaviour: Resets timer to start value and stops if running. Disabled or visually
+        subdued if timer is already at the starting value.
+      id: reset-button-block
+    id: controls-section
+    title: Controls
+    visual: 'Two large, horizontally arranged rounded buttons: Start/Pause on the
+      left, Reset on the right. Minimal outlines, clear labels, and focus/hover effect.'
+  title: Pomodoro Timer
+  visual: 'Centralized vertical layout. Large timer at the top center. Below, two
+    large rounded buttons, spaced apart: Start/Pause and Reset. Minimal use of color,
+    focusing on usability. Clear visual states for buttons.'
+summary: A single-page minimalist UI for a Pomodoro timer, featuring a large countdown
+  display, start/pause and reset controls, and a clean, distraction-free design.
+visual: Minimalist and modern. Use a white or very light background. Large, bold,
+  sans-serif typeface for the timer. Monochrome color scheme with a highlight color
+  (e.g., blue or green) for primary buttons. Generous spacing, no unnecessary borders
+  or decorative elements.

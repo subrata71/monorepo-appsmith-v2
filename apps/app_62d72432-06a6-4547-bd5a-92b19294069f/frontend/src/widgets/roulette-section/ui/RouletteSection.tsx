@@ -25,7 +25,7 @@ export const RouletteSection = memo(() => {
         />
 
         <SpinControl />
-        
+
         <ResultDisplay />
       </div>
     </section>

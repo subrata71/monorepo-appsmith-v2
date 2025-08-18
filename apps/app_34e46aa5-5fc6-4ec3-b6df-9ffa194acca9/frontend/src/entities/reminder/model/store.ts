@@ -3,7 +3,7 @@ import type { ReminderStore, Reminder, ReminderUpdateInput } from './types';
 
 /**
  * Reminder Store - Local State Management
- * 
+ *
  * Manages all reminders in local state without backend communication.
  * Includes sample data for demonstration purposes.
  */
@@ -15,7 +15,7 @@ const generateId = (): string => {
 const createSampleReminders = (): Reminder[] => {
   const now = new Date();
   const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  
+
   return [
     {
       id: generateId(),
@@ -48,7 +48,7 @@ const createSampleReminders = (): Reminder[] => {
   ];
 };
 
-export const useReminderStore = create<ReminderStore>((set) => ({
+export const useReminderStore = create<ReminderStore>(set => ({
   // State
   reminders: createSampleReminders(),
   loading: false,
@@ -64,14 +64,14 @@ export const useReminderStore = create<ReminderStore>((set) => ({
   },
 
   addReminder: (reminder: Reminder) => {
-    set((state) => ({
+    set(state => ({
       reminders: [reminder, ...state.reminders],
     }));
   },
 
   updateReminder: (id: string, data: ReminderUpdateInput) => {
-    set((state) => ({
-      reminders: state.reminders.map((reminder) =>
+    set(state => ({
+      reminders: state.reminders.map(reminder =>
         reminder.id === id
           ? {
               ...reminder,
@@ -84,14 +84,14 @@ export const useReminderStore = create<ReminderStore>((set) => ({
   },
 
   removeReminder: (id: string) => {
-    set((state) => ({
-      reminders: state.reminders.filter((reminder) => reminder.id !== id),
+    set(state => ({
+      reminders: state.reminders.filter(reminder => reminder.id !== id),
     }));
   },
 
   markAsDone: (id: string) => {
-    set((state) => ({
-      reminders: state.reminders.map((reminder) =>
+    set(state => ({
+      reminders: state.reminders.map(reminder =>
         reminder.id === id
           ? {
               ...reminder,
@@ -104,8 +104,8 @@ export const useReminderStore = create<ReminderStore>((set) => ({
   },
 
   toggleCompletion: (id: string) => {
-    set((state) => ({
-      reminders: state.reminders.map((reminder) =>
+    set(state => ({
+      reminders: state.reminders.map(reminder =>
         reminder.id === id
           ? {
               ...reminder,

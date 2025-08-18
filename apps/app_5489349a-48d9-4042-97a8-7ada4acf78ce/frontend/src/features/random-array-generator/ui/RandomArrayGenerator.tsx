@@ -1,5 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
-import { Button, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui';
+import {
+  Button,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/shared/ui';
 import { useVisualizationStore } from '@/entities/visualization';
 import { generateRandomArray } from '@/entities/visualization/lib/array-utils';
 import { Shuffle } from 'lucide-react';
@@ -13,10 +21,13 @@ export const RandomArrayGenerator = React.memo(() => {
   const setError = useVisualizationStore(state => state.setError);
   const status = useVisualizationStore(state => state.status);
 
-  const handleArraySizeChange = useCallback((value: string) => {
-    const size = parseInt(value, 10);
-    setArraySize(size);
-  }, [setArraySize]);
+  const handleArraySizeChange = useCallback(
+    (value: string) => {
+      const size = parseInt(value, 10);
+      setArraySize(size);
+    },
+    [setArraySize]
+  );
 
   const handleGenerateArray = useCallback(() => {
     try {
@@ -24,7 +35,8 @@ export const RandomArrayGenerator = React.memo(() => {
       setArray(newArray);
       setError(null);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to generate array';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to generate array';
       setError(errorMessage);
     }
   }, [arraySize, setArray, setError]);
@@ -48,7 +60,7 @@ export const RandomArrayGenerator = React.memo(() => {
               <SelectValue placeholder="Select size" />
             </SelectTrigger>
             <SelectContent>
-              {ARRAY_SIZE_OPTIONS.map((size) => (
+              {ARRAY_SIZE_OPTIONS.map(size => (
                 <SelectItem key={size} value={size.toString()}>
                   {size} numbers
                 </SelectItem>

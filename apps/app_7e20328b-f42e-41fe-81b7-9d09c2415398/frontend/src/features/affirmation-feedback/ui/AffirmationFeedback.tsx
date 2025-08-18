@@ -1,6 +1,6 @@
 /**
  * AffirmationFeedback Feature Component
- * 
+ *
  * Handles random selection of affirmation and triggers overlay/animation after mood submission.
  */
 
@@ -18,7 +18,8 @@ export interface AffirmationFeedbackProps {
 
 export const AffirmationFeedback = React.memo<AffirmationFeedbackProps>(
   ({ open, onClose, className }) => {
-    const [currentAffirmation, setCurrentAffirmation] = React.useState<Affirmation | null>(null);
+    const [currentAffirmation, setCurrentAffirmation] =
+      React.useState<Affirmation | null>(null);
     const [showConfetti, setShowConfetti] = React.useState(false);
 
     // Load random affirmation when overlay opens
@@ -27,7 +28,7 @@ export const AffirmationFeedback = React.memo<AffirmationFeedbackProps>(
         const affirmation = getRandomAffirmation();
         setCurrentAffirmation(affirmation);
         setShowConfetti(true);
-        
+
         // Auto-hide confetti after 3 seconds
         const confettiTimer = setTimeout(() => {
           setShowConfetti(false);
@@ -50,11 +51,14 @@ export const AffirmationFeedback = React.memo<AffirmationFeedbackProps>(
     }, [open, currentAffirmation, onClose]);
 
     // Handle click to close
-    const handleOverlayClick = React.useCallback((e: React.MouseEvent) => {
-      if (e.target === e.currentTarget) {
-        onClose();
-      }
-    }, [onClose]);
+    const handleOverlayClick = React.useCallback(
+      (e: React.MouseEvent) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      },
+      [onClose]
+    );
 
     // Handle escape key
     React.useEffect(() => {
@@ -90,14 +94,14 @@ export const AffirmationFeedback = React.memo<AffirmationFeedbackProps>(
             className={`bg-gradient-to-br from-primary/10 via-accent/10 to-primary/5 backdrop-blur-md 
                        border border-primary/20 rounded-3xl shadow-2xl p-8 max-w-md w-full 
                        transform transition-all duration-500 ${
-                         open 
-                           ? 'scale-100 opacity-100 translate-y-0' 
+                         open
+                           ? 'scale-100 opacity-100 translate-y-0'
                            : 'scale-95 opacity-0 translate-y-4'
                        }`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <AffirmationMessage message={currentAffirmation.message} />
-            
+
             {/* Close button */}
             <div className="mt-6 text-center">
               <button
