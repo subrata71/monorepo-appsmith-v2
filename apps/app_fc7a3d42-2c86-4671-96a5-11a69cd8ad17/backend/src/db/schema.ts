@@ -1,0 +1,36 @@
+import {
+  pgTable,
+  uuid,
+  varchar,
+  timestamp,
+  text,
+  integer,
+} from 'drizzle-orm/pg-core';
+
+// Don't delete this schema defintion. It is actually used in the app.
+// Use this schema as a sample to define other tables in the app.
+export const __entityPlural__ = pgTable('__entityPlural__', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 255 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Row returned by SELECTs
+export type __Entity__ = typeof __entityPlural__.$inferSelect;
+// Payload accepted by INSERTs
+export type New__Entity__ = typeof __entityPlural__.$inferInsert;
+
+// Tasks table for kanban board
+export const tasks = pgTable('tasks', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  title: varchar('title', { length: 200 }).notNull(),
+  description: text('description'),
+  status: varchar('status', { length: 20 }).notNull().default('todo'),
+  order: integer('order').notNull().default(0),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+// Task types
+export type Task = typeof tasks.$inferSelect;
+export type NewTask = typeof tasks.$inferInsert;

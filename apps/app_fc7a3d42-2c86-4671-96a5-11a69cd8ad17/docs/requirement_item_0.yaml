@@ -1,0 +1,70 @@
+access: Authenticated users can view and manipulate the board. All users with access
+  can move tasks, but advanced task editing or board configuration is restricted to
+  users with edit rights (not covered in this requirement).
+behaviour: Supports drag-and-drop of task cards between columns using a standard library.
+  Columns and tasks update in real-time upon interaction. Animated transitions when
+  dragging/dropping. Tasks update status immediately and visually reflect their new
+  state. Board layout and state persist on refresh. Accessible keyboard navigation
+  for drag-and-drop wherever possible.
+name: Task Board UI
+page:
+  behaviour: Page loads all columns and tasks on entry. Users drag tasks between columns
+    to update status. Changes are saved immediately. Provides responsive feedback
+    and accessibility support.
+  id: task-board
+  purpose: Allows users to visualize and manage tasks by status, quickly update status
+    using drag-and-drop, and track progress across the workflow.
+  sections:
+  - behaviour: Columns render dynamically for each task status. Supports drag-and-drop
+      operations between columns. Columns update their content as tasks move.
+    blocks:
+    - behaviour: Displays tasks in the given status. Accepts dropped task cards and
+        updates their status.
+      id: status-column
+    id: board-layout
+    title: Board Layout
+    visual: Columns are arranged side by side, visually separated with card styling.
+      Each has a header with status name. Columns are horizontally scrollable if overflowing.
+  - behaviour: Cards are draggable within and between columns. Visual feedback (shadow,
+      ghost card) during drag. Cards reorder on drop.
+    blocks:
+    - behaviour: Draggable task element. On drop in new column, triggers status update
+        in data model.
+      id: task-card
+    id: task-cards
+    title: Task Cards
+    visual: Each task is a card with a light background, shadow, and rounded corners.
+      Task title is prominent, and optionally displays metadata. Drag handle appears
+      on hover or always on touch devices.
+  - behaviour: Implements drag-and-drop with a library (e.g., react-beautiful-dnd).
+      On drop, updates task position and column. Reorders within columns. Accessible
+      via mouse and (if possible) keyboard.
+    blocks:
+    - behaviour: Handles drag events, updates state, triggers animations and data
+        model updates.
+      id: drag-drop-handler
+    id: drag-and-drop
+    title: Drag-and-Drop
+    visual: Dragging shows a semi-transparent ghost card. Drop zones highlighted in
+      columns. Animations on card movement.
+  - behaviour: On card drop, updates the task's status in the backend or data model
+      and re-renders the UI to reflect the change. Handles errors gracefully.
+    blocks:
+    - behaviour: Updates the persistent data model for the task's new status after
+        drag-and-drop.
+      id: status-update
+    id: data-update
+    title: Task Status Update
+    visual: On successful drop, the task animates into place in the new column. Optional
+      checkmark or toast notification for confirmation.
+  title: Task Board
+  visual: Layout is a horizontally scrollable kanban board. Each status is a column
+    with a header. Tasks are cards in columns. Clean, minimal, with soft color indicators
+    for status.
+summary: Create the main task board interface with columns representing different
+  task statuses. Users can view tasks as cards in columns and move them between statuses
+  using drag-and-drop, with real-time status updates.
+visual: Modern, clean UI with a light or neutral background. Each status column has
+  a distinct card with soft shadow and rounded corners. Tasks are displayed as elevated
+  cards. Accent color for selected/dragged items. Responsive layout supporting both
+  desktop and mobile. Clear, high-contrast labels and readable fonts.

@@ -1,0 +1,24 @@
+id: '1'
+name: Task Board UI
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Set up board layout
+  summary: Implement a board layout with columns for task statuses (e.g., To Do, In
+    Progress, Done).
+- effort: 2
+  id: '1.2'
+  name: Display tasks in columns
+  summary: Render tasks as cards within their respective status columns.
+- effort: 3
+  id: '1.3'
+  name: Implement drag-and-drop
+  summary: Enable drag-and-drop functionality to move tasks between columns using
+    a library (e.g., react-beautiful-dnd).
+- effort: 2
+  id: '1.4'
+  name: Update task status on drop
+  summary: Update the task's status in the data model when it is dropped in a new
+    column.
+summary: Create the main task board interface with columns for different statuses
+  and drag-and-drop support.

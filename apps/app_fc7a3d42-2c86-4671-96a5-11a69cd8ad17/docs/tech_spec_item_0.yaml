@@ -1,0 +1,429 @@
+client:
+  components:
+    entities:
+    - description: Task business entity UI/state (card, details, selectors).
+      entity: task
+      name: Task
+      props:
+      - id
+      - title
+      - description
+      - status
+      - order
+    features:
+    - description: Load board data on entry, refetch on changes.
+      entities:
+      - Task
+      feature: fetch-tasks
+      name: fetch-tasks
+      props: []
+      shared:
+      - ApiClient
+    - description: Enables reordering and status updates via drag-and-drop.
+      entities:
+      - Task
+      feature: drag-and-drop
+      name: drag-and-drop
+      props: []
+      shared:
+      - DragDropContext
+    - description: Optimistically update UI on task changes, handle concurrency errors.
+      entities:
+      - Task
+      feature: realtime-task-update
+      name: realtime-task-update
+      props: []
+      shared:
+      - Toast
+    - description: Handles updating backend on status/order change.
+      entities:
+      - Task
+      feature: task-status-update
+      name: task-status-update
+      props: []
+      shared:
+      - ApiClient
+    shared:
+    - category: ui
+      description: Drag-and-drop provider component for board.
+      name: DragDropContext
+      props:
+      - children
+    - category: api
+      description: Generated OpenAPI client for tasks.
+      name: ApiClient
+      props: []
+    - category: ui
+      description: Toast notification for success/error.
+      name: Toast
+      props:
+      - message
+      - type
+    - category: ui
+      description: Spinner/skeleton for loading states.
+      name: Loader
+      props: []
+    - category: ui
+      description: Error boundary for UI errors.
+      name: ErrorBoundary
+      props:
+      - children
+    - category: lib
+      description: Authentication provider/client.
+      name: auth
+      props: []
+    - category: config
+      description: Global config, theme, etc.
+      name: config
+      props: []
+    widgets:
+    - description: Orchestrates task columns, drag-and-drop, and state.
+      entities:
+      - Task
+      features:
+      - fetch-tasks
+      - drag-and-drop
+      - realtime-task-update
+      name: KanbanBoardWidget
+      props: []
+      shared:
+      - DragDropContext
+      - ApiClient
+      - Toast
+    - description: Displays tasks of a single status, manages drop zone.
+      entities:
+      - Task
+      features:
+      - drag-and-drop
+      name: StatusColumn
+      props:
+      - status
+      - tasks
+      shared: []
+    - description: Draggable card UI for a task.
+      entities:
+      - Task
+      features:
+      - drag-and-drop
+      name: TaskCard
+      props:
+      - task
+      shared: []
+    - description: Handles DnD events, reorder logic, and API calls.
+      entities:
+      - Task
+      features:
+      - drag-and-drop
+      - task-status-update
+      name: DragDropHandler
+      props: []
+      shared: []
+    - description: Handles API update and error feedback.
+      entities:
+      - Task
+      features:
+      - realtime-task-update
+      name: StatusUpdateHandler
+      props: []
+      shared:
+      - Toast
+  pages:
+  - description: Visualize and manage tasks by status; supports drag-and-drop with
+      real-time updates.
+    queries:
+    - fetchTasks
+    route: /task-board
+    title: Task Board
+    widgets:
+    - KanbanBoardWidget
+  stores:
+  - actions:
+    - fetchTasks
+    - updateTaskStatusOrder
+    - reorderTaskInColumn
+    - optimisticUpdate
+    - revertOnError
+    description: Store for all board tasks, grouped and ordered by status.
+    layer: entities
+    name: taskStore
+    state_shape:
+    - name: byId
+      type: '{ [taskId: string]: Task }'
+    - name: idsByStatus
+      type: '{ [status: string]: string[] }'
+    - name: isLoading
+      type: boolean
+    - name: error
+      type: string | null
+components:
+  parameters:
+  - in_: path},{
+    name: id
+    required: true
+  - in_: query},{
+    name: status
+    required: false
+  - in_: query},{
+    name: limit
+    required: false
+  - in_: query},{
+    name: offset
+    required: false
+  - in_: query},{
+    name: sortBy
+    required: false
+  - in_: query},{
+    name: sortOrder
+    required: false
+  responses:
+  - code: '200'
+    description: Successful operation
+  - code: '201'
+    description: Created
+  - code: '204'
+    description: Deleted
+  - code: '400'
+    description: Validation error
+  - code: '401'
+    description: Authentication required
+  - code: '403'
+    description: Forbidden
+  - code: '404'
+    description: Not found
+  - code: '409'
+    description: Conflict
+  schemas:
+  - name: Task
+    type: object
+  - name: TaskCreate
+    type: object
+  - name: TaskUpdate
+    type: object
+  - name: TaskList
+    type: object
+  - name: ValidationError
+    type: object
+  - name: Unauthorized
+    type: object
+  - name: Forbidden
+    type: object
+  - name: NotFound
+    type: object
+  - name: Conflict
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Fetches tasks; supports filtering by status and sorting/reordering.
+      operation_id: getTasks
+      summary: List all tasks, optionally filtered by status and ordered by 'order'
+        field
+      tags:
+      - task
+    path: /tasks
+  - method: GET
+    operation:
+      description: Fetches a single task by ID.
+      operation_id: getTaskById
+      summary: Get a single task by ID
+      tags:
+      - task
+    path: /tasks/{id}
+  - method: POST
+    operation:
+      description: Creates a new task.
+      operation_id: createTask
+      summary: Create a new task
+      tags:
+      - task
+    path: /tasks
+  - method: PATCH
+    operation:
+      description: Updates a task (status/order change). Used for drag-and-drop.
+      operation_id: updateTask
+      summary: Update a task (used for drag-and-drop status/order changes)
+      tags:
+      - task
+    path: /tasks/{id}
+  - method: DELETE
+    operation:
+      description: Deletes a task.
+      operation_id: deleteTask
+      summary: Delete a task
+      tags:
+      - task
+    path: /tasks/{id}
+  description: Domain for task management, including fields for status, order, and
+    real-time updates.
+  models:
+  - description: A unit of work on the board.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: uuid
+    - name: title
+      nullable: false
+      pk: false
+      type: string
+    - name: description
+      nullable: true
+      pk: false
+      type: string
+    - name: status
+      nullable: false
+      pk: false
+      type: string
+    - name: order
+      nullable: false
+      pk: false
+      type: number
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Task
+  name: task
+  services:
+  - description: Business logic for task CRUD, drag-and-drop reordering, and status
+      changes.
+    methods:
+    - getTasks
+    - getTaskById
+    - createTask
+    - updateTask
+    - deleteTask
+    name: TaskService
+metadata:
+  description: Differential technical specification for implementing a real-time,
+    drag-and-drop kanban task board with status columns and task cards, including
+    backend and client changes.
+  generated_at: '2024-06-14T12:00:00Z'
+  name: Task Board UI
+  version: 1.0.0
+product:
+  features:
+  - description: Displays tasks in columns by status, supporting drag-and-drop reordering
+      and status changes.
+    domains:
+    - task
+    id: task-board
+    priority: high
+    title: Kanban Task Board
+  - description: Allows users to move tasks between columns and reorder within a column.
+    domains:
+    - task
+    id: drag-and-drop
+    priority: high
+    title: Drag-and-Drop Status Update
+  goals:
+  - Provide a visual board for managing and tracking tasks by status
+  - Enable intuitive drag-and-drop for changing task status/order
+  - Ensure real-time UI updates and data persistence
+  - Support responsive design and accessibility
+  personas:
+  - description: A user who can view and manage tasks on the board, moving tasks between
+      statuses.
+    goals:
+    - Track progress and manage workflow visually
+    - Quickly update status of tasks
+    - Access the board on desktop and mobile devices
+    name: Authenticated User
+  - description: A user with advanced permissions who can configure the board (out
+      of scope for this requirement).
+    goals:
+    - Configure columns/statuses (Not in scope)
+    - Manage access (Not in scope)
+    name: Board Configurator
+  summary: Implement a kanban-style task board enabling users to view, reorder, and
+    update the status of tasks using drag-and-drop in real-time, with persistence
+    and accessibility.
+use_cases:
+- actors:
+  - user
+  apis:
+  - GET /tasks
+  description: User visits the board and sees tasks grouped by status.
+  domains:
+  - task
+  happy_path:
+  - User navigates to the /task-board page
+  - System fetches all statuses and tasks
+  - UI displays the board with columns and tasks
+  - User reviews the task list
+  id: view-task-board
+  pages:
+  - /task-board
+  postconditions:
+  - Board with tasks is visible and interactive
+  preconditions:
+  - User is authenticated
+  title: View Task Board
+- actors:
+  - user
+  apis:
+  - PATCH /tasks/{id}
+  description: User drags a task card from one column to another to update its status.
+  domains:
+  - task
+  happy_path:
+  - User clicks/drags a task card
+  - User drags it to a new column/status
+  - System sends update to backend and updates UI optimistically
+  - System reflects new status in real-time; error handling if update fails
+  id: move-task-between-columns
+  pages:
+  - /task-board
+  postconditions:
+  - Task has updated status and appears in new column
+  preconditions:
+  - User is authenticated
+  - Task board is loaded
+  title: Move Task Between Columns
+- actors:
+  - user
+  apis:
+  - PATCH /tasks/{id}
+  description: User reorders tasks within a column to prioritize.
+  domains:
+  - task
+  happy_path:
+  - User drags a task card within the same column
+  - System sends new order to backend and updates UI optimistically
+  - System reflects new order; error handling if update fails
+  id: reorder-task-in-column
+  pages:
+  - /task-board
+  postconditions:
+  - Task order is updated in backend and UI
+  preconditions:
+  - User is authenticated
+  - Task board is loaded
+  title: Reorder Task in Column
+user_journeys:
+- id: kanban-flow
+  persona: Authenticated User
+  related_use_cases:
+  - move-task-between-columns
+  - reorder-task-in-column
+  steps:
+  - action: User logs in and navigates to /task-board
+    page: /task-board
+  - action: User views columns for each status with tasks inside
+    page: /task-board
+  - action: User drags a task card to another column; sees animation and ghost card
+    page: /task-board
+  - action: UI updates immediately; backend is notified
+    page: /task-board
+  - action: If backend update succeeds, UI confirms (e.g., checkmark/toast)
+    page: /task-board
+  - action: If backend fails, UI reverts task and shows error
+    page: /task-board
+  success_criteria: Tasks update status/order correctly and visually in real-time;
+    errors are communicated and UI is consistent.
+  title: Managing Tasks on the Board
