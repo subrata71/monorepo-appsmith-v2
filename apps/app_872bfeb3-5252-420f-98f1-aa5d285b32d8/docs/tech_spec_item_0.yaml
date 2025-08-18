@@ -1,0 +1,303 @@
+client:
+  components:
+    entities: []
+    features:
+    - description: Enables prev/next navigation with UI and keyboard.
+      entities: []
+      feature: month_navigation
+      name: NavigateMonth
+      props:
+      - onPrev
+      - onNext
+      shared:
+      - CalendarHeader
+    - description: Handles keyboard focus logic for days grid.
+      entities: []
+      feature: responsive_accessibility
+      name: FocusDayCell
+      props:
+      - focusedDay
+      - onFocus
+      shared:
+      - CalendarGrid
+    - description: Applies animation on month transitions.
+      entities: []
+      feature: calendar_grid
+      name: AnimateCalendarGrid
+      props: []
+      shared:
+      - CalendarGrid
+    shared:
+    - category: ui
+      description: Renders grid of days for a month.
+      name: CalendarGrid
+      props:
+      - days
+      - onDayFocus
+      - focusedDay
+    - category: ui
+      description: Month/year label and navigation button row.
+      name: CalendarHeader
+      props:
+      - year
+      - month
+      - onPrev
+      - onNext
+    - category: ui
+      description: Displays a single day cell in the grid, focusable and accessible.
+      name: CalendarDayCell
+      props:
+      - date
+      - isCurrentMonth
+      - isFocused
+    - category: ui
+      description: Static row of weekday abbreviations.
+      name: CalendarWeekdayHeader
+      props: []
+    - category: lib
+      description: Hook/utility for month navigation and keyboard logic.
+      name: useCalendarNavigation
+      props: []
+    - category: api
+      description: (Future) API client for calendar data, if server source is used.
+      name: calendarApi
+      props: []
+    - category: lib
+      description: Date calculation helpers.
+      name: dateUtils
+      props: []
+    - category: config
+      description: Styling and branding config.
+      name: themeConfig
+      props: []
+    - category: ui
+      description: Loading indicator.
+      name: Spinner
+      props: []
+    - category: ui
+      description: Displays error messages.
+      name: ErrorMessage
+      props: []
+    widgets:
+    - description: Header with navigation and month/year label.
+      entities: []
+      features:
+      - NavigateMonth
+      name: calendar_header
+      props:
+      - year
+      - month
+      - onPrev
+      - onNext
+      shared:
+      - CalendarHeader
+    - description: Grid of days with weekday headers.
+      entities: []
+      features:
+      - FocusDayCell
+      - AnimateCalendarGrid
+      name: calendar_grid
+      props:
+      - days
+      - focusedDay
+      shared:
+      - CalendarGrid
+      - CalendarWeekdayHeader
+  pages:
+  - description: Main calendar page showing grid for current month, with header and
+      navigation controls.
+    queries: []
+    route: /calendar
+    title: Calendar
+    widgets:
+    - calendar_header
+    - calendar_grid
+  - description: Landing page redirects to /calendar.
+    queries: []
+    route: /
+    title: Home (redirects to calendar)
+    widgets: []
+  - description: Page not found.
+    queries: []
+    route: /404
+    title: Not Found
+    widgets: []
+  stores:
+  - actions:
+    - loadCurrentMonth()
+    - goToPrevMonth()
+    - goToNextMonth()
+    - setMonth(year:number, month:number)
+    - focusDay(dayIndex:number)
+    description: Holds current month/year and day grid; manages navigation and loading
+      state.
+    layer: features
+    name: calendarMonthStore
+    state_shape:
+    - name: year
+      type: number
+    - name: month
+      type: number
+    - name: days
+      type: DayCell[]
+    - name: focusedDay
+      type: number|null
+    - name: loading
+      type: boolean
+    - name: error
+      type: string|null
+components:
+  parameters: []
+  responses: []
+  schemas:
+  - name: CalendarMonth
+    type: object
+  - name: DayCell
+    type: object
+domains:
+- apis: []
+  description: Handles calendar month state, day grid calculation, and navigation
+    logic.
+  models:
+  - description: Represents a month and its days for display.
+    fields:
+    - name: year
+      nullable: false
+      pk: false
+      type: number
+    - name: month
+      nullable: false
+      pk: false
+      type: number
+    - name: days
+      nullable: false
+      pk: false
+      type: DayCell[]
+    name: CalendarMonth
+  name: calendar
+  services:
+  - description: Calculates days for a given month/year and handles navigation logic.
+    methods:
+    - getCurrentMonth()
+    - getMonth(year:number, month:number)
+    - getPrevMonth(year:number, month:number)
+    - getNextMonth(year:number, month:number)
+    name: CalendarService
+metadata:
+  description: Technical specification for a minimal, accessible, responsive calendar
+    UI with month navigation and a grid view of days.
+  generated_at: '2024-06-11T13:25:00Z'
+  name: Calendar UI
+  version: 1.0.0
+product:
+  features:
+  - description: Displays days of the current month in a 7-column grid.
+    domains:
+    - calendar
+    id: calendar_grid
+    priority: high
+    title: Calendar Grid
+  - description: Navigate to previous or next month using buttons or keyboard.
+    domains:
+    - calendar
+    id: month_navigation
+    priority: high
+    title: Month Navigation
+  - description: Grid and controls adapt to device, all features are keyboard-accessible
+      and screen-reader friendly.
+    domains:
+    - calendar
+    id: responsive_accessibility
+    priority: high
+    title: Responsive and Accessible UI
+  goals:
+  - Users can view days of any month in a calendar grid
+  - Users can navigate between months with mouse or keyboard
+  - All interactive elements are accessible and labeled for screen readers
+  - UI is responsive for desktop and mobile
+  - Design is visually clean and ready for future extensibility
+  personas:
+  - description: Any user accessing the calendar, no login required.
+    goals:
+    - Browse calendar months
+    - Check days for scheduling or information
+    - Access on any device, including with assistive tech
+    name: Public Visitor
+  summary: A public, accessible calendar UI showing a grid of days for any month,
+    with controls to browse months. Modern, minimal, responsive, and keyboard-accessible
+    design.
+use_cases:
+- actors:
+  - Public Visitor
+  apis: []
+  description: User opens the calendar page and sees the current month.
+  domains:
+  - calendar
+  happy_path:
+  - User loads /calendar
+  - System detects current month and renders grid
+  - User sees month/year header and grid of days
+  id: uc_calendar_view
+  pages:
+  - /calendar
+  postconditions:
+  - Current month is shown in a grid with navigation
+  preconditions:
+  - User accesses /calendar
+  title: View Calendar
+- actors:
+  - Public Visitor
+  apis: []
+  description: User goes to previous or next month using header controls or keyboard.
+  domains:
+  - calendar
+  happy_path:
+  - User clicks left/right arrow or uses keyboard
+  - Month/year label and grid update with animation
+  id: uc_navigate_months
+  pages:
+  - /calendar
+  postconditions:
+  - Grid updates to show new month
+  preconditions:
+  - Calendar page is open
+  title: Navigate Months
+- actors:
+  - Public Visitor
+  apis: []
+  description: User navigates calendar grid and controls with keyboard.
+  domains:
+  - calendar
+  happy_path:
+  - User tabs to navigation or grid
+  - Arrow keys move focus in grid and between months
+  - ARIA labels describe controls and grid
+  id: uc_keyboard_access
+  pages:
+  - /calendar
+  postconditions:
+  - All controls and days can be focused, navigated, and labeled for screen readers
+  preconditions:
+  - Calendar page is open
+  title: Keyboard Navigation & Accessibility
+user_journeys:
+- id: uj_simple_browse
+  persona: Public Visitor
+  related_use_cases:
+  - uc_calendar_view
+  - uc_navigate_months
+  - uc_keyboard_access
+  steps:
+  - action: Page loads, current month displayed
+    page: /calendar
+  - action: User clicks right arrow, next month animates in
+    page: /calendar
+  - action: User clicks left arrow, previous month animates in
+    page: /calendar
+  - action: User uses arrow keys to navigate days
+    page: /calendar
+  - action: User tabs between header controls and grid
+    page: /calendar
+  success_criteria: User can view and navigate months with mouse or keyboard; all
+    controls are focusable and labeled.
+  title: Browse Calendar Months

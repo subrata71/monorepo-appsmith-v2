@@ -1,0 +1,55 @@
+access: Public access; no restrictions. All users can view and interact with calendar
+  features.
+behaviour: 'Responsive design for mobile and desktop. Smooth month transitions with
+  animation. Keyboard accessible: arrow keys allow navigation between days and months.
+  All grid days are focusable; clicking does nothing yet. All controls are labeled
+  for screen readers.'
+name: Calendar UI
+page:
+  behaviour: On page load, shows the current month. Navigation controls switch month,
+    animating the grid. Days in the grid update accordingly. All days are accessible
+    by keyboard. The structure is ready for future extensibility (e.g., day selection).
+  id: calendar_main
+  purpose: Allow users to view the days of any month and navigate between months for
+    scheduling or information purposes.
+  sections:
+  - behaviour: Left/right arrows move to previous/next month, updating the grid and
+      label. Month/year label updates in sync with grid.
+    blocks:
+    - behaviour: On click, decrements month and updates grid. Disabled if minimum
+        date reached (future extension).
+      id: prev_month_button
+    - behaviour: Displays current month and year; updates when navigation occurs.
+      id: month_year_label
+    - behaviour: On click, increments month and updates grid. Disabled if maximum
+        date reached (future extension).
+      id: next_month_button
+    id: calendar_header
+    title: Header
+    visual: 'Horizontal alignment: left arrow, centered month/year, right arrow. Arrows
+      are buttons with subtle hover/focus effect. Month/year in bold.'
+  - behaviour: Shows all days of the current month in order. Cells for days are focusable
+      and highlight on hover or focus. No click actions for now. Grid updates when
+      month changes.
+    blocks:
+    - behaviour: Displays static weekday abbreviations (e.g., Sun, Mon, etc.) at grid
+        top.
+      id: weekday_headers
+    - behaviour: Renders date numbers for each day cell in the current month. Each
+        cell is focusable. No action on click.
+      id: calendar_days
+    id: calendar_grid
+    title: Month Grid
+    visual: 7-column grid with weekday headers on top. Day cells are square with slight
+      hover effect. Empty cells fill leading/trailing spaces as needed.
+  title: Calendar
+  visual: Calendar page is centered with header (month/year and navigation) above
+    the month grid. Grid fills available width on mobile, with max width on desktop.
+    Consistent spacing and padding. Navigation and focus highlights in primary brand
+    color.
+summary: Create a basic calendar interface with a grid view of days for the current
+  month and controls to navigate to previous and next months.
+visual: Minimal, modern, and clean interface. White background, subtle grey borders,
+  rounded corners. Sans-serif font for clarity. Month/year title is bold and centered.
+  Navigation controls use simple left/right arrows. Calendar grid is 7 columns (Sun-Sat),
+  with light hover effect on days.

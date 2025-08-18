@@ -1,0 +1,13 @@
+id: '1'
+name: Calendar UI
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Display Month Grid
+  summary: Render a grid for the current month showing all days.
+- effort: 1
+  id: '1.2'
+  name: Month Navigation Controls
+  summary: Add buttons to navigate to previous and next months.
+summary: Create a basic calendar interface to display days and allow navigation between
+  months.

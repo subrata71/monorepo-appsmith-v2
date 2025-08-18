@@ -1,0 +1,26 @@
+plan_items:
+- id: '1'
+  name: Calendar UI
+  sub_items:
+  - effort: 2
+    id: '1.1'
+    name: Display Month Grid
+    summary: Render a grid for the current month showing all days.
+  - effort: 1
+    id: '1.2'
+    name: Month Navigation Controls
+    summary: Add buttons to navigate to previous and next months.
+  summary: Create a basic calendar interface to display days and allow navigation
+    between months.
+- id: '2'
+  name: Event Management
+  sub_items:
+  - effort: 2
+    id: '2.1'
+    name: Add Event to Date
+    summary: Enable users to add a text event to a selected date.
+  - effort: 1
+    id: '2.2'
+    name: View Events for Date
+    summary: Show a list of events for a selected date.
+  summary: Allow users to add and view simple events on specific dates.
