@@ -1,0 +1,252 @@
+client:
+  components:
+    entities:
+    - description: Alarm domain entity model.
+      entity: alarm
+      name: AlarmEntity
+      props:
+      - id
+      - userId
+      - time
+      - createdAt
+      - updatedAt
+    features:
+    - description: Feature for controlling the time picker logic and state.
+      entities:
+      - AlarmEntity
+      feature: alarm-time-selection
+      name: TimePickerFeature
+      props:
+      - value
+      - onChange
+      shared:
+      - TimePicker
+    - description: Feature for handling confirmation and API update.
+      entities:
+      - AlarmEntity
+      feature: alarm-time-selection
+      name: ConfirmAlarmTimeFeature
+      props:
+      - time
+      - onConfirm
+      shared:
+      - Button
+    shared:
+    - category: ui
+      description: Accessible button component.
+      name: Button
+      props:
+      - onClick
+      - disabled
+      - children
+    - category: ui
+      description: Time picker UI component supporting keyboard and screen reader.
+      name: TimePicker
+      props:
+      - value
+      - onChange
+    widgets:
+    - description: Widget combining time picker UI and confirmation logic.
+      entities:
+      - AlarmEntity
+      features:
+      - TimePickerFeature
+      - ConfirmAlarmTimeFeature
+      name: AlarmTimeWidget
+      props:
+      - alarm
+      - onChangeTime
+      - onConfirm
+      shared:
+      - TimePicker
+      - Button
+  pages:
+  - description: Let users select and confirm the time for their alarm, ensuring accuracy
+      and ease of use.
+    queries:
+    - useMyAlarmQuery
+    - useUpdateAlarmMutation
+    route: /alarm/time
+    title: Set Alarm Time
+    widgets:
+    - AlarmTimeWidget
+  stores:
+  - actions:
+    - fetchAlarm
+    - setSelectedTime
+    - updateAlarm
+    description: Alarm state store (selected time, loading, errors).
+    layer: entities
+    name: alarmStore
+    state_shape:
+    - name: alarm
+      type: Alarm | null
+    - name: loading
+      type: boolean
+    - name: error
+      type: string | null
+    - name: selectedTime
+      type: string | null
+    - name: isSaving
+      type: boolean
+components:
+  parameters:
+  - in_: path
+    name: AlarmId
+    required: true
+  - in_: query
+    name: Page
+    required: false
+  - in_: query
+    name: Limit
+    required: false
+  responses:
+  - code: '200'
+    description: Success
+  - code: '201'
+    description: Created
+  - code: '400'
+    description: Validation error
+  - code: '401'
+    description: Unauthorized
+  - code: '404'
+    description: Not found
+  schemas:
+  - name: Alarm
+    type: object
+  - name: AlarmCreate
+    type: object
+  - name: AlarmUpdate
+    type: object
+  - name: Error
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Get alarm time for the authenticated user.
+      operation_id: getMyAlarm
+      summary: Get current user's alarm
+      tags:
+      - Alarm
+    path: /alarms/my
+  - method: POST
+    operation:
+      description: Create an alarm time for the user (one per user).
+      operation_id: createAlarm
+      summary: Create alarm for current user
+      tags:
+      - Alarm
+    path: /alarms
+  - method: PUT
+    operation:
+      description: Update alarm time for the user.
+      operation_id: updateAlarm
+      summary: Update alarm for current user
+      tags:
+      - Alarm
+    path: /alarms/my
+  description: Domain for user alarm time settings.
+  models:
+  - description: Stores each user's selected alarm time.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: uuid
+    - name: userId
+      nullable: false
+      pk: false
+      type: uuid
+    - name: time
+      nullable: false
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Alarm
+  name: alarm
+  services:
+  - description: Service for managing alarm CRUD operations.
+    methods:
+    - getByUserId
+    - createForUser
+    - updateForUser
+    - deleteForUser
+    name: AlarmService
+metadata:
+  description: Technical specification for the Alarm Time Selection feature, including
+    backend model/API, client FSD structure, and UI requirements.
+  generated_at: '2024-06-12T12:00:00Z'
+  name: Alarm Time Selection
+  version: 1.0.0
+product:
+  features:
+  - description: Users can select and confirm a time for their alarm using a time
+      picker.
+    domains:
+    - alarm
+    id: alarm-time-selection
+    priority: high
+    title: Alarm Time Selection
+  goals:
+  - Enable users to set and confirm their alarm time easily.
+  - Ensure only valid times can be selected and confirmed.
+  - Provide instant feedback and accessible interaction.
+  personas:
+  - description: Any user who has logged in and wants to set or update their alarm
+      time.
+    goals:
+    - Set an accurate alarm time.
+    - Use a simple and accessible interface.
+    - Receive confirmation when the time is set.
+    name: Authenticated User
+  summary: Allow users to set the time for their alarm via a simple and intuitive
+    interface, using a time picker control.
+use_cases:
+- actors:
+  - Authenticated User
+  apis:
+  - POST /alarms (create)
+  - PUT /alarms/my (update)
+  - GET /alarms/my (fetch current)
+  description: User selects a time and confirms it as their alarm time.
+  domains:
+  - alarm
+  happy_path:
+  - User navigates to the Set Alarm Time page.
+  - User picks a time using the time picker.
+  - Confirmation button enables after valid time is selected.
+  - User confirms selection.
+  - System saves the alarm time and shows success indicator.
+  id: set-alarm-time
+  pages:
+  - alarm_time_selection
+  postconditions:
+  - Alarm time is saved for the user
+  preconditions:
+  - User is authenticated
+  title: Set Alarm Time
+user_journeys:
+- id: alarm-time-selection-journey
+  persona: Authenticated User
+  related_use_cases:
+  - set-alarm-time
+  steps:
+  - action: Arrives on Set Alarm Time page
+    page: /alarm/time
+  - action: Selects desired time using time picker
+    page: /alarm/time
+  - action: Confirms time selection
+    page: /alarm/time
+  - action: Receives feedback (success or error)
+    page: /alarm/time
+  success_criteria: The user sees the desired time reflected and receives a success
+    message after confirmation.
+  title: Alarm Time Selection Journey

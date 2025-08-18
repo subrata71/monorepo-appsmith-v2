@@ -1,0 +1,34 @@
+access: Any authenticated user can access and set the alarm time. No special roles
+  or restrictions required.
+behaviour: Instant feedback on UI interactions. Only valid times can be selected.
+  Responsive design for mobile and desktop. Keyboard and screen reader accessible.
+  Confirmation feedback upon setting time.
+name: Alarm Time Selection
+page:
+  behaviour: When the user adjusts the time, the selection is immediately reflected
+    in the UI. The confirmation button is enabled only after a valid time is chosen.
+    Upon confirmation, a success message or indicator is shown.
+  id: alarm_time_selection
+  purpose: Let users select and confirm the time for their alarm, ensuring accuracy
+    and ease of use.
+  sections:
+  - behaviour: The section manages the state of the selected time, ensuring only valid
+      entries. Provides focus outlines and ARIA labels for accessibility.
+    blocks:
+    - behaviour: Displays a time picker control for the user to select hour and minute.
+        Updates the time in real-time as the user interacts. Prevents invalid input.
+        Optionally uses native OS time picker for mobile.
+      id: time_picker_ui
+    id: alarm_time
+    title: Select Alarm Time
+    visual: Centered section containing a prominently sized time picker UI. Label
+      above and confirmation button below. Minimal distractions.
+  title: Set Alarm Time
+  visual: Single-column layout with the page title at the top, followed by the time
+    picker and a confirmation button. Spacing separates elements for clarity and ease
+    of interaction.
+summary: Allow users to set the time for their alarm via a simple and intuitive interface,
+  using a time picker control.
+visual: Clean, minimal, and focused UI. Central placement for key controls. Use of
+  native or custom time picker components with clear labels and adequate touch/click
+  targets. Consistent spacing and alignment. Accessible color scheme.

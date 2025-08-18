@@ -1,0 +1,37 @@
+plan_items:
+- id: '1'
+  name: Alarm Time Selection
+  sub_items:
+  - effort: 2
+    id: '1.1'
+    name: Time Picker UI
+    summary: Implement a simple UI for the user to pick the alarm time.
+  summary: Allow the user to set the time for the alarm.
+- id: '2'
+  name: Alarm Storage and Listing
+  sub_items:
+  - effort: 1
+    id: '2.1'
+    name: Store Alarm Data
+    summary: Save the alarm time in memory or local storage.
+  - effort: 1
+    id: '2.2'
+    name: Display Alarm List
+    summary: Show a list of all set alarms to the user.
+  summary: Store alarms and display them in a list.
+- id: '3'
+  name: Alarm Trigger and Notification
+  sub_items:
+  - effort: 2
+    id: '3.1'
+    name: Alarm Time Check
+    summary: Check the current time against set alarms and trigger when matched.
+  - effort: 1
+    id: '3.2'
+    name: Alarm Notification UI
+    summary: Show a notification or alert when the alarm goes off.
+  - effort: 1
+    id: '3.3'
+    name: Stop Alarm Button
+    summary: Allow the user to stop the alarm when it rings.
+  summary: Trigger the alarm at the set time and notify the user.

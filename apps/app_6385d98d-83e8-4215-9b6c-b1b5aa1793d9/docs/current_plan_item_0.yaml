@@ -1,0 +1,8 @@
+id: '1'
+name: Alarm Time Selection
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Time Picker UI
+  summary: Implement a simple UI for the user to pick the alarm time.
+summary: Allow the user to set the time for the alarm.
