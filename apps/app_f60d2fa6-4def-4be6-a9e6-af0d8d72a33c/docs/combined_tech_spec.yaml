@@ -1,0 +1,473 @@
+metadata:
+  description: Comprehensive technical specification combining all individual plan
+    specifications
+  generated_from_files:
+  - tech_spec_item_0.yaml
+  title: Combined Technical Specification
+  total_plans: 1
+plans:
+- plan_name: item_0
+  source_file: tech_spec_item_0.yaml
+  specification:
+    client:
+      components:
+        entities:
+        - description: Shows current/final score.
+          entity: GameState
+          name: ScoreDisplay
+          props:
+          - score
+        - description: Renders paddle on canvas.
+          entity: Paddle
+          name: PaddleDisplay
+          props:
+          - paddle
+        - description: Renders ball on canvas.
+          entity: Ball
+          name: BallDisplay
+          props:
+          - ball
+        - description: Renders bricks on canvas.
+          entity: Brick
+          name: BrickDisplay
+          props:
+          - bricks
+        features:
+        - description: Handles game state, input, rendering, scoring, end logic.
+          entities:
+          - PaddleDisplay
+          - BallDisplay
+          - BrickDisplay
+          feature: instant_gameplay
+          name: PlayGameFeature
+          props:
+          - none
+          shared:
+          - GameCanvas
+          - useAnimationFrame
+          - useKeyboardControls
+          - useMouseControls
+        - description: Handles game over message and logic.
+          entities:
+          - ScoreDisplay
+          feature: game_end_states
+          name: ShowGameOverFeature
+          props:
+          - score
+          shared:
+          - NeonText
+        - description: Handles win message and logic.
+          entities:
+          - ScoreDisplay
+          feature: game_end_states
+          name: ShowWinFeature
+          props:
+          - score
+          shared:
+          - NeonText
+        shared:
+        - category: ui
+          description: Styled neon text (for score, messages, hints)
+          name: NeonText
+          props:
+          - text
+          - color
+        - category: ui
+          description: Retro-styled HTML5 canvas for rendering game area.
+          name: GameCanvas
+          props:
+          - width
+          - height
+          - gameState
+        - category: lib
+          description: Custom hook for requestAnimationFrame game loop.
+          name: useAnimationFrame
+          props:
+          - callback
+        - category: lib
+          description: Custom hook for handling keyboard input.
+          name: useKeyboardControls
+          props:
+          - onLeft
+          - onRight
+          - onKeyDown
+        - category: lib
+          description: Custom hook for mouse-based paddle movement.
+          name: useMouseControls
+          props:
+          - onMove
+        widgets:
+        - description: Panel showing current/final score in neon style.
+          entities:
+          - ScoreDisplay
+          features:
+          - live_score
+          name: ScoreWidget
+          props:
+          - score
+          shared:
+          - NeonText
+        - description: Main canvas area; draws paddle, ball, bricks, handles animation
+            and input.
+          entities:
+          - PaddleDisplay
+          - BallDisplay
+          - BrickDisplay
+          features:
+          - instant_gameplay
+          - responsive_controls
+          name: GameCanvasWidget
+          props:
+          - gameState
+          shared:
+          - GameCanvas
+        - description: Panel with static controls instructions below canvas.
+          entities: []
+          features:
+          - instructions
+          name: ControlsHintWidget
+          props: []
+          shared:
+          - NeonText
+      pages:
+      - description: Main page showing game canvas, score panel, and controls hint.
+        queries: []
+        route: /
+        title: DX Ball Game
+        widgets:
+        - ScoreWidget
+        - GameCanvasWidget
+        - ControlsHintWidget
+      - description: Overlay/modal showing final score when player loses.
+        queries: []
+        route: /game-over
+        title: Game Over
+        widgets:
+        - ScoreWidget
+      - description: Overlay/modal showing final score when all bricks are destroyed.
+        queries: []
+        route: /win
+        title: You Win!
+        widgets:
+        - ScoreWidget
+      stores:
+      - actions:
+        - initializeGame()
+        - movePaddle(direction, amount)
+        - updateBallPosition()
+        - setGameOver()
+        - setGameWon()
+        - resetGame()
+        description: Holds all game state for DX Ball, including score, object positions,
+          and status.
+        layer: features
+        name: gameStore
+        state_shape:
+        - name: gameState
+          type: GameState
+        - name: loading
+          type: boolean
+        - name: error
+          type: string | null
+    components:
+      parameters: []
+      responses: []
+      schemas:
+      - name: GameState
+        type: object
+      - name: Brick
+        type: object
+      - name: Paddle
+        type: object
+      - name: Ball
+        type: object
+    domains:
+    - apis: []
+      description: All client-side game logic, state, and entities for DX Ball. No
+        backend or persistence.
+      models:
+      - description: Complete state of the DX Ball game at a point in time.
+        fields:
+        - name: score
+          nullable: false
+          pk: false
+          type: number
+        - name: bricks
+          nullable: false
+          pk: false
+          type: Brick[]
+        - name: paddle
+          nullable: false
+          pk: false
+          type: Paddle
+        - name: ball
+          nullable: false
+          pk: false
+          type: Ball
+        - name: status
+          nullable: false
+          pk: false
+          type: string
+        - name: remainingLives
+          nullable: false
+          pk: false
+          type: number
+        name: GameState
+      - description: A single brick.
+        fields:
+        - name: id
+          nullable: false
+          pk: true
+          type: string
+        - name: x
+          nullable: false
+          pk: false
+          type: number
+        - name: y
+          nullable: false
+          pk: false
+          type: number
+        - name: width
+          nullable: false
+          pk: false
+          type: number
+        - name: height
+          nullable: false
+          pk: false
+          type: number
+        - name: color
+          nullable: false
+          pk: false
+          type: string
+        - name: destroyed
+          nullable: false
+          pk: false
+          type: boolean
+        name: Brick
+      - description: Player paddle.
+        fields:
+        - name: x
+          nullable: false
+          pk: false
+          type: number
+        - name: y
+          nullable: false
+          pk: false
+          type: number
+        - name: width
+          nullable: false
+          pk: false
+          type: number
+        - name: height
+          nullable: false
+          pk: false
+          type: number
+        - name: color
+          nullable: false
+          pk: false
+          type: string
+        name: Paddle
+      - description: Ball entity.
+        fields:
+        - name: x
+          nullable: false
+          pk: false
+          type: number
+        - name: y
+          nullable: false
+          pk: false
+          type: number
+        - name: radius
+          nullable: false
+          pk: false
+          type: number
+        - name: velocityX
+          nullable: false
+          pk: false
+          type: number
+        - name: velocityY
+          nullable: false
+          pk: false
+          type: number
+        - name: color
+          nullable: false
+          pk: false
+          type: string
+        name: Ball
+      name: game
+      services:
+      - description: Encapsulates all game logic and state transitions. All state
+          is managed in-memory on the client.
+        methods:
+        - initializeGame()
+        - 'movePaddle(direction: ''left'' | ''right'' | ''mouse'', amount: number)'
+        - updateBallPosition()
+        - checkCollisions()
+        - 'destroyBrick(brickId: string)'
+        - 'updateScore(amount: number)'
+        - checkGameEnd()
+        - resetGame()
+        name: GameService
+    metadata:
+      description: 'Technical specification for a single-page, browser-based DX Ball
+        game: retro visuals, real-time gameplay, no backend, no persistence, all client-side.'
+      generated_at: '2024-06-12T14:00:00Z'
+      name: DX Ball Web App Prototype
+      version: 1.0.0
+    product:
+      features:
+      - description: Game loads and starts on page load, no barriers.
+        domains:
+        - game
+        id: instant_gameplay
+        priority: high
+        title: Instant Gameplay
+      - description: Score display updates in real-time as bricks are destroyed.
+        domains:
+        - game
+        id: live_score
+        priority: high
+        title: Live Scoring
+      - description: Paddle is controlled via keyboard and/or mouse, immediate feedback.
+        domains:
+        - game
+        id: responsive_controls
+        priority: high
+        title: Responsive Controls
+      - description: Neon colors, dark backgrounds, pixel fonts.
+        domains:
+        - game
+        id: retro_visuals
+        priority: medium
+        title: Retro Visuals
+      - description: Display 'Game Over' or 'You Win' and final score when the game
+          ends.
+        domains:
+        - game
+        id: game_end_states
+        priority: high
+        title: Game Over/Win States
+      - description: Panel showing paddle control instructions below the canvas.
+        domains:
+        - game
+        id: instructions
+        priority: low
+        title: Controls Instructions
+      goals:
+      - Allow instant play of a DX Ball game in-browser with smooth controls and retro
+        style.
+      - Live, accurate score updates as bricks are destroyed.
+      - Responsive paddle control via keyboard or mouse.
+      - Simple, uncluttered, visually distinct UI for desktop/tablet.
+      - No persistence or authentication; game resets on reload.
+      personas:
+      - description: Wants to quickly play a nostalgic DX Ball game in their browser,
+          no sign-up needed.
+        goals:
+        - Quickly start and play a familiar game.
+        - See score and results instantly.
+        name: Casual Player
+      - description: Seeks an authentic, visually retro arcade experience and responsive
+          gameplay.
+        goals:
+        - Experience the look and feel of classic DX Ball.
+        - Enjoy responsive controls and game physics.
+        name: Retro Gamer
+      - description: Wants to see a modern, client-side implementation of a classic
+          game for inspiration or learning.
+        goals:
+        - Understand game logic and architecture in a modern stack.
+        - See how game state is managed client-side.
+        name: Web Developer
+      summary: A browser-based DX Ball clone with retro visuals, paddle/ball/bricks
+        gameplay, and live scoring, designed as a single-page, no-login, no-persistence
+        app.
+    use_cases:
+    - actors:
+      - User
+      apis: []
+      description: User loads the page, plays the game using keyboard or mouse, and
+        sees end-of-game messages.
+      domains:
+      - game
+      happy_path:
+      - User loads the app.
+      - Game auto-starts with paddle, ball, and bricks displayed.
+      - User moves paddle with controls; ball bounces, bricks are destroyed, score
+        increases.
+      - Game ends (all bricks destroyed or ball lost).
+      - End message and score shown.
+      id: play_game
+      pages:
+      - /
+      postconditions:
+      - Game ends with 'Game Over' or 'You Win'.
+      - Final score is displayed.
+      preconditions:
+      - User has a modern browser.
+      title: Play DX Ball
+    - actors:
+      - User
+      apis: []
+      description: User always sees their real-time and final score.
+      domains:
+      - game
+      happy_path:
+      - Score panel visible above playfield.
+      - Score updates as bricks are destroyed.
+      - Final score shown at game end.
+      id: view_score
+      pages:
+      - /
+      postconditions:
+      - Score is always visible and accurate.
+      preconditions:
+      - Game is in progress.
+      title: View Current and Final Score
+    - actors:
+      - User
+      apis: []
+      description: User sees a hint panel with paddle controls.
+      domains:
+      - game
+      happy_path:
+      - Instructions visible under the game area.
+      id: read_controls_hint
+      pages:
+      - /
+      postconditions:
+      - Controls instructions always visible.
+      preconditions: []
+      title: Read Controls Hint
+    user_journeys:
+    - id: instant_play_journey
+      persona: Casual Player
+      related_use_cases:
+      - play_game
+      steps:
+      - action: Page loads, game auto-starts.
+        page: /
+      - action: User moves paddle using controls.
+        page: /
+      - action: Score updates as bricks are destroyed.
+        page: /
+      - action: Game ends, user sees final message and score.
+        page: /
+      success_criteria: Game is playable instantly, controls are responsive, end-of-game
+        message shown.
+      title: Instant Play Journey
+    - id: view_score_journey
+      persona: Retro Gamer
+      related_use_cases:
+      - view_score
+      steps:
+      - action: Score is visible and updates live during play.
+        page: /
+      - action: At game end, final score is displayed.
+        page: /
+      success_criteria: Score is always visible and accurate.
+      title: View Score Journey
+summary:
+  plan_names:
+  - item_0
+  total_plans: 1

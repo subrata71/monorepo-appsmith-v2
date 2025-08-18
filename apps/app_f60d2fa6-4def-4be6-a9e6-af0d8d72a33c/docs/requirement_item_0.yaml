@@ -1,0 +1,56 @@
+access: Anyone can play the game in their browser. No login or registration. No admin
+  features. No persistent data beyond current session.
+behaviour: Game renders in real-time (ideally 60fps) in a canvas. Paddle responds
+  immediately to keyboard and mouse. Collision logic is immediate and accurate. Game
+  state (score, bricks remaining, ball/paddle position) updates live. Game resets
+  on page reload. No authentication or persistent storage needed.
+name: DX Ball Web App Prototype
+page:
+  behaviour: Game starts automatically on page load. Paddle is controlled by arrow
+    keys or A/D, and optionally by mouse movement. Game loop continuously renders
+    game state and processes input. Ball bounces off paddle, walls, and destroys bricks
+    on contact. Score updates live. When all bricks are gone or player loses the ball,
+    game shows a simple 'Game Over' or 'You Win' message and final score.
+  id: dxball_main_page
+  purpose: Allow the user to play a full game of DX Ball, see their score, and interact
+    with the game controls within a single page.
+  sections:
+  - behaviour: Updates live as bricks are destroyed. Shows final score at game end.
+    blocks:
+    - behaviour: Displays current and final score as text. Updates in real-time.
+      id: score_block
+    id: score_section
+    title: Score Display
+    visual: Full-width, single-row panel above the canvas with bold neon score text.
+      No buttons or controls here.
+  - behaviour: All game rendering, input, and logic occurs here. Mouse/keyboard events
+      tied to paddle movement. Ball and bricks managed by game loop.
+    blocks:
+    - behaviour: HTML5 canvas. Draws paddle, ball, bricks, and background every frame.
+        Processes game state and collision logic.
+      id: game_canvas_block
+    id: canvas_section
+    title: Game Area
+    visual: Main, centered canvas element (at least 640x480), with black or dark blue
+      background, neon bricks, paddle, and ball. Visually separated from the rest
+      of the page with padding or a subtle border.
+  - behaviour: 'Static content. Explains: ''Move paddle: Arrow keys, A/D, or Mouse''.'
+    blocks:
+    - behaviour: Displays static instructions for controlling the paddle.
+      id: controls_hint_block
+    id: controls_section
+    title: Controls Hint
+    visual: Small, unobtrusive panel below the canvas. Slightly faded text for instructions.
+  title: DX Ball Game
+  visual: Central canvas (minimum 640x480), surrounded by dark background, neon-themed
+    elements. Score shown above the game area. Simple instruction/hint panel below.
+    Everything is visually uncluttered, with clear, vibrant colors for interactive
+    elements.
+summary: Create a single-page web app that allows a user to play a basic version of
+  DX Ball, with a paddle, ball, bricks, and scoring system. The game should be simple,
+  visually retro, and playable in modern browsers, using keyboard/mouse controls for
+  the paddle.
+visual: 'Retro arcade look: dark background, neon colors for bricks and paddle, pixel-style
+  fonts, with a central canvas. Minimalist layout, with a focus on the game area.
+  The score panel is visually distinct above the playfield. Responsive for desktop
+  and tablet, with clear margins.'

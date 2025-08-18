@@ -1,0 +1,29 @@
+id: dxball-prototype-1
+name: DX Ball Web App Prototype
+sub_items:
+- effort: 2
+  id: dxball-canvas-1
+  name: Set up game canvas and rendering loop
+  summary: Create an HTML canvas and implement a game loop to render the game state
+    and update positions of game objects.
+- effort: 1
+  id: dxball-paddle-1
+  name: Implement paddle movement
+  summary: Allow the user to control the paddle using keyboard or mouse input to move
+    left and right within the canvas bounds.
+- effort: 2
+  id: dxball-ball-1
+  name: Implement ball movement and collision
+  summary: Add a ball that moves and bounces off walls and the paddle, and implement
+    collision detection with bricks.
+- effort: 2
+  id: dxball-bricks-1
+  name: Create brick layout and collision
+  summary: Display a grid of bricks and remove them when hit by the ball, updating
+    the game state accordingly.
+- effort: 1
+  id: dxball-score-1
+  name: Add scoring system
+  summary: Track and display the player's score as bricks are destroyed.
+summary: 'Create a simple, playable DX Ball game as a single-page web app with basic
+  gameplay elements: paddle, ball, bricks, and scoring.'
