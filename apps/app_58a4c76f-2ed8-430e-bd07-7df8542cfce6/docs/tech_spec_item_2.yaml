@@ -1,0 +1,183 @@
+client:
+  components:
+    entities: []
+    features:
+    - description: Resets the game session state and navigates to the main gameplay
+        screen. Handles disabling the restart button during transition.
+      entities: []
+      feature: restart_game
+      name: feature_restart_game
+      props:
+      - onRestart
+      shared: []
+    shared:
+    - category: ui
+      description: Reusable heading component for displaying large score.
+      name: ui_text_heading
+      props:
+      - text
+      - level
+      - align
+      - color
+      - fontWeight
+      - fontFamily
+    - category: ui
+      description: Reusable button component for restart action.
+      name: ui_button
+      props:
+      - text
+      - onClick
+      - size
+      - fullWidth
+      - color
+      - disabled
+      - ariaLabel
+    widgets:
+    - description: Displays the player's final score in large, bold text; centered
+        and prominent.
+      entities: []
+      features: []
+      name: results_score_widget
+      props:
+      - score
+      shared:
+      - ui_text_heading
+    - description: Visually distinct, accessible button to restart the game. Triggers
+        game session reset and navigation.
+      entities: []
+      features:
+      - feature_restart_game
+      name: results_restart_button_widget
+      props:
+      - onRestart
+      - disabled
+      shared:
+      - ui_button
+  pages:
+  - description: Displays the final score after game ends and provides a restart button.
+      Content centered, accessible, and responsive.
+    queries: []
+    route: /results
+    title: Game Results
+    widgets:
+    - results_score_widget
+    - results_restart_button_widget
+  stores:
+  - actions:
+    - setFinalScore
+    - startRestart
+    - completeRestart
+    - setError
+    description: 'Manages results screen state: final score, restart in progress,
+      and navigation.'
+    layer: features
+    name: results_ui_store
+    state_shape:
+    - name: finalScore
+      type: integer
+    - name: isRestarting
+      type: boolean
+  - actions:
+    - startNavigation
+    - completeNavigation
+    description: Tracks navigation state to handle disabling restart button while
+      navigating.
+    layer: shared
+    name: navigation_ui
+    state_shape:
+    - name: isNavigating
+      type: boolean
+components:
+  parameters: []
+  responses: []
+  schemas: []
+domains: []
+metadata:
+  description: Differential technical specification for the Results UI of the tossing
+    game. Introduces a results screen to display the user's final score and provide
+    a restart button. Updates client-side FSD layers and user journey mapping; no
+    backend domain/model/API changes required.
+  generated_at: '2024-06-12T15:30:00Z'
+  name: Tossing Game Results UI Differential Specification
+  version: 1.2.0
+product:
+  features:
+  - description: Minimal results screen showing the user's final score and a prominent
+      restart button. Accessible, responsive, and visually clear.
+    domains: []
+    id: results_ui
+    priority: high
+    title: Results UI
+  goals:
+  - Clearly communicate the final score at the end of the game
+  - Enable instant, frictionless game restart with a single action
+  - Ensure accessibility and responsiveness across all device types
+  - Maintain consistent, inviting, and distraction-free UI/UX
+  personas:
+  - description: Unauthenticated player who wants clear feedback on their performance
+      and the ability to replay the game instantly.
+    goals:
+    - See their score immediately after game ends
+    - Restart the game without confusion or delay
+    name: player_guest
+  summary: Implements a minimalist, accessible results screen for the tossing game,
+    displaying the user's final score and providing a restart button to begin a new
+    game session.
+use_cases:
+- actors:
+  - player_guest
+  apis: []
+  description: Player finishes gameplay and is shown their final score and a restart
+    button.
+  domains: []
+  happy_path:
+  - Game ends, client navigates to "/results"
+  - Final score is fetched from game session state and displayed prominently
+  - Restart button is visible and enabled
+  id: uc_view_results
+  pages:
+  - /results
+  postconditions:
+  - Player sees their score and can choose to restart
+  preconditions:
+  - Player has completed a game session
+  title: Player sees final score at game end
+- actors:
+  - player_guest
+  apis: []
+  description: Player taps/clicks the restart button, which resets the game session
+    and navigates to the gameplay screen.
+  domains: []
+  happy_path:
+  - Player activates the restart button (keyboard or pointer)
+  - Button disables while navigation occurs
+  - Client resets game session state and navigates to "/game"
+  id: uc_restart_game
+  pages:
+  - /results
+  - /game
+  postconditions:
+  - Player is on the gameplay screen with a fresh session and score=0
+  preconditions:
+  - Player is on the results screen
+  title: Player restarts the game from results screen
+user_journeys:
+- id: uj_game_end_to_restart
+  persona: player_guest
+  related_use_cases:
+  - uc_view_results
+  - uc_restart_game
+  steps:
+  - action: Arrive at results screen ("/results") after finishing game
+    page: /results
+  - action: See large, bold final score and prominent restart button
+    page: /results
+  - action: Press/tap restart button (keyboard or pointer)
+    page: /results
+  - action: Button disables; game session resets, client navigates to "/game"
+    page: /results
+  - action: Arrive at gameplay screen with score reset to 0
+    page: /game
+  success_criteria: Player sees their score instantly, can replay without friction,
+    and all interactions are accessible and responsive.
+  title: From Game End to New Game

@@ -12,7 +12,7 @@ export const ResultsPage = React.memo(() => {
   useEffect(() => {
     // Get the score from navigation state if available
     const scoreFromState = location.state?.score;
-    
+
     if (typeof scoreFromState === 'number') {
       setFinalScore(scoreFromState);
     } else if (finalScore === 0 && typeof scoreFromState !== 'number') {
@@ -26,16 +26,16 @@ export const ResultsPage = React.memo(() => {
       <div className="max-w-2xl w-full space-y-12 text-center">
         <div className="space-y-8">
           <ResultsScoreWidget score={finalScore} />
-          
+
           <div className="space-y-4">
             <p className="text-lg text-muted-foreground">
-              {finalScore > 5 
-                ? "Excellent performance!" 
-                : finalScore > 2 
-                ? "Good job!" 
-                : finalScore > 0 
-                ? "Not bad for a try!" 
-                : "Don't give up - practice makes perfect!"}
+              {finalScore > 5
+                ? 'Excellent performance!'
+                : finalScore > 2
+                  ? 'Good job!'
+                  : finalScore > 0
+                    ? 'Not bad for a try!'
+                    : "Don't give up - practice makes perfect!"}
             </p>
           </div>
         </div>

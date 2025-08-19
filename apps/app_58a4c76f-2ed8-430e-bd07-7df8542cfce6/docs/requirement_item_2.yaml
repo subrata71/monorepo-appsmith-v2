@@ -1,0 +1,43 @@
+access: Public access with no restrictions.
+behaviour: Content is centered both vertically and horizontally. When the game ends,
+  this screen is shown. The user can see their score immediately and restart the game
+  with a single tap/click. All interface elements are accessible for both touch and
+  pointer devices. The page is responsive to different screen sizes.
+name: Results UI
+page:
+  behaviour: On page load, the final score is presented. The restart button is immediately
+    active. Tapping/clicking the restart button resets the game and navigates to the
+    main gameplay screen or game start.
+  id: results_ui
+  purpose: To clearly communicate the user's final score at the end of the game, and
+    provide a straightforward action to restart the game.
+  sections:
+  - behaviour: Displays the user's final score, fetched from game logic, as soon as
+      the page loads.
+    blocks:
+    - behaviour: Renders the final score in large, prominent text. Accepts score as
+        a parameter from the game logic. No interaction.
+      id: final_score_display_block
+    id: score_display_section
+    title: Final Score Display
+    visual: Large, bold text centered on the page showing the final score. Padding
+      around the score for emphasis.
+  - behaviour: Button is enabled and accessible. On press, resets game state and navigates
+      to start or main gameplay screen.
+    blocks:
+    - behaviour: On user tap/click, resets the game state and navigates to the initial
+        screen to start a new game.
+      id: restart_button_block
+    id: restart_game_section
+    title: Restart Game Button
+    visual: Large, primary-colored button centered below the score. High visual prominence
+      and clear label, e.g., 'Restart Game'.
+  title: Game Results
+  visual: Single-column layout with the score at the top and the restart button underneath.
+    Both blocks are centered with generous spacing. High contrast between text/button
+    and background for readability.
+summary: A simple results screen presented after the game ends, showing the user's
+  final score and providing a restart option.
+visual: Minimalist and centered layout with bold, readable fonts. The final score
+  is displayed prominently. The restart button is visually distinct and easy to find.
+  Neutral background with clear contrast between elements.

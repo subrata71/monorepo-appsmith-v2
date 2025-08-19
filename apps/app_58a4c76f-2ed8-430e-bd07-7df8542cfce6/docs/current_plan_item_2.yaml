@@ -1,0 +1,12 @@
+id: ui_results
+name: Results UI
+sub_items:
+- effort: 1
+  id: ui_results_score
+  name: Final Score Display
+  summary: Show the user's final score after the game is over.
+- effort: 1
+  id: ui_results_restart_btn
+  name: Restart Game Button
+  summary: Add a button to allow the user to restart the game from the results screen.
+summary: A simple results screen shown after the game ends.

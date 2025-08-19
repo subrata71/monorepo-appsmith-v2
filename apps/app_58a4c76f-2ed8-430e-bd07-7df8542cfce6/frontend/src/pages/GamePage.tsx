@@ -69,7 +69,7 @@ export const GamePage = React.memo(() => {
             onToss={handleToss}
             ariaLabel="Press to simulate a toss"
           />
-          
+
           <Button
             onClick={handleEndGame}
             variant="outline"
