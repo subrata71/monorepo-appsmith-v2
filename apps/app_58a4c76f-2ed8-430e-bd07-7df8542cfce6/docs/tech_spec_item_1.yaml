@@ -1,0 +1,349 @@
+client:
+  components:
+    entities:
+    - description: Current game session state and display. Reuses api_game types.
+      entity: game_session
+      name: entity_game_session
+      props:
+      - score
+      - sessionId
+      - loading
+      - error
+    features:
+    - description: Performs toss action, updates UI with feedback and score.
+      entities:
+      - entity_game_session
+      feature: toss
+      name: feature_toss
+      props:
+      - onSuccess
+      - onError
+      shared:
+      - api_game
+    shared:
+    - category: ui
+      description: Reusable heading component for displaying prominent titles.
+      name: ui_text_heading
+      props:
+      - text
+      - level
+      - align
+      - color
+      - fontWeight
+      - fontFamily
+    - category: ui
+      description: Reusable button with accessibility and press animation.
+      name: ui_button
+      props:
+      - text
+      - onClick
+      - size
+      - fullWidth
+      - color
+      - disabled
+      - ariaLabel
+    - category: ui
+      description: Displays feedback message with color and animation.
+      name: ui_feedback_message
+      props:
+      - text
+      - type
+      - visible
+    - category: api
+      description: Typed API client for game endpoints (generated from OpenAPI contract).
+      name: api_game
+      props: []
+    widgets:
+    - description: Displays current score at top of game screen.
+      entities:
+      - entity_game_session
+      features: []
+      name: game_score_widget
+      props:
+      - score
+      shared:
+      - ui_text_heading
+    - description: Shows toss feedback message (success/fail) with animation.
+      entities: []
+      features: []
+      name: game_feedback_widget
+      props:
+      - feedback
+      - outcome
+      - visible
+      shared:
+      - ui_feedback_message
+    - description: Large toss button; triggers toss logic, disables on press.
+      entities: []
+      features:
+      - feature_toss
+      name: game_toss_button_widget
+      props:
+      - disabled
+      - onToss
+      shared:
+      - ui_button
+  pages:
+  - description: Main gameplay screen with score, toss button, and feedback.
+    queries:
+    - getGameSession
+    - toss
+    route: /game
+    title: Game Play UI
+    widgets:
+    - game_score_widget
+    - game_feedback_widget
+    - game_toss_button_widget
+  stores:
+  - actions:
+    - initializeSession
+    - resetSession
+    - updateScore
+    - setError
+    description: Tracks current score, sessionId, loading/error state, and handles
+      session lifecycle.
+    layer: entities
+    name: game_session_store
+    state_shape:
+    - name: score
+      type: integer
+    - name: sessionId
+      type: string
+    - name: isLoading
+      type: boolean
+    - name: error
+      type: string | null
+  - actions:
+    - startToss
+    - completeToss
+    - hideFeedback
+    - resetFeedback
+    description: Manages toss button debounce, feedback display, and loading UI.
+    layer: features
+    name: toss_ui_store
+    state_shape:
+    - name: isTossing
+      type: boolean
+    - name: feedback
+      type: string
+    - name: outcome
+      type: string
+    - name: feedbackVisible
+      type: boolean
+components:
+  parameters:
+  - in_: query
+    name: sessionId
+    required: true
+  responses:
+  - code: '200'
+    description: OK
+  - code: '201'
+    description: Created
+  - code: '204'
+    description: No Content
+  - code: '400'
+    description: Bad Request
+  - code: '404'
+    description: Not Found
+  - code: '409'
+    description: Conflict
+  - code: '422'
+    description: Unprocessable Entity
+  - code: '500'
+    description: Server Error
+  schemas:
+  - name: GameSession
+    type: object
+  - name: TossResult
+    type: object
+  - name: ErrorResponse
+    type: object
+  - name: IdempotencyKey
+    type: string
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Retrieves the current session and score for a given sessionId.
+      operation_id: getGameSession
+      summary: Get current game session and score (by sessionId)
+      tags:
+      - game
+    path: /api/game/session
+  - method: POST
+    operation:
+      description: Creates a new game session and returns its details.
+      operation_id: createGameSession
+      summary: Create a new game session
+      tags:
+      - game
+    path: /api/game/session
+  - method: POST
+    operation:
+      description: Performs the toss logic, updates score, and returns toss feedback.
+      operation_id: toss
+      summary: Perform a toss action, update score, and return feedback
+      tags:
+      - game
+    path: /api/game/toss
+  - method: DELETE
+    operation:
+      description: Deletes the current game session (resets score to zero).
+      operation_id: deleteGameSession
+      summary: Delete/reset the game session (reset score)
+      tags:
+      - game
+    path: /api/game/session
+  description: Handles game session, toss actions, and score tracking for the tossing
+    game prototype.
+  models:
+  - description: Tracks the current score for an anonymous, stateless game session
+      (ephemeral, resets on refresh).
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: uuid
+    - name: score
+      nullable: false
+      pk: false
+      type: integer
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: timestamp
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: timestamp
+    name: GameSession
+  name: game
+  services:
+  - description: Business logic for creating, retrieving, deleting, and updating game
+      sessions and scores.
+    methods:
+    - 'createGameSession(idempotencyKey?: string): GameSession'
+    - 'getGameSession(sessionId: uuid): GameSession | NotFound'
+    - 'deleteGameSession(sessionId: uuid): void | NotFound'
+    - 'toss(sessionId: uuid): TossResult | NotFound | Conflict'
+    name: GameSessionService
+metadata:
+  description: Differential technical specification for the implementation of the
+    Game Play UI for the tossing game, including backend game session/score domain,
+    API contract, and complete client structure in FSD.
+  generated_at: '2024-06-12T14:00:00Z'
+  name: Tossing Game Play UI Differential Specification
+  version: 1.1.0
+product:
+  features:
+  - description: Main in-game experience with toss interaction, instant feedback,
+      and score display.
+    domains:
+    - game
+    id: game_play_ui
+    priority: high
+    title: Game Play UI
+  - description: Toss endpoint implementing random outcome logic, updating and returning
+      score and feedback.
+    domains:
+    - game
+    id: toss_action
+    priority: high
+    title: Toss Action API
+  - description: Backend model for persisting and retrieving the current score for
+      a session.
+    domains:
+    - game
+    id: score_tracking
+    priority: high
+    title: Score Tracking
+  goals:
+  - Enable interactive, real-time gameplay for guests
+  - Show instant toss feedback and accurate score tracking
+  - Ensure fully accessible, responsive, and inviting UI/UX
+  - Provide a stateless, public API for toss actions and score retrieval
+  personas:
+  - description: Unauthenticated player who wants to play and track their score in
+      a single session (reset on refresh).
+    goals:
+    - Play the game easily on any device
+    - Receive instant feedback on toss outcomes
+    - See their current score at all times
+    name: player_guest
+  summary: Implements the main interactive screen for the tossing game, where users
+    toss, receive instant feedback, and see their current score. Adds backend score
+    persistence and toss result logic.
+use_cases:
+- actors:
+  - player_guest
+  apis:
+  - toss
+  description: Player presses the toss button, triggers game logic, receives immediate
+    feedback and updated score.
+  domains:
+  - game
+  happy_path:
+  - Player presses or activates toss button
+  - Button disables instantly to prevent rapid repeat
+  - Toss API is called with a session ID
+  - API returns toss outcome and updated score
+  - Feedback message appears for 1.5s, then fades
+  - Score updates instantly
+  - Button re-enables after debounce interval
+  id: uc_toss_and_feedback
+  pages:
+  - /game
+  postconditions:
+  - Score and feedback are visible and correct
+  preconditions:
+  - Player is on the game screen
+  title: Player tosses and receives feedback
+- actors:
+  - player_guest
+  apis:
+  - getScore
+  - toss
+  description: Player's score persists for the session, resets on refresh.
+  domains:
+  - game
+  happy_path:
+  - Game session is created on entry if not present
+  - Player's current score is loaded from backend
+  - Score updates after each toss
+  - On browser refresh, session resets to zero
+  id: uc_score_persistence
+  pages:
+  - /game
+  postconditions:
+  - Player always sees their current score
+  preconditions:
+  - Player has started a game session
+  title: Score is tracked for game session
+user_journeys:
+- id: uj_gameplay
+  persona: player_guest
+  related_use_cases:
+  - uc_toss_and_feedback
+  - uc_score_persistence
+  steps:
+  - action: Arrive at game screen ("/game")
+    page: /game
+  - action: See current score at top, feedback area, and large toss button
+    page: /game
+  - action: Press/tap/activate toss button (mouse/touch/keyboard)
+    page: /game
+  - action: Button disables, spinner or press animation plays
+    page: /game
+  - action: Toss API called, returns outcome/score
+    page: /game
+  - action: Feedback message ("Success!" in green or "Try Again!" in red) appears
+      and fades after 1.5s
+    page: /game
+  - action: Score display updates instantly
+    page: /game
+  - action: Button re-enables, ready for next toss
+    page: /game
+  success_criteria: Gameplay is frictionless, feedback is instant and visible, UI
+    is accessible, and score is always accurate.
+  title: Full gameplay loop

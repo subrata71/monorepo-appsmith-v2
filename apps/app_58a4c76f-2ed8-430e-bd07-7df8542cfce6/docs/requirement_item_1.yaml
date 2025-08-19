@@ -1,0 +1,53 @@
+access: Public access with no restrictions.
+behaviour: All elements are responsive. The toss button triggers the game logic, then
+  disables briefly to prevent rapid repeat. Feedback message appears after each toss,
+  disappears after a short duration (e.g. 1.5 seconds). Score updates immediately.
+  Supports both mouse/tap and keyboard activation for accessibility.
+name: Game Play UI
+page:
+  behaviour: Score updates as soon as a successful toss is made. Feedback message
+    appears then fades. Toss button disables briefly when pressed. All elements are
+    accessible via keyboard and touch.
+  id: ui_game
+  purpose: Provides the main interactive screen for the tossing game, letting users
+    toss, see feedback, and track their score.
+  sections:
+  - behaviour: Shows the current score, updates instantly after each toss.
+    blocks:
+    - behaviour: Displays the current score. Updates value instantly after a toss.
+        Resets on refresh.
+      id: ui_game_score
+    id: score_section
+    title: Score Display
+    visual: Prominent, large font at the top with accent color background and white
+      text. Rounded corners and light drop shadow.
+  - behaviour: Displays feedback message for the most recent toss. Fades out after
+      1.5 seconds. Only one message shown at a time.
+    blocks:
+    - behaviour: Shows feedback message after toss, then hides after delay. Resets
+        on new toss.
+      id: ui_game_feedback
+    id: feedback_section
+    title: Toss Feedback Display
+    visual: Centered below score, large friendly text that is green for 'Success!'
+      and red for 'Try Again!'. Smooth fade-in/out animation.
+  - behaviour: Button can be pressed by clicking, tapping, or space/enter key. Triggers
+      toss logic, disables briefly for debounce, re-enables after.
+    blocks:
+    - behaviour: On press, triggers the toss and feedback logic, updates score, and
+        disables briefly to prevent rapid re-tossing.
+      id: ui_game_toss_btn
+    id: toss_button_section
+    title: Toss Button
+    visual: Very large, circular, accent-colored button at bottom-center. Has a toss
+      icon or 'Toss' label. Slight shadow and press animation effect.
+  title: Game Play UI
+  visual: Single-column, centered layout. Score at the top, feedback message in the
+    center, large toss button at the bottom. Soft shadows, rounded corners, and playful
+    font styling.
+summary: The main screen where the user interacts with the tossing game prototype.
+  Players press a toss button, get instant feedback, and see their current score.
+visual: Bright, playful design with large, touch-friendly elements. Uses an accent
+  color for primary UI (e.g., green or blue). Score is prominent at the top, feedback
+  is clearly displayed, and the toss button is large and centered. Responsive to mobile
+  and desktop sizes.

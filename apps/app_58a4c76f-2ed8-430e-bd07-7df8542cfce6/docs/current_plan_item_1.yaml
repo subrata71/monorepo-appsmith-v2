@@ -1,0 +1,18 @@
+id: ui_game
+name: Game Play UI
+sub_items:
+- effort: 1
+  id: ui_game_toss_btn
+  name: Toss Button
+  summary: Add a large button or interactive element that the user can press to simulate
+    a toss.
+- effort: 1
+  id: ui_game_feedback
+  name: Toss Feedback Display
+  summary: Show simple feedback (e.g., 'Success!' or 'Try Again!') after each toss
+    action.
+- effort: 1
+  id: ui_game_score
+  name: Score Display
+  summary: Display the current score or number of successful tosses on the screen.
+summary: The main screen where the user interacts with the tossing game prototype.
