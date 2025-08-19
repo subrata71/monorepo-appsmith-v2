@@ -1,0 +1,59 @@
+access: Publicly accessible; no login required.
+behaviour: Game responds fluidly to keyboard input. Runner movement is animated smoothly.
+  Obstacles spawn and move at a constant speed. Collision detection is immediate and
+  responsive. Game over halts gameplay and disables controls until the player chooses
+  to restart.
+name: Runner Game
+page:
+  behaviour: Updates game state continuously. Handles keyboard events for movement.
+    Pauses on collision. Allows the player to restart after game over.
+  id: game_screen
+  purpose: To provide an interactive area for the player to control the runner, avoid
+    obstacles, and view their current score.
+  sections:
+  - behaviour: Runs the main game loop, updating positions of runner and obstacles
+      and checking for collisions.
+    blocks:
+    - behaviour: 'Handles left/right and jump (keyboard input: arrows or WASD). Moves
+        with smooth animation. Prevents moving off the ground or screen.'
+      id: runner
+    - behaviour: Spawns obstacles at intervals off the right edge. Obstacles move
+        left at a constant speed. Removes obstacles when off-screen.
+      id: obstacle_spawner
+    - behaviour: Checks each frame for overlap between runner and obstacles. If collision
+        occurs, triggers game over and stops game loop.
+      id: collision_detection
+    id: main_game_area
+    title: Main Game Area
+    visual: A single canvas or div containing the runner, obstacles, and ground. Visually
+      centered. Background is simple and non-distracting.
+  - behaviour: Score increases as time or distance passes. Resets to zero on game
+      restart. Updates every frame.
+    blocks:
+    - behaviour: Displays and updates score value.
+      id: score_display
+    id: score_section
+    title: Score Display
+    visual: Score is in the top right in large, bold font with a slight background
+      for contrast.
+  - behaviour: Appears when collision is detected. Disables main controls. Restart
+      button resets game state and hides overlay.
+    blocks:
+    - behaviour: Shows 'Game Over' text and restart button. On restart, re-initializes
+        all game variables and removes overlay.
+      id: game_over_message
+    id: game_over
+    title: Game Over Overlay
+    visual: A semi-transparent overlay covers the game area. 'Game Over' text and
+      a restart button are centered and prominent.
+  title: Game Screen
+  visual: Landscape layout with a central game area, runner on the left, obstacles
+    entering from the right, and a persistent score display in the top right. Includes
+    a game over overlay when triggered.
+summary: A simple endless runner game where the player controls a runner to avoid
+  obstacles, using keyboard controls. The player's score increases over time or distance
+  survived. The game ends when the runner collides with an obstacle.
+visual: Bright, cartoon-like visuals with a horizontal side-scrolling view. The runner
+  is clearly visible against the ground. Obstacles are distinct and easily visible.
+  The score is displayed in a prominent font in the top right. Game over is shown
+  with a semi-transparent overlay and a large, bold font.

@@ -1,0 +1,237 @@
+client:
+  components:
+    entities:
+    - description: Represents and renders the player character.
+      entity: runner
+      name: Runner
+      props:
+      - position
+      - inputState
+    - description: Represents and renders obstacles.
+      entity: obstacle
+      name: Obstacle
+      props:
+      - position
+    features:
+    - description: Detects overlaps between runner and obstacles, triggers game over.
+      entities:
+      - Runner
+      - Obstacle
+      feature: collision
+      name: CollisionDetection
+      props:
+      - runner
+      - obstacles
+      shared: []
+    - description: Manages score accumulation and resets.
+      entities: []
+      feature: scoring
+      name: ScoreManager
+      props:
+      - score
+      shared: []
+    shared:
+    - category: lib
+      description: Shared handler for keyboard events (arrows/WASD).
+      name: KeyboardInputHandler
+      props:
+      - onInput
+    - category: lib
+      description: Shared game loop utility for animation frame updates.
+      name: GameLoop
+      props:
+      - onTick
+    widgets:
+    - description: Canvas or div containing runner, obstacles, and ground. Handles
+        main game logic and rendering.
+      entities:
+      - Runner
+      - Obstacle
+      features:
+      - CollisionDetection
+      name: MainGameArea
+      props:
+      - runner
+      - obstacles
+      - inputState
+      shared:
+      - GameLoop
+      - KeyboardInputHandler
+    - description: Displays and updates the score in the top right.
+      entities: []
+      features:
+      - ScoreManager
+      name: ScoreSection
+      props:
+      - score
+      shared: []
+    - description: Semi-transparent overlay with 'Game Over' and restart button.
+      entities: []
+      features: []
+      name: GameOverOverlay
+      props:
+      - visible
+      shared: []
+  pages:
+  - description: Central game area with runner, obstacles, ground. Score in top right.
+      Game over overlay appears when needed.
+    queries: []
+    route: /
+    title: Game Screen
+    widgets:
+    - MainGameArea
+    - ScoreSection
+    - GameOverOverlay
+  - description: Fallback error page if game cannot be rendered.
+    queries: []
+    route: /error
+    title: Error
+    widgets: []
+  - description: Fallback loading page for initialization (not essential for local-only
+      game).
+    queries: []
+    route: /loading
+    title: Loading
+    widgets: []
+  stores:
+  - actions:
+    - startGame
+    - endGame
+    - updateScore
+    - moveRunner
+    - spawnObstacle
+    - removeObstacle
+    - setInput
+    description: Centralized store for game state (FSD entities/features/widgets).
+    layer: shared
+    name: gameStore
+    state_shape:
+    - name: gameState
+      type: '"playing" | "gameOver"'
+    - name: score
+      type: number
+    - name: runnerPosition
+      type: '{ x: number, y: number }'
+    - name: obstacles
+      type: Obstacle[]
+    - name: inputState
+      type: '{ left: boolean; right: boolean; jump: boolean }'
+components:
+  parameters: []
+  responses: []
+  schemas:
+  - name: Score
+    type: object
+  - name: Obstacle
+    type: object
+  - name: RunnerPosition
+    type: object
+domains:
+- apis: []
+  description: Tracks and manages the player’s current score in the game session.
+  models:
+  - description: Current score in the running game session.
+    fields:
+    - name: value
+      nullable: false
+      pk: false
+      type: integer
+    name: Score
+  name: score
+  services:
+  - description: Handles all score logic and state in the client application.
+    methods:
+    - resetScore
+    - incrementScore
+    - getScore
+    name: ScoreService
+metadata:
+  description: Differential technical specification for the Runner Game, based on
+    provided requirements. Initial version, standalone endless runner game with score
+    tracking and keyboard controls.
+  generated_at: '2024-06-14T10:00:00Z'
+  name: Runner Game
+  version: 1.0.0
+product:
+  features:
+  - description: Control the runner via keyboard, avoid obstacles, and accumulate
+      score as time/distance passes.
+    domains:
+    - score
+    id: core_gameplay
+    priority: high
+    title: Core Endless Runner Gameplay
+  - description: Display and update score in real time; reset score on restart.
+    domains:
+    - score
+    id: scoring
+    priority: high
+    title: Score Tracking
+  - description: Show overlay and restart option when collision is detected.
+    domains:
+    - score
+    id: game_over
+    priority: high
+    title: Game Over State
+  goals:
+  - Provide a responsive, smooth endless runner gameplay experience.
+  - Visually clear, accessible game interface with easy-to-understand controls.
+  - Track and display the player’s current score in real time.
+  - Halt gameplay and show a restart option upon collision/game over.
+  personas:
+  - description: Wants quick, engaging gameplay with no setup.
+    goals:
+    - Play instantly and compete for high scores.
+    - Enjoy smooth controls and responsive feedback.
+    name: Casual Gamer
+  - description: Needs accessible controls and clear visuals.
+    goals:
+    - Play using keyboard only.
+    - Have readable, high-contrast score and overlays.
+    name: Accessibility-focused User
+  summary: A simple endless runner game with keyboard controls, animated runner, obstacles,
+    and scoring. Publicly accessible with no login. Game ends on collision and can
+    be restarted.
+use_cases:
+- actors:
+  - Player
+  apis: []
+  description: 'The primary use case: a player controls the runner, avoids obstacles,
+    scores points, and can restart the game after game over.'
+  domains:
+  - score
+  happy_path:
+  - User opens the game page.
+  - Runner and obstacles are visible, score is zero.
+  - User uses keyboard to move and jump runner.
+  - Game loop updates runner, obstacles, and score.
+  - On collision, game halts and game over overlay appears.
+  - User clicks restart, game state resets.
+  id: play_game
+  pages:
+  - /
+  postconditions:
+  - Player can restart after game over with score reset.
+  preconditions:
+  - User has access to a keyboard.
+  - Browser supports canvas or div rendering.
+  title: Play Endless Runner
+user_journeys:
+- id: basic_session
+  persona: Casual Gamer
+  related_use_cases:
+  - play_game
+  steps:
+  - action: Open game page, see ready runner and UI.
+    page: /
+  - action: Use keyboard to move/jump, avoid obstacles.
+    page: /
+  - action: Score increases as time passes.
+    page: /
+  - action: Collision triggers game over overlay.
+    page: /
+  - action: Click restart, game resets and resumes.
+    page: /
+  success_criteria: Player can play, see score, and restart after game over without
+    issues.
+  title: Basic Game Session

@@ -1,0 +1,22 @@
+id: '1'
+name: Game Screen
+sub_items:
+- effort: 2
+  id: '1.1'
+  name: Runner Movement
+  summary: Implement basic left/right and jump controls for the runner using keyboard
+    input.
+- effort: 2
+  id: '1.2'
+  name: Obstacle Spawning
+  summary: Create simple obstacles that move towards the runner at a constant speed.
+- effort: 2
+  id: '1.3'
+  name: Collision Detection
+  summary: Detect when the runner collides with an obstacle and trigger game over.
+- effort: 1
+  id: '1.4'
+  name: Score Tracking
+  summary: Increment and display the player's score based on distance or time survived.
+summary: The main screen where the runner game is played, including the runner, obstacles,
+  and score display.
