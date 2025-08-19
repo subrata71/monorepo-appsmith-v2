@@ -1,0 +1,29 @@
+plan_items:
+- id: ui-main-list
+  name: Main Notes List UI
+  sub_items:
+  - effort: 2
+    id: ui-list-view
+    name: List View of Notes
+    summary: Implement a simple scrollable list to display note titles or first lines.
+  - effort: 1
+    id: ui-add-button
+    name: Add Note Button
+    summary: Add a floating or fixed button to create a new note.
+  summary: A minimalist page showing a list of notes and a button to add a new note.
+- id: ui-note-editor
+  name: Note Editor UI
+  sub_items:
+  - effort: 2
+    id: ui-textarea
+    name: Note Textarea
+    summary: Implement a large, borderless textarea for note input.
+  - effort: 1
+    id: ui-save-action
+    name: Save Action
+    summary: Add a simple save button or icon to save the note and return to the list.
+  - effort: 1
+    id: ui-cancel-action
+    name: Cancel Action
+    summary: Add a cancel or back button to discard changes and return to the list.
+  summary: A minimalist editor for creating or editing a note.

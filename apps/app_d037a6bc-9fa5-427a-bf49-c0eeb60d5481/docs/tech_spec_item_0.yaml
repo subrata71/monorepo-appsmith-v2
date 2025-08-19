@@ -1,0 +1,355 @@
+client:
+  components:
+    entities:
+    - description: Represents the Note data model in UI and state
+      entity: note
+      name: NoteEntity
+      props:
+      - id
+      - title
+      - body
+      - createdAt
+      - updatedAt
+    features:
+    - description: State and logic for listing notes; handles fetch, loading, error,
+        pagination
+      entities:
+      - NoteEntity
+      feature: notes-listing
+      name: NotesListFeature
+      props: []
+      shared:
+      - apiClient
+    - description: State and logic for adding a note; handles modal, form state, submit,
+        error
+      entities: []
+      feature: add-note
+      name: AddNoteFeature
+      props: []
+      shared:
+      - apiClient
+    shared:
+    - category: api
+      description: Generated from OpenAPI; exposes typed methods for all note APIs
+      name: apiClient
+      props:
+      - baseUrl
+    - category: ui
+      description: Accessible, styled button component
+      name: Button
+      props:
+      - children
+      - onClick
+      - aria-label
+    - category: ui
+      description: Minimalist card container
+      name: Card
+      props:
+      - children
+    - category: ui
+      description: Loading spinner for async states
+      name: Spinner
+      props: []
+    - category: ui
+      description: Accessible modal dialog
+      name: Modal
+      props:
+      - open
+      - onClose
+      - children
+    - category: ui
+      description: Transient notification
+      name: Toast
+      props:
+      - message
+      - type
+    widgets:
+    - description: Displays scrollable list of notes as cards/rows
+      entities:
+      - NoteEntity
+      features:
+      - NotesListFeature
+      name: notes-list-widget
+      props: []
+      shared:
+      - Card
+    - description: Floating action button to create a new note, opens modal with form
+      entities: []
+      features:
+      - AddNoteFeature
+      name: add-note-widget
+      props: []
+      shared:
+      - Button
+      - Modal
+  pages:
+  - description: To provide an at-a-glance view of all notes with the fastest possible
+      path to creating a new note. Solves the problem of quick note access and frictionless
+      note creation.
+    queries:
+    - notes-list-query
+    route: /
+    title: Notes
+    widgets:
+    - notes-list-widget
+    - add-note-widget
+  stores:
+  - actions:
+    - fetchNotes({limit,offset,sortBy,sortOrder})
+    - setNotes(notes,total)
+    - setLoading(loading)
+    - setError(error)
+    - setPagination({limit,offset,sortBy,sortOrder})
+    description: Store for notes list state, loading, error, and pagination
+    layer: features
+    name: notesStore
+    state_shape:
+    - name: notes
+      type: Note[]
+    - name: total
+      type: number
+    - name: loading
+      type: boolean
+    - name: error
+      type: string | null
+    - name: pagination
+      type: '{ limit: number; offset: number; sortBy: string; sortOrder: string; }'
+  - actions:
+    - openModal()
+    - closeModal()
+    - setField(field,value)
+    - submitNewNote(data)
+    - setSubmitting(submitting)
+    - setSubmitError(error)
+    - setFieldErrors(errors)
+    description: Store for add note modal/form state and submission
+    layer: features
+    name: addNoteStore
+    state_shape:
+    - name: modalOpen
+      type: boolean
+    - name: fields
+      type: '{ title: string; body: string | null }'
+    - name: submitting
+      type: boolean
+    - name: submitError
+      type: string | null
+    - name: fieldErrors
+      type: '{ [field: string]: string }'
+components:
+  parameters:
+  - in_: path
+    name: id
+    required: true
+  - in_: query
+    name: limit
+    required: false
+  - in_: query
+    name: offset
+    required: false
+  - in_: query
+    name: sortBy
+    required: false
+  - in_: query
+    name: sortOrder
+    required: false
+  - in_: header
+    name: If-Match
+    required: false
+  responses:
+  - code: '200'
+    description: Success
+  - code: '201'
+    description: Created
+  - code: '204'
+    description: No Content
+  - code: '400'
+    description: Bad Request
+  - code: '404'
+    description: Not Found
+  - code: '409'
+    description: Conflict
+  - code: '422'
+    description: Validation Error
+  - code: '500'
+    description: Internal Error
+  schemas:
+  - name: Note
+    type: object
+  - name: NotesList
+    type: object
+  - name: NewNote
+    type: object
+  - name: UpdateNote
+    type: object
+  - name: Error
+    type: object
+  - name: FieldError
+    type: object
+domains:
+- apis:
+  - method: GET
+    operation:
+      description: Returns paginated, ordered list of notes (public, no auth)
+      operation_id: getNotes
+      summary: List all notes, most recent first
+      tags:
+      - note
+    path: /api/notes
+  - method: GET
+    operation:
+      description: Fetch one note by uuid
+      operation_id: getNoteById
+      summary: Get a single note by id
+      tags:
+      - note
+    path: /api/notes/{id}
+  - method: POST
+    operation:
+      description: Create a new note entry
+      operation_id: createNote
+      summary: Create a new note
+      tags:
+      - note
+    path: /api/notes
+  description: Notes domain - handles creation, listing, and storage of simple textual
+    notes; public access, no authentication.
+  models:
+  - description: A single note entity; public, minimal fields for quick creation and
+      listing.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: title
+      nullable: false
+      pk: false
+      type: string
+    - name: body
+      nullable: true
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Note
+  name: note
+  services:
+  - description: Implements business logic for creating, listing, and retrieving notes;
+      handles validation, ordering, and repository access.
+    methods:
+    - listNotes({limit,offset,sortBy,sortOrder})
+    - getNoteById(id)
+    - createNote({title,body})
+    name: NoteService
+metadata:
+  description: Technical specification for a minimalist public notes list page, focusing
+    on fast note browsing and creation with accessibility and responsive design, using
+    FSD architecture.
+  generated_at: '2024-06-07T14:25:00Z'
+  name: Main Notes List UI
+  version: 1.0.0
+product:
+  features:
+  - description: Instantly loads and displays a scrollable, accessible list of notes,
+      ordered by most recent.
+    domains:
+    - note
+    id: notes-listing
+    priority: high
+    title: Minimal Notes List
+  - description: Prominent floating button to initiate note creation, accessible at
+      all times.
+    domains:
+    - note
+    id: add-note
+    priority: high
+    title: Add Note Button
+  goals:
+  - Provide a fast, frictionless interface for viewing and adding notes
+  - Ensure real-time feedback and up-to-date list without reloads
+  - Deliver a clean, accessible, and responsive UI on all devices
+  - Guarantee accessibility for keyboard and assistive technologies
+  - Maintain clear, open, public access with no authentication required
+  personas:
+  - description: Anyone visiting the site; no registration or login required; seeks
+      to quickly view and add notes with minimal friction.
+    goals:
+    - Quickly view recent notes
+    - Create a new note with minimal effort
+    name: Guest User
+  summary: A minimalist notes list page enabling fast browsing and creation of notes,
+    accessible to all users with real-time UI updates and full accessibility.
+use_cases:
+- actors:
+  - Guest User
+  apis:
+  - GET /api/notes
+  description: See the most recent notes at a glance
+  domains:
+  - note
+  happy_path:
+  - User lands on notes list page
+  - System fetches and displays notes, ordered by recency
+  - User scrolls list; UI remains responsive
+  id: view-notes-list
+  pages:
+  - /
+  postconditions:
+  - Notes list is visible, scrollable, accessible
+  preconditions:
+  - None (public)
+  title: View all notes, newest first
+- actors:
+  - Guest User
+  apis:
+  - POST /api/notes
+  description: Quickly create a new note
+  domains:
+  - note
+  happy_path:
+  - User activates the add note button
+  - System opens note creation UI (modal or navigation)
+  - User enters note content and submits
+  - System creates new note
+  - Notes list updates instantly, showing new note at the top
+  id: add-new-note
+  pages:
+  - /
+  postconditions:
+  - New note appears at top of list without reload
+  preconditions:
+  - On notes list page
+  title: Add a new note
+user_journeys:
+- id: journey-quick-note
+  persona: Guest User
+  related_use_cases:
+  - add-new-note
+  - view-notes-list
+  steps:
+  - action: User opens notes page
+    page: /
+  - action: Notes list loads, showing existing notes (loading spinner if fetching)
+    page: /
+  - action: User sees floating add note button, presses it (keyboard or pointer)
+    page: /
+  - action: Note creation UI opens (modal or navigates to /new)
+    page: /
+  - action: User enters note content, submits
+    page: /
+  - action: UI gives instant feedback (spinner, disables submit, then confirmation)
+    page: /
+  - action: Notes list updates, new note visible at top; add button remains accessible
+    page: /
+  - action: User can tab through list, all items/controls have ARIA labels
+    page: /
+  success_criteria: New note is visible with no full-page reload; all actions are
+    accessible, feedback is prompt.
+  title: Fast Note Creation and Confirmation

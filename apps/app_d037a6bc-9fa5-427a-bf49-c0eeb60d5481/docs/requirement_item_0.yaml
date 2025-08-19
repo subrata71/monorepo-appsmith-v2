@@ -1,0 +1,45 @@
+access: Public access with no restrictions.
+behaviour: Instant feedback on adding notes; the notes list updates without reload.
+  Scrollable list, responsive design for mobile and desktop. The add button remains
+  visible during scrolling. All interactive elements are keyboard-accessible and ARIA-labeled
+  for accessibility.
+name: Main Notes List UI
+page:
+  behaviour: List updates immediately when a new note is added. Add button floats/fixed
+    in the lower right, always accessible. Notes are ordered by recency. All controls
+    are accessible and provide visual/tactile feedback.
+  id: main-notes-list
+  purpose: To provide an at-a-glance view of all notes with the fastest possible path
+    to creating a new note. Solves the problem of quick note access and frictionless
+    note creation.
+  sections:
+  - behaviour: Displays all notes, most recent first. Clicking a note (if supported)
+      opens the note detail. List updates in real-time as notes are added or changed.
+    blocks:
+    - behaviour: Renders each note as a clickable or tappable row/card, showing title
+        or first line. Dynamically updates as note data changes.
+      id: notes-list-view
+    id: notes-list
+    title: List of Notes
+    visual: Scrollable vertical list. Each note in a simple card or row, showing the
+      note's title or first line. Subtle divider or shadow for each item.
+  - behaviour: Always visible. Clicking or tapping triggers the new note creation
+      flow (modal or navigation). Keyboard and screen reader accessible.
+    blocks:
+    - behaviour: Initiates note creation UI (e.g., opens modal, navigates to new note
+        page) when activated.
+      id: add-note-button
+    id: add-note
+    title: Add Note Button
+    visual: Floating or fixed round button with a plus (+) icon, primary color, slight
+      shadow. Sits at the lower right of the viewport above other content.
+  title: Notes
+  visual: Single column layout. Notes appear in a vertical scroll list; each is a
+    card or row with a shadow/border. The add note button is a round floating action
+    button at the lower right, with a plus icon. Mobile and desktop friendly.
+summary: A minimalist page showing a list of notes and a prominent button to add a
+  new note. Focuses on simplicity, easy scanning, and quick access to note creation.
+visual: Minimalist design with ample white space. List of notes appears as simple
+  cards or text rows on a clean background. Use a primary accent color for the add
+  button. Sans-serif font, 16px, subtle dividers between notes. The add note button
+  floats or is fixed at the lower corner of the viewport.
