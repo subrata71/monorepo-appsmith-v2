@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router';
 import { AppLayout } from '@/app/layouts';
-import { HomePage, GamePage } from '@/pages';
+import { HomePage, GamePage, ResultsPage } from '@/pages';
 import { ROUTES } from '@/shared';
 
 export const AppRoutes = () => {
@@ -9,6 +9,7 @@ export const AppRoutes = () => {
       <Route element={<AppLayout />}>
         <Route path={ROUTES.HOME} element={<HomePage />} />
         <Route path={ROUTES.GAME} element={<GamePage />} />
+        <Route path={ROUTES.RESULTS} element={<ResultsPage />} />
       </Route>
     </Routes>
   );

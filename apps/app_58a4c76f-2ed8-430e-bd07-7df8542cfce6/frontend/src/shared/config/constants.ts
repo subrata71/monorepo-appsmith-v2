@@ -6,4 +6,5 @@ export const APP_CONFIG = {
 export const ROUTES = {
   HOME: '/',
   GAME: '/game',
+  RESULTS: '/results',
 } as const;

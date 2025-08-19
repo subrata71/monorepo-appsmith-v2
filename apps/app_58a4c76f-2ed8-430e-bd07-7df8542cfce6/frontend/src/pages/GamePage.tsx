@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Container } from '@/shared';
+import { useNavigate } from 'react-router-dom';
+import { Container, Button, ROUTES } from '@/shared';
 import {
   GameTossButtonWidget,
   GameFeedbackWidget,
@@ -7,6 +8,7 @@ import {
 } from '@/widgets';
 
 export const GamePage = React.memo(() => {
+  const navigate = useNavigate();
   const [feedback, setFeedback] = useState('');
   const [outcome, setOutcome] = useState<'success' | 'failure'>('success');
   const [feedbackVisible, setFeedbackVisible] = useState(false);
@@ -25,6 +27,10 @@ export const GamePage = React.memo(() => {
       setScore(prev => prev + 1);
     }
   }, []);
+
+  const handleEndGame = useCallback(() => {
+    navigate(ROUTES.RESULTS, { state: { score } });
+  }, [navigate, score]);
 
   // Auto-hide feedback after 1.5 seconds
   useEffect(() => {
@@ -57,12 +63,21 @@ export const GamePage = React.memo(() => {
           className="mb-8"
         />
 
-        <div className="mt-16">
+        <div className="mt-16 space-y-6">
           <GameTossButtonWidget
             text="TOSS!"
             onToss={handleToss}
             ariaLabel="Press to simulate a toss"
           />
+          
+          <Button
+            onClick={handleEndGame}
+            variant="outline"
+            size="lg"
+            className="min-w-[160px]"
+          >
+            End Game
+          </Button>
         </div>
       </div>
     </Container>
