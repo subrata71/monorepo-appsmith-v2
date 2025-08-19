@@ -1,0 +1,43 @@
+access: Public access with no restrictions.
+behaviour: All elements are keyboard accessible, screen reader friendly, and responsive.
+  The start button gives feedback on hover/press and smoothly navigates to the game
+  screen. No login or restrictions on access.
+name: Home Screen UI
+page:
+  behaviour: Instant load, content always centered regardless of screen size. Start
+    button is focusable, keyboard and mouse/touch operable, and navigates to gameplay
+    view when activated. Button disables on click until navigation completes.
+  id: ui_home
+  purpose: Provides an introduction to the tossing game and a clear way to start the
+    game. Sets the tone and ensures a frictionless start for players.
+  sections:
+  - behaviour: Purely presentational. Always visible and statically displayed.
+    blocks:
+    - behaviour: Displays the tossing game title in a visually prominent way. No interactivity.
+      id: ui_home_title
+    id: home_title_section
+    title: Game Title Display
+    visual: Large, bold text, playful font, centered horizontally. Sufficient contrast
+      for accessibility. Title is visually distinct from button below.
+  - behaviour: Button is accessible by keyboard, mouse, or touch. Gives visual feedback
+      on interaction. Navigates to game screen on activation, with navigation feedback
+      (e.g., disables until navigation).
+    blocks:
+    - behaviour: Button triggers navigation to the game screen. Accessible, debounced
+        to prevent double-activation, provides pressed feedback.
+      id: ui_home_start_btn
+    id: home_action_section
+    title: Start Game Button
+    visual: Prominent, full-width or large button beneath title. Bright accent color
+      (e.g., blue or orange), rounded corners, appropriate touch target size. Subtle
+      hover and press feedback.
+  title: Home
+  visual: Vertical, center-aligned stack. Large, fun title at the top; prominent start
+    button beneath. Use whitespace to keep UI uncluttered. Button uses game theme
+    color. Supports mobile and desktop.
+summary: A simple landing page for the tossing game with a title and a button to start
+  the game. Ensures an inviting first impression and a clear, accessible entry point
+  to gameplay.
+visual: Minimalist, centered layout with a playful brand tone. Large, bold title text
+  at the top-center; start button is visually prominent below title. Use high contrast
+  and vibrant accent colors for the button. Responsive to all device sizes.

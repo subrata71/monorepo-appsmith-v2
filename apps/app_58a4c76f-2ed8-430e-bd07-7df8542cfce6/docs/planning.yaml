@@ -1,0 +1,45 @@
+plan_items:
+- id: ui_home
+  name: Home Screen UI
+  sub_items:
+  - effort: 1
+    id: ui_home_title
+    name: Game Title Display
+    summary: Display the name of the tossing game prominently on the home screen.
+  - effort: 1
+    id: ui_home_start_btn
+    name: Start Game Button
+    summary: Add a button that allows the user to start the game and navigate to the
+      game screen.
+  summary: A simple landing page for the tossing game with a title and a button to
+    start the game.
+- id: ui_game
+  name: Game Play UI
+  sub_items:
+  - effort: 1
+    id: ui_game_toss_btn
+    name: Toss Button
+    summary: Add a large button or interactive element that the user can press to
+      simulate a toss.
+  - effort: 1
+    id: ui_game_feedback
+    name: Toss Feedback Display
+    summary: Show simple feedback (e.g., 'Success!' or 'Try Again!') after each toss
+      action.
+  - effort: 1
+    id: ui_game_score
+    name: Score Display
+    summary: Display the current score or number of successful tosses on the screen.
+  summary: The main screen where the user interacts with the tossing game prototype.
+- id: ui_results
+  name: Results UI
+  sub_items:
+  - effort: 1
+    id: ui_results_score
+    name: Final Score Display
+    summary: Show the user's final score after the game is over.
+  - effort: 1
+    id: ui_results_restart_btn
+    name: Restart Game Button
+    summary: Add a button to allow the user to restart the game from the results screen.
+  summary: A simple results screen shown after the game ends.

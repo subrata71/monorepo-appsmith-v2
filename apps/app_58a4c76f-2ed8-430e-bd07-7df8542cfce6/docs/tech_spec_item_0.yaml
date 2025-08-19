@@ -1,0 +1,160 @@
+client:
+  components:
+    entities: []
+    features: []
+    shared:
+    - category: ui
+      description: Reusable heading component for displaying prominent titles.
+      name: ui_text_heading
+      props:
+      - text
+      - level
+      - align
+      - color
+      - fontWeight
+      - fontFamily
+    - category: ui
+      description: Reusable button component supporting feedback and accessibility.
+      name: ui_button
+      props:
+      - text
+      - onClick
+      - size
+      - fullWidth
+      - color
+      - disabled
+    widgets:
+    - description: Displays the tossing game title in a visually prominent, accessible
+        way.
+      entities: []
+      features: []
+      name: home_title_widget
+      props:
+      - text
+      - level
+      - align
+      - color
+      - fontWeight
+      - fontFamily
+      shared:
+      - ui_text_heading
+    - description: Start button to navigate to game screen with feedback and accessibility.
+      entities: []
+      features: []
+      name: home_start_button_widget
+      props:
+      - text
+      - size
+      - fullWidth
+      - color
+      - disabled
+      shared:
+      - ui_button
+  pages:
+  - description: Minimal landing page with title and start game button; entry to gameplay
+    queries: []
+    route: /
+    title: Home
+    widgets:
+    - home_title_widget
+    - home_start_button_widget
+  stores:
+  - actions:
+    - startNavigation
+    - completeNavigation
+    description: Tracks navigation state to handle start button disabling during navigation.
+    layer: shared
+    name: navigation_ui
+    state_shape:
+    - name: isNavigating
+      type: boolean
+components:
+  parameters: []
+  responses: []
+  schemas: []
+domains: []
+metadata:
+  description: Differential technical specification for the implementation of the
+    Home Screen UI for the tossing game, focusing on frontend structure and accessibility,
+    as no backend domains/models are impacted.
+  generated_at: '2024-06-12T12:00:00Z'
+  name: Tossing Game Home Screen UI Differential Specification
+  version: 1.0.0
+product:
+  features:
+  - description: Minimalist, accessible landing page with game title and start button.
+    domains: []
+    id: home_screen_ui
+    priority: high
+    title: Home Screen UI
+  goals:
+  - Deliver a frictionless, accessible entry point to gameplay
+  - Ensure UI is responsive and visually inviting across devices
+  - Provide clear, immediate navigation to the game screen
+  personas:
+  - description: Unauthenticated player who wants to try the tossing game immediately.
+    goals:
+    - Begin gameplay with minimal friction
+    - Understand game context immediately
+    name: player_guest
+  summary: Implements an accessible, visually inviting, minimal landing page for the
+    tossing game, with a prominent title and a start button for clear user onboarding.
+use_cases:
+- actors:
+  - player_guest
+  apis: []
+  description: Unauthenticated guest arrives at the home screen and sees the game
+    title and start button.
+  domains: []
+  happy_path:
+  - Guest loads the root URL
+  - UI is centered, with large title and prominent start button
+  - All content is accessible via keyboard and screen reader
+  - No login or extra steps required
+  id: uc_guest_lands_on_home
+  pages:
+  - /
+  postconditions:
+  - Home screen title and start button are visible and accessible
+  preconditions:
+  - Guest is not logged in
+  - No prior setup required
+  title: Guest visits home screen
+- actors:
+  - player_guest
+  apis: []
+  description: Guest activates the start button to begin gameplay.
+  domains: []
+  happy_path:
+  - Guest focuses or taps start button
+  - Button provides visual feedback (hover/pressed)
+  - On activation, button disables to prevent double-activation
+  - Client navigates to game screen
+  id: uc_start_game
+  pages:
+  - /
+  postconditions:
+  - Guest is navigated to game screen
+  preconditions:
+  - Guest is on the home screen
+  title: Start Game button interaction
+user_journeys:
+- id: uj_home_to_game
+  persona: player_guest
+  related_use_cases:
+  - uc_guest_lands_on_home
+  - uc_start_game
+  steps:
+  - action: Arrive at home screen
+    page: /
+  - action: See large title and start button
+    page: /
+  - action: Navigate (keyboard/mouse/touch) to start button
+    page: /
+  - action: Activate start button; button disables and feedback shown
+    page: /
+  - action: Arrive at game screen
+    page: /game
+  success_criteria: The player reaches the game screen with no confusion, friction,
+    or errors, and all steps are accessible.
+  title: From Home Screen to Game Start

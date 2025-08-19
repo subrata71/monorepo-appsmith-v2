@@ -1,0 +1,14 @@
+id: ui_home
+name: Home Screen UI
+sub_items:
+- effort: 1
+  id: ui_home_title
+  name: Game Title Display
+  summary: Display the name of the tossing game prominently on the home screen.
+- effort: 1
+  id: ui_home_start_btn
+  name: Start Game Button
+  summary: Add a button that allows the user to start the game and navigate to the
+    game screen.
+summary: A simple landing page for the tossing game with a title and a button to start
+  the game.
