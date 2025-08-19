@@ -7,6 +7,7 @@
 
 import React, { useCallback } from 'react';
 import { PlusIcon } from 'lucide-react';
+import { Link } from 'react-router';
 
 import { Button } from '@/shared/ui/button';
 import {
@@ -26,6 +27,8 @@ import { useAddNoteStore, useCreateNote } from '@/features/add-note';
 interface AddNoteWidgetProps {
   /** Optional className for the floating button */
   className?: string;
+  /** Use navigation to full-page editor instead of modal */
+  useEditor?: boolean;
 }
 
 /**
@@ -219,42 +222,62 @@ AddNoteForm.displayName = 'AddNoteForm';
  * Floating action button that opens a modal for creating new notes.
  * Always accessible and positioned fixed on the screen.
  */
-export const AddNoteWidget = React.memo<AddNoteWidgetProps>(({ className }) => {
-  const modalOpen = useAddNoteStore(state => state.modalOpen);
-  const openModal = useAddNoteStore(state => state.openModal);
-  const closeModal = useAddNoteStore(state => state.closeModal);
+export const AddNoteWidget = React.memo<AddNoteWidgetProps>(
+  ({ className, useEditor = false }) => {
+    const modalOpen = useAddNoteStore(state => state.modalOpen);
+    const openModal = useAddNoteStore(state => state.openModal);
+    const closeModal = useAddNoteStore(state => state.closeModal);
 
-  const handleOpenModal = useCallback(() => {
-    openModal();
-  }, [openModal]);
+    const handleOpenModal = useCallback(() => {
+      openModal();
+    }, [openModal]);
 
-  const handleCloseModal = useCallback(() => {
-    closeModal();
-  }, [closeModal]);
+    const handleCloseModal = useCallback(() => {
+      closeModal();
+    }, [closeModal]);
 
-  return (
-    <Dialog open={modalOpen} onOpenChange={handleCloseModal}>
-      <DialogTrigger asChild>
+    // If using editor mode, render as a Link
+    if (useEditor) {
+      return (
         <Button
           size="lg"
           className={`fixed bottom-6 right-6 rounded-full shadow-lg hover:shadow-xl transition-shadow z-50 ${className || ''}`}
-          onClick={handleOpenModal}
           aria-label="Add new note"
+          asChild
         >
-          <PlusIcon />
-          <span className="sr-only sm:not-sr-only sm:ml-2">Add Note</span>
+          <Link to="/new">
+            <PlusIcon />
+            <span className="sr-only sm:not-sr-only sm:ml-2">Add Note</span>
+          </Link>
         </Button>
-      </DialogTrigger>
+      );
+    }
 
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Create New Note</DialogTitle>
-        </DialogHeader>
+    // Default modal mode
+    return (
+      <Dialog open={modalOpen} onOpenChange={handleCloseModal}>
+        <DialogTrigger asChild>
+          <Button
+            size="lg"
+            className={`fixed bottom-6 right-6 rounded-full shadow-lg hover:shadow-xl transition-shadow z-50 ${className || ''}`}
+            onClick={handleOpenModal}
+            aria-label="Add new note"
+          >
+            <PlusIcon />
+            <span className="sr-only sm:not-sr-only sm:ml-2">Add Note</span>
+          </Button>
+        </DialogTrigger>
 
-        <AddNoteForm />
-      </DialogContent>
-    </Dialog>
-  );
-});
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New Note</DialogTitle>
+          </DialogHeader>
+
+          <AddNoteForm />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+);
 
 AddNoteWidget.displayName = 'AddNoteWidget';

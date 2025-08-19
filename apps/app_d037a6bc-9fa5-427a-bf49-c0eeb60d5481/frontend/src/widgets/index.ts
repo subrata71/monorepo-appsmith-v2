@@ -2,3 +2,4 @@
 
 export * from './notes-list';
 export * from './add-note';
+export * from './note-editor';

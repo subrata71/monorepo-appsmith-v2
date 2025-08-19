@@ -7,6 +7,7 @@
 
 import React, { useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router';
 
 import { Container } from '@/shared/ui/container';
 import { NotesListWidget } from '@/widgets/notes-list';
@@ -14,11 +15,15 @@ import { AddNoteWidget } from '@/widgets/add-note';
 import type { Note } from '@/entities/note';
 
 export const NotesPage = React.memo(() => {
-  // Handle note click - could navigate to detail view
-  const handleNoteClick = useCallback((note: Note) => {
-    console.log('Note clicked:', note);
-    // TODO: Navigate to note detail view when implemented
-  }, []);
+  const navigate = useNavigate();
+
+  // Handle note click - navigate to edit page
+  const handleNoteClick = useCallback(
+    (note: Note) => {
+      navigate(`/edit/${note.id}`);
+    },
+    [navigate]
+  );
 
   return (
     <>
@@ -43,7 +48,7 @@ export const NotesPage = React.memo(() => {
         </div>
 
         {/* Add Note Button - Fixed positioned floating button */}
-        <AddNoteWidget />
+        <AddNoteWidget useEditor />
       </Container>
     </>
   );

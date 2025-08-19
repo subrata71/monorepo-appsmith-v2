@@ -1,0 +1,306 @@
+client:
+  components:
+    entities:
+    - description: UI/state for displaying and editing a Note (id, title, body, createdAt,
+        updatedAt)
+      entity: note
+      name: NoteEntity
+      props:
+      - id
+      - title
+      - body
+      - createdAt
+      - updatedAt
+    features:
+    - description: Handles state, validation, autosave, save/cancel logic, error handling
+        for note editor UI
+      entities:
+      - NoteEntity
+      feature: note-editor
+      name: NoteEditorFeature
+      props: []
+      shared:
+      - apiClient
+      - useAutosaveDraft
+      - useKeyboardShortcut
+    shared:
+    - category: ui
+      description: Accessible, auto-resizing textarea with focus ring and placeholder
+      name: Textarea
+      props:
+      - value
+      - onChange
+      - placeholder
+      - autoFocus
+      - aria-label
+    - category: ui
+      description: Small, accessible icon button for actions (e.g., Save, Cancel)
+      name: IconButton
+      props:
+      - icon
+      - onClick
+      - aria-label
+      - disabled
+    - category: util
+      description: React hook for autosaving/restoring editor drafts to localStorage
+        by note id or "new"
+      name: useAutosaveDraft
+      props:
+      - draftKey
+      - initialValue
+      - onRestore
+      - onSave
+    - category: util
+      description: React hook for binding keyboard shortcuts (e.g., Ctrl+S, Esc)
+      name: useKeyboardShortcut
+      props:
+      - shortcut
+      - callback
+    - category: api
+      description: Generated OpenAPI client with updateNote and deleteNote endpoints
+      name: apiClient
+      props:
+      - baseUrl
+    - category: ui
+      description: Accessible loading spinner
+      name: Spinner
+      props: []
+    - category: ui
+      description: Transient notification for save/error feedback
+      name: Toast
+      props:
+      - message
+      - type
+    widgets:
+    - description: Full-page minimal editor layout; orchestrates NoteEditorFeature
+        and NoteEntity, renders textarea and actions
+      entities:
+      - NoteEntity
+      features:
+      - NoteEditorFeature
+      name: note-editor-widget
+      props: []
+      shared: []
+  pages:
+  - description: Minimal editor for creating a note; full-page, centered, focused,
+      with autosave draft.
+    queries: []
+    route: /new
+    title: New Note
+    widgets:
+    - note-editor-widget
+  - description: Minimal editor for editing an existing note; loads note by id, supports
+      autosave draft, save/cancel.
+    queries:
+    - getNoteById
+    route: /edit/:id
+    title: Edit Note
+    widgets:
+    - note-editor-widget
+  stores:
+  - actions:
+    - loadNote(id)
+    - setField(field, value)
+    - autosaveDraft()
+    - restoreDraft()
+    - clearDraft()
+    - saveNote()
+    - setSaving(saving)
+    - setSaveError(error)
+    - setFieldErrors(errors)
+    - cancelEdit()
+    - resetEditor()
+    - setDraftRestored(restored)
+    description: Store for note editor state (new or editing), draft, loading, error,
+      save/cancel actions, and feedback
+    layer: features
+    name: noteEditorStore
+    state_shape:
+    - name: mode
+      type: '"new" | "edit"'
+    - name: noteId
+      type: string | null
+    - name: fields
+      type: '{ title: string; body: string | null }'
+    - name: draft
+      type: '{ title: string; body: string | null }'
+    - name: loading
+      type: boolean
+    - name: saving
+      type: boolean
+    - name: saveError
+      type: string | null
+    - name: fieldErrors
+      type: '{ [field: string]: string }'
+    - name: draftRestored
+      type: boolean
+components:
+  parameters: []
+  responses: []
+  schemas: []
+domains:
+- apis:
+  - method: PUT
+    operation:
+      description: Updates a note's title and body. Returns 200 with updated note,
+        400/422 on validation error, 404 if not found, 409 on ETag conflict.
+      operation_id: updateNote
+      summary: Update an existing note by id
+      tags:
+      - note
+    path: /api/notes/{id}
+  - method: DELETE
+    operation:
+      description: Deletes the note. Returns 204 on success, 404 if not found.
+      operation_id: deleteNote
+      summary: Delete a note by id
+      tags:
+      - note
+    path: /api/notes/{id}
+  description: Extends existing Notes domain to support updating and deleting notes,
+    and explicit draft recovery.
+  models:
+  - description: A single note entity; unchanged from previous version.
+    fields:
+    - name: id
+      nullable: false
+      pk: true
+      type: string
+    - name: title
+      nullable: false
+      pk: false
+      type: string
+    - name: body
+      nullable: true
+      pk: false
+      type: string
+    - name: createdAt
+      nullable: false
+      pk: false
+      type: string
+    - name: updatedAt
+      nullable: false
+      pk: false
+      type: string
+    name: Note
+  name: note
+  services:
+  - description: Adds methods for updating and deleting notes, with full validation
+      and ETag concurrency checks.
+    methods:
+    - updateNote(id, {title, body}, ifMatch)
+    - deleteNote(id)
+    name: NoteService
+metadata:
+  description: Differential technical specification for introducing a dedicated note
+    editor page and supporting UI/UX for seamless note creation or editing, with minimalist,
+    accessible design and autosave draft logic.
+  generated_at: '2024-06-07T16:00:00Z'
+  name: Note Editor UI
+  version: 1.1.0
+product:
+  features:
+  - description: A focused editor interface for creating or editing a note, with autosave
+      draft, keyboard shortcuts, and accessible actions for save/cancel.
+    domains:
+    - note
+    id: note-editor
+    priority: high
+    title: Minimal Note Editor
+  goals:
+  - Enable users to create or edit a note with minimal friction and maximal focus
+  - Ensure accessibility and intuitive keyboard navigation in the editor
+  - Provide autosave of drafts to prevent data loss on accidental navigation
+  - Maintain consistency and backward compatibility with existing notes features
+  personas:
+  - description: Anyone visiting the site; no registration or login required; wants
+      to create or edit notes quickly and reliably.
+    goals:
+    - Quickly create or edit a note without distractions
+    - Avoid losing work if interrupted
+    name: Guest User
+  summary: Adds a dedicated minimalist note editor page for creating or editing a
+    note, with autosave draft, keyboard navigation, and seamless transitions between
+    editing and the notes list.
+use_cases:
+- actors:
+  - Guest User
+  apis:
+  - GET /api/notes/{id}
+  - PUT /api/notes/{id}
+  description: User opens an existing note for editing, makes changes, and saves or
+    cancels.
+  domains:
+  - note
+  happy_path:
+  - User navigates to /edit/:id
+  - System fetches note content, focuses textarea
+  - User edits note, autosave draft stores progress
+  - User saves (Ctrl+S or Save button), changes persisted
+  - User returned to notes list with confirmation
+  id: edit-existing-note
+  pages:
+  - /edit/:id
+  postconditions:
+  - Note is updated and visible in list
+  preconditions:
+  - User is on notes list and selects a note to edit
+  title: Edit an existing note
+- actors:
+  - Guest User
+  apis:
+  - POST /api/notes
+  description: User opens the editor page to create a new note, enters content, and
+    saves or cancels.
+  domains:
+  - note
+  happy_path:
+  - User lands on /new, textarea is auto-focused
+  - User enters note, draft autosaves
+  - User saves (Ctrl+S or Save), note is created
+  - User returned to notes list with new note at top
+  id: create-note-editor
+  pages:
+  - /new
+  postconditions:
+  - New note is visible in list
+  preconditions:
+  - User navigates to /new or selects add note
+  title: Create a new note via editor
+user_journeys:
+- id: journey-edit-note
+  persona: Guest User
+  related_use_cases:
+  - edit-existing-note
+  steps:
+  - action: User navigates to an existing note's edit page (/edit/:id)
+    page: /edit/:id
+  - action: Textarea focuses automatically, displays current note
+    page: /edit/:id
+  - action: User edits note; draft autosaves on each change
+    page: /edit/:id
+  - action: User presses Ctrl+S or Save; system validates and updates note
+    page: /edit/:id
+  - action: User redirected to notes list, sees updated note
+    page: /
+  success_criteria: Edits are not lost if interrupted; save/cancel are accessible;
+    transitions are smooth and feedback is clear.
+  title: Edit Note and Prevent Data Loss
+- id: journey-create-note-editor
+  persona: Guest User
+  related_use_cases:
+  - create-note-editor
+  steps:
+  - action: User clicks add note and is navigated to /new
+    page: /new
+  - action: Textarea is empty, placeholder visible, auto-focused
+    page: /new
+  - action: User types note; input is autosaved to local storage
+    page: /new
+  - action: User leaves page and returns; draft is restored
+    page: /new
+  - action: User saves note; draft clears and user is returned to notes list
+    page: /
+  success_criteria: Draft is never lost; save/cancel are accessible by mouse and keyboard;
+    UI is minimal and focused.
+  title: Create Note with Draft Recovery

@@ -1,0 +1,45 @@
+access: Public access with no restrictions.
+behaviour: Textarea auto-focuses on page load. Save button is disabled if input is
+  empty. Cancel returns to note list without saving. Smooth keyboard and touch navigation.
+  Autosave draft to local storage on input change.
+name: Note Editor UI
+page:
+  behaviour: 'On page load, textarea is focused. Save persists note if not empty,
+    then returns to notes list. Cancel/discard navigates to notes list without saving.
+    Autosaves draft on change. Keyboard shortcuts: Ctrl+S to save, Esc to cancel.'
+  id: note_editor
+  purpose: Enables users to create or edit a note, with the ability to save or discard
+    changes and return to the notes list.
+  sections:
+  - behaviour: 'Save is disabled if textarea is empty. Save persists note and navigates
+      to list. Cancel discards and navigates to list. Keyboard: Ctrl+S saves, Esc
+      cancels.'
+    blocks:
+    - behaviour: Enabled when textarea is not empty. On click or Ctrl+S, saves note
+        and navigates to notes list. Shows feedback if error.
+      id: save_button
+    - behaviour: On click or Esc, discards changes and returns to notes list.
+      id: cancel_button
+    id: editor_actions
+    title: Editor Actions
+    visual: Horizontal row, right-aligned at the top of the editor. Small, modern
+      buttons or icons with subtle hover effect.
+  - behaviour: Auto-focus on load. Autosave to local storage on change. Clears draft
+      on save/cancel. Supports multiline input.
+    blocks:
+    - behaviour: Captures and displays note content. Auto-resizes vertically. Placeholder
+        appears if empty. Local draft autosaves on change.
+      id: note_textarea
+    id: note_input
+    title: Note Input Area
+    visual: Large, borderless textarea with muted placeholder. No visible border except
+      slight shadow on focus. Flexibly fills vertical space.
+  title: Edit Note
+  visual: Single column layout, centered. Large borderless textarea. Top bar or floating
+    actions for save/cancel. Simple and distraction-free.
+summary: A minimalist editor interface for creating or editing a single note, with
+  a large, borderless textarea and simple save/cancel actions.
+visual: Minimalistic, clean, and focused design. White or light background, subtle
+  shadows, no visual clutter. Large, borderless textarea dominates the page. Action
+  buttons/icons in a single horizontal row, top right or bottom, with subtle hover/focus
+  effects.

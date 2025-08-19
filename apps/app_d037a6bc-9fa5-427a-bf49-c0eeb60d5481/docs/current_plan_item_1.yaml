@@ -1,0 +1,16 @@
+id: ui-note-editor
+name: Note Editor UI
+sub_items:
+- effort: 2
+  id: ui-textarea
+  name: Note Textarea
+  summary: Implement a large, borderless textarea for note input.
+- effort: 1
+  id: ui-save-action
+  name: Save Action
+  summary: Add a simple save button or icon to save the note and return to the list.
+- effort: 1
+  id: ui-cancel-action
+  name: Cancel Action
+  summary: Add a cancel or back button to discard changes and return to the list.
+summary: A minimalist editor for creating or editing a note.

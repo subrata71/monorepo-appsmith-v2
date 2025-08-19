@@ -261,6 +261,7 @@ export {
 } from './table';
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { Textarea } from './textarea';
+export { NoteTextarea, type NoteTextareaProps } from './note-textarea';
 export { Toast } from './toast';
 export { Toggle, toggleVariants } from './toggle';
 export { ToggleGroup, ToggleGroupItem } from './toggle-group';
